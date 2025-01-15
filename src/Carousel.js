@@ -9,10 +9,10 @@ const Carousel = () => {
 
   // Array of images (doubled as requested)
   const images = [
-    { src: cameraImage, caption: "Camera",p:"welcome here you can buy digital Camera you want" },
-    { src: gimbalImage, caption: "Gimbal",p:"welcome here you can buy digital Gimbal you want"  },
-    { src: cameraImage, caption: "Camera", p:"welcome here you can buy digital Camera you want"  },
-    { src: gimbalImage, caption: "Gimbal",p:"welcome here you can buy digital Gimbal you want"  },
+    { src: cameraImage, caption: "Camera", p: "Welcome here you can buy the digital camera you want" },
+    { src: gimbalImage, caption: "Gimbal", p: "Welcome here you can buy the digital gimbal you want" },
+    { src: cameraImage, caption: "Camera", p: "Welcome here you can buy the digital camera you want" },
+    { src: gimbalImage, caption: "Gimbal", p: "Welcome here you can buy the digital gimbal you want" },
   ];
 
   // Handle the previous slide click
@@ -34,32 +34,32 @@ const Carousel = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    }, 3000); // Change slide every 3 seconds
+    }, 10000); // Change slide every 3 seconds
 
     // Clean up the interval when the component is unmounted
     return () => clearInterval(interval);
   }, [images.length]);
 
   return (
-    <div id="default-carousel" className="relative w-full">
+    <div id="default-carousel" className="relative w-full h-svh mt-32">
       {/* Carousel wrapper */}
-      <div className="relative h-56 overflow-hidden md:h-96">
+      <div className="relative w-full h-full overflow-hidden">
         {images.map((image, index) => (
           <div
             key={index}
             className={`${
               index === currentSlide ? 'block' : 'hidden'
-            } duration-700 ease-in-out`}
+            } duration-700 ease-in-out h-full`}
           >
             <img
               src={image.src}
-              className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+              className="absolute block w-full h-full object-cover"
               alt={`Slide ${index + 1}`}
             />
             {/* Overlay with caption */}
-            <div className="absolute top-0 left-0 w-full h-full bg-black/90 flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 w-full h-full bg-black/50 flex flex-col items-center justify-center">
               <h1 className="text-blue-400 mb-8 text-5xl font-bold">{image.caption}</h1>
-              <p className='text-white text-2xl capitalize'>{image.p}</p>
+              <p className="text-white text-2xl capitalize text-center">{image.p}</p>
             </div>
           </div>
         ))}

@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Add this CSS for the dropdown */
+.full-width-dropdown {
+    position: absolute;
+    top: 100%; /* Place it below the navigation bar */
+    right:-985px;
+    width: 100svw; /* Take the full viewport width */
+    background-color: rgb(5, 5, 17); /* Adjust the background color */
+    color: white; /* Text color */
+    padding: 2rem; /* Add some padding for better spacing */
+    z-index: 1000; 
+    margin-top: 30px;/* Ensure it appears above other elements */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
+    line-height:4ch;
+  }
+
+/* Chrome, Edge, Safari: Webkit-specific scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px; /* Thinner scrollbar width */
+  height: 6px; /* Thinner scrollbar height for horizontal scroll */
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Light track color */
+  border-radius: 6px; /* Rounded corners for the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000; /* Black thumb color */
+  border-radius: 60px; /* Rounded corners for the thumb */
+  width: 6px; /* Reduced width of the scrollbar thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker thumb on hover */
+}
+
+::-webkit-scrollbar-corner {
+  background: #f0f0f0; /* Color for the scrollbar corner in two-scrollable areas */
+}
+
