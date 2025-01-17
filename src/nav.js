@@ -7,12 +7,13 @@ function Navbar({ cartCount }) {
 
   return (
     <nav className="bg-black text-white">
-      {/* Top section */}
-      <div className="flex justify-between items-center p-4">
+      {/* Top Section */}
+      <div className="flex justify-between items-center px-6 py-2 bg-black text-sm">
         {/* Contact Information */}
-        <div className="text-sm">
+        <div>
           <p>+250791855396 | psevenrwanda@gmail.com</p>
         </div>
+
         {/* Social Media Icons */}
         <div className="flex space-x-4">
           <a href="#" className="hover:text-gray-400">YouTube</a>
@@ -23,17 +24,19 @@ function Navbar({ cartCount }) {
       </div>
 
       {/* Main Navbar */}
-      <div className="bg-gray-800 flex justify-between items-center px-6 py-4">
-        {/* Logo */}
+      <div className="flex justify-between items-center px-6 py-4 bg-gray-800">
+        {/* Logo as Home Link */}
         <div className="flex items-center space-x-4">
-          <img src={Logo} alt="Logo" className="h-12 rounded-full" />
-          <span className="font-bold text-xl">
-            P<span className="text-gray-400">SEVEN</span>
-          </span>
+          <Link to="/" className="flex items-center space-x-2">
+            <img src={Logo} alt="Logo" className="h-12 rounded-full" />
+            <span className="font-bold text-xl">
+              P<span className="text-gray-400">SEVEN</span>
+            </span>
+          </Link>
         </div>
 
         {/* Navigation Links */}
-        <div className="hidden lg:flex space-x-8">
+        <div className="hidden lg:flex space-x-8 text-sm">
           <Link to="/" className="hover:text-gray-400">Home</Link>
           <Link to="/job-employers" className="hover:text-gray-400">Job & Employers</Link>
           <Link to="/buy-sell" className="hover:text-gray-400">Buy & Sell</Link>
