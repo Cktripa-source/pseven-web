@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
+import {FaTag, FaHome, FaBriefcase, FaShoppingBag, FaServicestack, FaQuestionCircle, FaInfoCircle, FaPhoneAlt, FaEnvelope, FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 import Logo from './images/logo.png';
 
 function Navbar({ cartCount }) {
@@ -14,17 +15,43 @@ function Navbar({ cartCount }) {
       {/* Top Section (Contact Information) */}
       <div className="md:flex justify-between items-center px-6 py-0 bg-black text-sm text-white transition duration-300">
         <div className="p-4 text-center md:text-left">
-          <p>📞 +250791855396 | <a href="mailto:psevenrwanda@gmail.com" className="hover:text-red-500 transition duration-300">psevenrwanda@gmail.com</a></p>
+          <p className="flex items-center space-x-2">
+            <FaPhoneAlt className="h-5 w-5 text-white" />
+            <span>+250791855396</span> 
+            <span>|</span>
+            <a href="mailto:psevenrwanda@gmail.com" className="flex items-center space-x-2 hover:text-red-500 transition duration-300">
+              <FaEnvelope className="h-5 w-5 text-white" />
+              <span>psevenrwanda@gmail.com</span>
+            </a>
+          </p>
         </div>
+
+        {/* Social Icons */}
         <div className="flex space-x-6 md:space-x-8 text-md">
-          <a href="#" className="hover:text-red-500 transition duration-300 text-white">YouTube</a>
-          <a href="#" className="hover:text-red-500 transition duration-300 text-white">Facebook</a>
-          <a href="#" className="hover:text-red-500 transition duration-300 text-white">Twitter</a>
-          <a href="#" className="hover:text-red-500 transition duration-300 text-white">Instagram</a>
+          <a href="#" className="hover:text-red-500 transition duration-300 text-white">
+            <FaYoutube className="h-6 w-6 text-white hover:text-red-500" />
+          </a>
+          <a href="#" className="hover:text-red-500 transition duration-300 text-white">
+            <FaFacebookF className="h-6 w-6 text-white hover:text-red-500" />
+          </a>
+          <a href="#" className="hover:text-red-500 transition duration-300 text-white">
+            <FaTwitter className="h-6 w-6 text-white hover:text-red-500" />
+          </a>
+          <a href="#" className="hover:text-red-500 transition duration-300 text-white">
+            <FaInstagram className="h-6 w-6 text-white hover:text-red-500" />
+          </a>
         </div>
+
+        {/* Login/Register Buttons with Icons */}
         <div className="flex space-x-6 mt-3 md:mt-0">
-          <Link to="/login" className="bg-white text-black py-2 px-6 rounded-lg hover:bg-red-500 hover:text-white transition duration-300">Login</Link>
-          <Link to="/register" className="bg-white text-black py-2 px-6 rounded-lg hover:bg-red-500 hover:text-white transition duration-300">Register</Link>
+          <Link to="/login" className="bg-white text-black py-2 px-6 rounded-lg hover:bg-red-500 hover:text-white transition duration-300 flex items-center space-x-2">
+            <FaSignInAlt className="h-5 w-5 text-black" />
+            <span>Login</span>
+          </Link>
+          <Link to="/register" className="bg-white text-black py-2 px-6 rounded-lg hover:bg-red-500 hover:text-white transition duration-300 flex items-center space-x-2">
+            <FaUserPlus className="h-5 w-5 text-black" />
+            <span>Register</span>
+          </Link>
         </div>
       </div>
 
@@ -62,46 +89,95 @@ function Navbar({ cartCount }) {
 
       {/* Third Section (Menu Links - only show on md and larger) */}
       <div className="hidden md:flex justify-center items-center bg-gray-950 py-4 transition duration-300 ease-in-out">
-        <div className="flex space-x-8 p-1">
-          <Link to="/" className="hover:text-red-500 transition font-semibold text-md duration-300">Home</Link>
-          <Link to="/job-employers" className="hover:text-red-500 transition font-semibold text-md duration-300">Job & Employers</Link>
-          <Link to="/buy-sell" className="hover:text-red-500 transition font-semibold text-md duration-300">Buy & Sell</Link>
-          <Link to="/services" className="hover:text-red-500 transition font-semibold text-md duration-300">Our Services</Link>
-          <Link to="/others" className="hover:text-red-500 transition font-semibold text-md duration-300">Others</Link>
-          <Link to="/about" className="hover:text-red-500 transition font-semibold text-md duration-300">About Us</Link>
-          <Link to="/faq" className="hover:text-red-500 transition font-semibold text-md duration-300">FAQ</Link>
-          <Link to="/contact" className="hover:text-red-500 transition font-semibold text-md duration-300">Contact Us</Link>
-        </div>
-      </div>
+  <div className="flex space-x-8 p-1">
+    <Link to="/" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaHome className="h-5 w-5" />
+      <span>Home</span>
+    </Link>
+    <Link to="/job-employers" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaBriefcase className="h-5 w-5" />
+      <span>Job & Employers</span>
+    </Link>
+    <Link to="/buy-sell" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaShoppingBag className="h-5 w-5" />
+      <span>Buy & Sell</span>
+    </Link>
+    <Link to="/services" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaServicestack className="h-5 w-5" />
+      <span>Our Services</span>
+    </Link>
+    <Link to="/others" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+  <FaTag className="h-5 w-5" />
+  <span>Others</span>
+</Link>
+    <Link to="/about" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaInfoCircle className="h-5 w-5" />
+      <span>About Us</span>
+    </Link>
+    <Link to="/faq" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaQuestionCircle className="h-5 w-5" />
+      <span>FAQ</span>
+    </Link>
+    <Link to="/contact" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaPhoneAlt className="h-5 w-5" />
+      <span>Contact Us</span>
+    </Link>
+  </div>
+</div>
 
-      {/* Mobile Menu Toggle */}
-      <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-      className="lg:hidden md:hidden py-2 px-4 bg-white rounded-lg hover:bg-red-500 
-       justify-end text-center text-black font-extrabold absolute right-4 top-36">
-        {isMobileMenuOpen ? (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
-        )}
-      </button>
+{/* Mobile Menu Toggle */}
+<button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+  className="lg:hidden md:hidden py-2 px-4 bg-white rounded-lg hover:bg-red-500 
+   justify-end text-center text-black font-extrabold absolute right-4 top-36">
+  {isMobileMenuOpen ? (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  ) : (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+  )}
+</button>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden bg-gray-800 text-white p-4">
-          <Link to="/" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">Home</Link>
-          <Link to="/job-employers" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">Job & Employers</Link>
-          <Link to="/buy-sell" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">Buy & Sell</Link>
-          <Link to="/services" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">Our Services</Link>
-          <Link to="/others" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">Others</Link>
-          <Link to="/about" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">About Us</Link>
-          <Link to="/faq" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">FAQ</Link>
-          <Link to="/contact" onClick={handleLinkClick} className="block p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300">Contact Us</Link>
-        </div>
-      )}
+{/* Mobile Menu */}
+{isMobileMenuOpen && (
+  <div className="lg:hidden bg-gray-800 text-white p-4">
+    <Link to="/" onClick={handleLinkClick} className="  p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaHome className="h-5 w-5" />
+      <span>Home</span>
+    </Link>
+    <Link to="/job-employers" onClick={handleLinkClick} className="  p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaBriefcase className="h-5 w-5" />
+      <span>Job & Employers</span>
+    </Link>
+    <Link to="/buy-sell" onClick={handleLinkClick} className="  p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaShoppingBag className="h-5 w-5" />
+      <span>Buy & Sell</span>
+    </Link>
+    <Link to="/services" onClick={handleLinkClick} className="  p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaServicestack className="h-5 w-5" />
+      <span>Our Services</span>
+    </Link>
+    <Link to="/others" className="hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+  <FaTag className="h-5 w-5" />
+  <span>Others</span>
+</Link>
+
+    <Link to="/about" onClick={handleLinkClick} className="  p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaInfoCircle className="h-5 w-5" />
+      <span>About Us</span>
+    </Link>
+    <Link to="/faq" onClick={handleLinkClick} className="  p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaQuestionCircle className="h-5 w-5" />
+      <span>FAQ</span>
+    </Link>
+    <Link to="/contact" onClick={handleLinkClick} className="  p-2 hover:bg-slate-950 rounded-md hover:text-red-500 transition font-semibold text-md duration-300 flex items-center space-x-2">
+      <FaPhoneAlt className="h-5 w-5" />
+      <span>Contact Us</span>
+    </Link>
+  </div>
+)}  
     </nav>
   );
 }
