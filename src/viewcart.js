@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ViewCart = ({ setCartCount }) => {
   const [cartItems, setCartItems] = useState([]);
+  const navigate = useNavigate();
 
   // Load cart items from localStorage on component mount
   useEffect(() => {
@@ -52,6 +53,16 @@ const ViewCart = ({ setCartCount }) => {
     return (itemPrice * item.quantity).toFixed(2);
   };
 
+  const handleCheckout = () => {
+    // Ensure there are items in the cart before proceeding to checkout
+    if (cartItems.length === 0) {
+      alert("Your cart is empty. Please add items before proceeding to checkout.");
+      return;
+    }
+    // Navigate to the checkout page
+    navigate("/checkout");
+  };
+
   return (
     <div className="container mx-auto p-4 mt-40">
       <h2 className="text-center mb-4 font-extrabold text-2xl">
@@ -72,7 +83,7 @@ const ViewCart = ({ setCartCount }) => {
             {cartItems.map((item, index) => (
               <div
                 key={index}
-                className="bg-white shadow-lg p-4 rounded-lg  space-y-4 border"
+                className="bg-white shadow-lg p-4 rounded-lg space-y-4 border"
               >
                 <div className="flex items-center gap-4">
                   <img
@@ -116,6 +127,14 @@ const ViewCart = ({ setCartCount }) => {
           </div>
           <div className="mt-6 text-xl font-semibold text-center">
             <p>Total Price: ${calculateTotalPrice()}</p>
+          </div>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handleCheckout}
+              className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300"
+            >
+              Proceed to Checkout
+            </button>
           </div>
         </>
       )}

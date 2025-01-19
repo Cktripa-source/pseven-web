@@ -17,6 +17,7 @@ import Others from './Others';
 import AboutUs from './AboutUs';
 import Faq from './Faq';
 import ContactUs from './ContactUs';
+import Checkout from './Checkout';
 
 function App() {
   const [cartCount, setCartCount] = useState(() => {
@@ -60,6 +61,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path='/shopping' element={<Shopping />} />
+        <Route path='/checkout' element={<Checkout />} />
       </Routes>
     </Router>
   );
