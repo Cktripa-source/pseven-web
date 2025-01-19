@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Register() {
   return (
-    <div className="w-full flex h-screen pt-32 md:mt-4 mt-24">
+    <div className="w-full flex h-screen pt-32 md:mt-20 mt-40">
       {/* Left Section with Image (visible on desktop and hidden on mobile) */}
       <div className="w-full md:w-1/2 h-full hidden md:flex items-center justify-center bg-gray-900">
         <img src={Shop} alt="Shop" className="max-w-full h-auto" />

@@ -41,15 +41,9 @@ const Carousel = () => {
   }, [images.length]);
 
   return (
-<<<<<<< Updated upstream
-    <div id="default-carousel" className="relative w-full h-svh mt-32">
+    <div id="default-carousel" className="relative w-full h-svh md:mt-40 mt-64">
       {/* Carousel wrapper */}
       <div className="relative w-full h-full overflow-hidden">
-=======
-    <div id="default-carousel" className="relative w-full h-screen p-10">
-      {/* Carousel wrapper */}
-      <div className="relative h-screen bg-black overflow-hidden md:h-96">
->>>>>>> Stashed changes
         {images.map((image, index) => (
           <div
             key={index}
@@ -59,11 +53,7 @@ const Carousel = () => {
           >
             <img
               src={image.src}
-<<<<<<< Updated upstream
               className="absolute block w-full h-full object-cover"
-=======
-              className="absolute block w-full h-screen -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
->>>>>>> Stashed changes
               alt={`Slide ${index + 1}`}
             />
             {/* Overlay with caption */}

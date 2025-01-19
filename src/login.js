@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Login() {
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row pt-20 md:mt-4 mt-24"> {/* Ensure the padding here to avoid overlapping with navbar */}
+    <div className="w-full h-screen flex flex-col md:flex-row pt-20 md:mt-32 mt-40"> {/* Ensure the padding here to avoid overlapping with navbar */}
       {/* Left Section with Image (Hidden on mobile and visible on larger screens) */}
       <div className="w-full md:w-1/2 h-full hidden md:flex items-center justify-center bg-gray-900">
         <img src={Shop} alt="Shop" className="max-w-full h-auto" />

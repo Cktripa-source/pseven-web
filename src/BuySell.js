@@ -3,7 +3,7 @@ import cameraImage from './images/camera.jpg';
 import gimbalImage from './images/gimbal.webp';
 import appleWatchImage from './images/apple-watch.jpg';
 
-const FeaturedProduct = ({ setCartCount }) => {
+const BuySell = ({ setCartCount }) => {
   const [cartItems, setCartItems] = useState([]);
   const [notification, setNotification] = useState('');
 
@@ -14,7 +14,7 @@ const FeaturedProduct = ({ setCartCount }) => {
     { id: 4, name: 'Tripod', image: cameraImage, price: '$199', description: 'A sturdy tripod for stable photography.', discount: '5%' },
     { id: 5, name: 'Drone', image: gimbalImage, price: '$899', description: 'Capture aerial shots with this high-tech drone.', discount: '25%' },
   ];
-
+ 
   useEffect(() => {
     const savedCartItems = localStorage.getItem('cart');
     if (savedCartItems) {
@@ -62,7 +62,7 @@ const FeaturedProduct = ({ setCartCount }) => {
   };
 
   return (
-    <div className="w-full px-4 overflow-hidden bg-gray-50 ">
+    <div className="w-full px-4 overflow-hidden bg-gray-50">
       {notification && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-green-500 text-white px-8 py-4 rounded-lg shadow-lg text-center">
@@ -107,4 +107,4 @@ const FeaturedProduct = ({ setCartCount }) => {
   );
 };
 
-export default FeaturedProduct;
+export default BuySell;
