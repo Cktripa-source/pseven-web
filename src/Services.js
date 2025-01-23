@@ -75,9 +75,9 @@ function Services() {
   ];
 
   return (
-    <div className="min-h-screen text-white py-16 px-6 mt-36">
+    <div className="min-h-screen text-white py-16 px-6 md:mt-40 mt-56 ">
       {/* Header */}
-      <h1 className="text-4xl md:text-5xl font-bold text-center text-red-500 mb-10">
+      <h1 className="text-3xl md:text-4xl font-extrabold w-full p-2 border-black border border-opacity-30 text-center text-black mb-4">
         Our Services
       </h1>
 
@@ -86,28 +86,29 @@ function Services() {
         {services.map((service, index) => (
           <div
             key={index}
-            className="relative group rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+            className="lg:flex   p-4 justify-between  border-black border  border-opacity-20 rounded-md shadow-lg"
           >
             {/* Background Image */}
+            <div className="p-2 rounded-md border-black border border-opacity-30">
             <img
-              src={service.image}
+              src={service.image} 
               alt={service.title}
-              className="w-full h-60 object-cover"
+              className="w-full h-60 object-cover rounded-md"
             />
-
-            {/* Overlay */}
-            <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-80 transition-opacity duration-500 ease-in-out">
-              <h2 className="text-2xl md:text-3xl font-bold text-red-500 mb-4">
+            </div>
+            <div className="text-center p-2 ">
+              <h2 className="text-2xl md:text-3xl font-bold text-black mb-4 text-center">
                 {service.icon} {service.title}
               </h2>
-              <p className="text-gray-300 text-center max-w-sm mb-6">
+              <p className="text-gray-900 text-center max-w-sm mb-6">
                 {service.description}
               </p>
-              <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition-transform transform hover:scale-105">
+              <button className="bg-black hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition-transform transform hover:scale-105">
                 Learn More
               </button>
             </div>
           </div>
+          
         ))}
       </div>
     </div>

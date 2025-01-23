@@ -1,21 +1,26 @@
+// FeaturedProduct.js
 import React, { useState, useEffect } from 'react';
-import cameraImage from './images/camera.jpg';
-import gimbalImage from './images/gimbal.webp';
-import appleWatchImage from './images/apple-watch.jpg';
+import axios from 'axios'; // You can use axios for easier API calls
 
 const FeaturedProduct = ({ setCartCount }) => {
+  const [products, setProducts] = useState([]); // State for storing fetched products
   const [cartItems, setCartItems] = useState([]);
   const [notification, setNotification] = useState('');
 
-  const products = [
-    { id: 1, name: 'Apple Watch Series 7', image: appleWatchImage, price: '$599', description: 'A sleek smartwatch with cutting-edge features.', discount: '20%' },
-    { id: 2, name: 'Camera', image: cameraImage, price: '$699', description: 'High-definition camera for stunning photos.', discount: '15%' },
-    { id: 3, name: 'Gimbal Stabilizer', image: gimbalImage, price: '$399', description: 'Stabilize your shots with this portable gimbal.', discount: '10%' },
-    { id: 4, name: 'Tripod', image: cameraImage, price: '$199', description: 'A sturdy tripod for stable photography.', discount: '5%' },
-    { id: 5, name: 'Drone', image: gimbalImage, price: '$899', description: 'Capture aerial shots with this high-tech drone.', discount: '25%' },
-  ];
-
   useEffect(() => {
+    // Fetch products from backend API
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/products'); // Adjust the URL to your backend API
+        setProducts(response.data); // Set fetched products to state
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+    
+    // Load cart items from localStorage on initial render
     const savedCartItems = localStorage.getItem('cart');
     if (savedCartItems) {
       setCartItems(JSON.parse(savedCartItems));
@@ -62,7 +67,7 @@ const FeaturedProduct = ({ setCartCount }) => {
   };
 
   return (
-    <div className="w-full px-4 overflow-hidden bg-gray-50 ">
+    <div className="w-full px-4 overflow-hidden bg-gray-50">
       {notification && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-green-500 text-white px-8 py-4 rounded-lg shadow-lg text-center">
@@ -75,13 +80,19 @@ const FeaturedProduct = ({ setCartCount }) => {
 
       <div className="relative w-full">
         <div className="flex gap-6 overflow-x-auto transition-all">
-          {products.map((product, index) => (
+          {products.length > 0 ? products.map((product, index) => (
             <div
               key={index}
               className="w-[90%] md:w-[23.5%] transition-all duration-500 ease-in-out transform hover:scale-95 flex-shrink-0 border border-gray-200 rounded-lg shadow-xl hover:shadow-2xl cursor-pointer"
             >
               <a href="#" className="block">
-                <img className="w-full h-56 object-cover rounded-t-lg" src={product.image} alt={product.name} />
+              <img 
+              className="w-full h-56 object-cover rounded-t-lg"
+              src={`http://localhost:5000/${product.image}`}
+              alt={product.name}
+            />
+
+
               </a>
               <div className="px-6 pb-4">
                 <a href="#">
@@ -100,7 +111,9 @@ const FeaturedProduct = ({ setCartCount }) => {
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="w-full text-center py-8 text-gray-600">Loading products...</div>
+          )}
         </div>
       </div>
     </div>

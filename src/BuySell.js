@@ -62,7 +62,7 @@ const BuySell = ({ setCartCount }) => {
   };
 
   return (
-    <div className="w-full px-4 overflow-hidden bg-gray-50">
+    <div className="w-11/12 px-4 overflow-hidden md:mt-56 mt-72 m-auto">
       {notification && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-green-500 text-white px-8 py-4 rounded-lg shadow-lg text-center">
@@ -70,18 +70,16 @@ const BuySell = ({ setCartCount }) => {
           </div>
         </div>
       )}
-      <h2 className="text-3xl font-bold text-gray-900 my-2 text-center">Featured Products</h2>
-      <p className="text-blue-500 text-center p-2 font-bold mb-6 text-2xl">Our list of Top Featured Products</p>
-
+      <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Top Featured Products</h2>
       <div className="relative w-full">
         <div className="flex gap-6 overflow-x-auto transition-all">
           {products.map((product, index) => (
             <div
               key={index}
-              className="w-[90%] md:w-[23.5%] transition-all duration-500 ease-in-out transform hover:scale-95 flex-shrink-0 border border-gray-200 rounded-lg shadow-xl hover:shadow-2xl cursor-pointer"
+              className="w-[90%] md:w-[23.5%] transition-all duration-500 ease-in-out transform hover:scale-95 flex-shrink-0 border border-gray-300 rounded-lg shadow-xl hover:shadow-2xl cursor-pointer"
             >
               <a href="#" className="block">
-                <img className="w-full h-56 object-cover rounded-t-lg" src={product.image} alt={product.name} />
+                <img className="w-full h-56 object-cover rounded-t-lg border-b" src={product.image} alt={product.name} />
               </a>
               <div className="px-6 pb-4">
                 <a href="#">
@@ -93,12 +91,13 @@ const BuySell = ({ setCartCount }) => {
                   <span className="text-xs font-medium text-red-500 bg-yellow-100 px-2 py-0.5 rounded">{product.discount} OFF</span>
                   <button
                     onClick={() => isProductInCart(product) ? handleRemoveFromCart(product) : handleAddToCart(product)}
-                    className={`text-white ${isProductInCart(product) ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'} focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-xs px-4 py-2 text-center`}
+                    className={`text-white ${isProductInCart(product) ? 'bg-red-600 hover:bg-red-700 text-md' : 'bg-black hover:bg-red-600'}  text-white px-4 py-1 rounded-full shadow-md transition-transform transform hover:scale-105`}
                   >
-                    {isProductInCart(product) ? 'Remove from cart' : 'Add to cart'}
+                    {isProductInCart(product) ? 'Remove ' : 'Add to cart'}
                   </button>
                 </div>
               </div>
+              
             </div>
           ))}
         </div>

@@ -10,6 +10,10 @@ const Checkout = ({ setCartCount }) => {
     zipCode: "",
     email: "",
   });
+  const [paymentDetails, setPaymentDetails] = useState({
+    phoneNumber: "",
+    paymentStatus: null,
+  });
 
   const navigate = useNavigate();
 
@@ -30,23 +34,31 @@ const Checkout = ({ setCartCount }) => {
     }));
   };
 
+  const handlePaymentChange = (e) => {
+    const { name, value } = e.target;
+    setPaymentDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+
   const calculateTotalPrice = () => {
     return cartItems.reduce((total, item) => {
-      const itemPrice = parseFloat(item.price.replace("$", "")) || 0;
+      const itemPrice = parseFloat(String(item.price).replace("$", "")) || 0;
       return total + itemPrice * item.quantity;
     }, 0).toFixed(2);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically handle payment processing
-    // For now, we just simulate a successful checkout
 
-    alert("Checkout successful! Your order has been placed.");
-    localStorage.removeItem("cart"); // Clear cart from localStorage
-    setCartCount(0); // Reset cart count
-    setCartItems([]); // Clear cart from state
-    navigate("/"); // Redirect to the home page or order confirmation page
+    // Here you could add logic to handle payment processing via MTN API
+
+    // For now, just simulate a successful payment
+    setPaymentDetails({ ...paymentDetails, paymentStatus: "success" });
+
+    // Redirect to payment confirmation page
+    navigate("/payment", { state: { shippingDetails, cartItems, totalPrice: calculateTotalPrice() } });
   };
 
   return (
@@ -59,12 +71,12 @@ const Checkout = ({ setCartCount }) => {
         </div>
       ) : (
         <div>
-          <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+          <h3 className="text-xl font-semibold mb-4">Order Summary</h3 >
           <div className="space-y-4">
             {cartItems.map((item, index) => (
               <div key={index} className="flex justify-between">
                 <span>{item.name} (x{item.quantity})</span>
-                <span>${(parseFloat(item.price.replace("$", "")) * item.quantity).toFixed(2)}</span>
+                <span>${(parseFloat(String(item.price).replace("$", "")) * item.quantity).toFixed(2)}</span>
               </div>
             ))}
           </div>
@@ -72,6 +84,7 @@ const Checkout = ({ setCartCount }) => {
             <p>Total: ${calculateTotalPrice()}</p>
           </div>
 
+          {/* MTN Rwanda Payment Form */}
           <form onSubmit={handleSubmit} className="mt-6">
             <div className="space-y-4">
               <input
@@ -120,11 +133,26 @@ const Checkout = ({ setCartCount }) => {
                 required
               />
             </div>
+
+            {/* MTN Payment Form */}
+            <div className="mt-6 space-y-4">
+              <label className="block text-sm font-semibold">MTN Rwanda Mobile Money Number</label>
+              <input
+                type="text"
+                name="phoneNumber"
+                value={paymentDetails.phoneNumber}
+                onChange={handlePaymentChange}
+                placeholder="Enter your MTN number"
+                className="w-full px-4 py-2 border rounded"
+                required
+              />
+            </div>
+
             <button
               type="submit"
               className="mt-4 px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
             >
-              Confirm Order
+              Confirm Order & Pay with MTN
             </button>
           </form>
         </div>

@@ -41,17 +41,21 @@ const ViewCart = ({ setCartCount }) => {
     }
   };
 
-  const calculateTotalPrice = () => {
-    return cartItems.reduce((total, item) => {
-      const itemPrice = parseFloat(item.price.replace("$", "")) || 0;
-      return total + itemPrice * item.quantity;
-    }, 0).toFixed(2);
-  };
+ // ViewCart.js
 
-  const calculateItemTotal = (item) => {
-    const itemPrice = parseFloat(item.price.replace("$", "")) || 0;
-    return (itemPrice * item.quantity).toFixed(2);
-  };
+const calculateTotalPrice = () => {
+  return cartItems.reduce((total, item) => {
+    // Ensure price is a string and remove "$" symbol
+    const itemPrice = parseFloat(String(item.price).replace("$", "")) || 0;
+    return total + itemPrice * item.quantity;
+  }, 0).toFixed(2);
+};
+
+const calculateItemTotal = (item) => {
+  // Ensure price is a string and remove "$" symbol
+  const itemPrice = parseFloat(String(item.price).replace("$", "")) || 0;
+  return (itemPrice * item.quantity).toFixed(2);
+};
 
   const handleCheckout = () => {
     // Ensure there are items in the cart before proceeding to checkout
