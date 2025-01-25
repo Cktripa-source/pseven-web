@@ -57,39 +57,39 @@ const UserManagement = () => {
   return (
     <div>
       <Dashboard />
-      <div className="p-20 min-h-screen sm:ml-64 dark:bg-gray-900">
-        <div className="bg-white dark:bg-gray-800 p-4 border-2 border-gray-200 border-dashed rounded-lg shadow-md dark:border-gray-700">
-          <h2 className="text-2xl font-semibold mb-6 text-black dark:text-white">Users Management</h2>
+      <div className="p-20 min-h-screen sm:ml-64 bg-gray-950">
+        <div className="bg-gray-900 p-4 border-2 border-dashed border-gray-700 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-6 text-white">Users Management</h2>
           {error && <div className="text-red-500">{error}</div>}
 
           {loading ? (
-            <p>Loading users...</p>
+            <p className="text-white">Loading users...</p>
           ) : (
             <div className="overflow-x-auto shadow-md sm:rounded-lg mt-8">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <table className="w-full text-sm text-left text-gray-400">
+                <thead className="text-xs text-gray-300 uppercase bg-gray-800">
                   <tr>
-                    <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">Name</th>
-                    <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">Email</th>
-                    <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">Actions</th>
+                    <th className="px-4 py-2 border-b border-gray-700">Name</th>
+                    <th className="px-4 py-2 border-b border-gray-700">Email</th>
+                    <th className="px-4 py-2 border-b border-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user._id}>
-                      <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{user.fullName}</td>
-                      <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{user.email}</td>
-                      <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">
+                    <tr key={user._id} className="hover:bg-gray-800">
+                      <td className="px-4 py-2 border-b border-gray-700">{user.fullName}</td>
+                      <td className="px-4 py-2 border-b border-gray-700">{user.email}</td>
+                      <td className="px-4 py-2 border-b border-gray-700">
                         {!user.burned ? (
                           <button
-                            className="text-yellow-500 hover:underline"
+                            className="text-yellow-400 hover:underline"
                             onClick={() => handleBurn(user._id)}
                           >
                             Burn Account
                           </button>
                         ) : (
                           <button
-                            className="text-green-500 hover:underline"
+                            className="text-green-400 hover:underline"
                             onClick={() => handleUnburn(user._id)}
                           >
                             Unburn Account

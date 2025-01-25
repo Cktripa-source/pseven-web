@@ -79,9 +79,9 @@ const ProductManagement = () => {
   return (
     <>
       <Dashboard />
-      <div className="p-20 min-h-screen sm:ml-64 dark:bg-gray-900">
-        <div className="bg-white dark:bg-gray-800 p-4 border-2 border-gray-200 border-dashed rounded-lg shadow-md dark:border-gray-700">
-          <h2 className="text-2xl font-semibold mb-6 text-black dark:text-white">Product Management</h2>
+      <div className="p-20 min-h-screen sm:ml-64   bg-gray-900">
+        <div className="   bg-gray-800 p-4 border-2  border-dashed rounded-lg shadow-md   border-gray-700">
+          <h2 className="text-2xl font-semibold mb-6   text-white">Product Management</h2>
 
           {/* Buttons Section */}
           <div className="flex justify-between items-center mb-6 gap-4">
@@ -118,13 +118,13 @@ const ProductManagement = () => {
 
           {/* Product Table */}
           {loading ? (
-            <p className="text-center text-gray-700 dark:text-gray-300">Loading products...</p>
+            <p className="text-center    text-gray-300">Loading products...</p>
           ) : error ? (
-            <p className="text-center text-red-500 dark:text-red-400">Error: {error}</p>
+            <p className="text-center   text-red-400">Error: {error}</p>
           ) : (
             <div className="overflow-x-auto shadow-md sm:rounded-lg mt-8">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <table className="w-full text-sm text-left    text-gray-400">
+                <thead className="text-xs  uppercase   bg-gray-700   text-gray-400">
                   <tr>
                     <th className="px-6 py-3">Product Image</th>
                     <th className="px-6 py-3">Product Name</th>
@@ -137,7 +137,7 @@ const ProductManagement = () => {
                   {products.map((product) => (
                     <tr
                       key={product._id}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      className="e border-b   bg-gray-800   border-gray-700   hover:bg-gray-600"
                     >
                       <td className="px-6 py-4">
                         <img
@@ -146,9 +146,9 @@ const ProductManagement = () => {
                           className="w-16 h-16 object-cover rounded-lg"
                         />
                       </td>
-                      <td className="px-6 py-4 text-black dark:text-white">{product.name}</td>
-                      <td className="px-6 py-4 text-black dark:text-white">${product.price}</td>
-                      <td className="px-6 py-4 text-black dark:text-white">{product.description}</td>
+                      <td className="px-6 py-4   text-white">{product.name}</td>
+                      <td className="px-6 py-4   text-white">${product.price}</td>
+                      <td className="px-6 py-4    text-white">{product.description}</td>
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleEditProduct(product._id)}
@@ -158,7 +158,7 @@ const ProductManagement = () => {
                         </button>
                         <button
                           onClick={() => handleDeleteProduct(product._id)}
-                          className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                          className=" text-red-400   hover:text-red-300"
                         >
                           Delete
                         </button>
