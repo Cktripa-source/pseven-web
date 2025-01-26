@@ -34,8 +34,8 @@ const UserManagement = () => {
 
   const handleBurn = async (id) => {
     try {
-      await axios.put(`https://pseven-api-test.onrender.com/api/auth/burn/${id}`); // Burn endpoint
-      setUsers(users.map((user) => 
+      await axios.put(`https://pseven-api-test.onrender.com/api/auth/burn/${id}`); // Correct burn endpoint
+      setUsers(users.map((user) =>
         user._id === id ? { ...user, burned: true } : user
       ));
     } catch (err) {
@@ -45,8 +45,8 @@ const UserManagement = () => {
 
   const handleUnburn = async (id) => {
     try {
-      await axios.put(`https://pseven-api-test.onrender.com/api/auth/unburn/${id}`); // Unburn endpoint
-      setUsers(users.map((user) => 
+      await axios.put(`https://pseven-api-test.onrender.com/api/auth/unburn/${id}`); // Correct unburn endpoint
+      setUsers(users.map((user) =>
         user._id === id ? { ...user, burned: false } : user
       ));
     } catch (err) {
@@ -64,6 +64,8 @@ const UserManagement = () => {
 
           {loading ? (
             <p className="text-white">Loading users...</p>
+          ) : users.length === 0 ? (
+            <p className="text-white">No users found.</p>  
           ) : (
             <div className="overflow-x-auto shadow-md sm:rounded-lg mt-8">
               <table className="w-full text-sm text-left text-gray-400">

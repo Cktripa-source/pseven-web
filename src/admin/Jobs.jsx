@@ -27,7 +27,7 @@ const AdminDashboard = () => {
   const handleUpdateJob = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`https://pseven-api-test.onrender.com//api/jobs/${editJob._id}`, editJob);
+      await axios.put(`https://pseven-api-test.onrender.com/api/jobs/${editJob._id}`, editJob);
       setJobs(jobs.map((job) => (job._id === editJob._id ? editJob : job)));
       setEditModalOpen(false);
     } catch (error) {
@@ -38,8 +38,8 @@ const AdminDashboard = () => {
   // Fetch jobs and applications
   const fetchData = async () => {
     try {
-      const jobsResponse = await axios.get('https://pseven-api-test.onrender.com//api/jobs');
-      const applicationsResponse = await axios.get('https://pseven-api-test.onrender.com//api/applications');
+      const jobsResponse = await axios.get('https://pseven-api-test.onrender.com/api/jobs');
+      const applicationsResponse = await axios.get('https://pseven-api-test.onrender.com/api/applications');
       setJobs(jobsResponse.data);
       setApplications(applicationsResponse.data);
     } catch (err) {
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
     };
 
     try {
-      const response = await axios.post('https://pseven-api-test.onrender.com//api/jobs', jobData);
+      const response = await axios.post('https://pseven-api-test.onrender.com/api/jobs', jobData);
       console.log('Job created:', response.data);
       fetchData(); // Fetch updated data immediately after creating a job
     } catch (err) {
