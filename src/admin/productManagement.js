@@ -12,7 +12,7 @@ const ProductManagement = () => {
   // Fetch products from the database
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch('https://pseven-api-test.onrender.com/api/products');
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
@@ -44,7 +44,7 @@ const ProductManagement = () => {
   // Handle Delete Product
   const handleDeleteProduct = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+      const response = await fetch(`https://pseven-api-test.onrender.com/api/products/${id}`, {
         method: 'DELETE',
       });
 
@@ -141,7 +141,7 @@ const ProductManagement = () => {
                     >
                       <td className="px-6 py-4">
                         <img
-                          src={`http://localhost:5000/${product.image}`}
+                          src={`https://pseven-api-test.onrender.com/${product.image}`}
                           alt={product.name}
                           className="w-16 h-16 object-cover rounded-lg"
                         />

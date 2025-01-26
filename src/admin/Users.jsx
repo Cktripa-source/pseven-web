@@ -14,7 +14,7 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/auth'); // Correct API endpoint
+      const response = await axios.get('https://pseven-api-test.onrender.com/api/auth'); // Correct API endpoint
       setUsers(response.data);
     } catch (err) {
       setError('Failed to fetch users.');
@@ -25,7 +25,7 @@ const UserManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/auth/${id}`); // Correct delete endpoint
+      await axios.delete(`https://pseven-api-test.onrender.com/api/auth/${id}`); // Correct delete endpoint
       setUsers(users.filter((user) => user._id !== id));
     } catch (err) {
       setError('Failed to delete user.');
@@ -34,7 +34,7 @@ const UserManagement = () => {
 
   const handleBurn = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/auth/burn/${id}`); // Burn endpoint
+      await axios.put(`https://pseven-api-test.onrender.com/api/auth/burn/${id}`); // Burn endpoint
       setUsers(users.map((user) => 
         user._id === id ? { ...user, burned: true } : user
       ));
@@ -45,7 +45,7 @@ const UserManagement = () => {
 
   const handleUnburn = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/auth/unburn/${id}`); // Unburn endpoint
+      await axios.put(`https://pseven-api-test.onrender.com/api/auth/unburn/${id}`); // Unburn endpoint
       setUsers(users.map((user) => 
         user._id === id ? { ...user, burned: false } : user
       ));

@@ -40,14 +40,14 @@ const AddProduct = ({ onProductAdded, editingProduct, onEditComplete }) => {
     try {
       if (editingProduct) {
         // Update existing product
-        await axios.put(`http://localhost:5000/api/products/${editingProduct._id}`, formData, {
+        await axios.put(`https://pseven-api-test.onrender.com/api/products/${editingProduct._id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         setMessage('Product updated successfully!');
         onEditComplete(); // Notify parent of edit completion
       } else {
         // Add new product
-        await axios.post('http://localhost:5000/api/products', formData, {
+        await axios.post('https://pseven-api-test.onrender.com/api/products', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         setMessage('Product added successfully!');

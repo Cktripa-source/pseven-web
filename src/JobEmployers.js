@@ -17,7 +17,7 @@ const JobEmployers = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/jobs');
+        const response = await axios.get('https://pseven-api-test.onrender.com/api/jobs');
         setJobs(response.data);
       } catch (err) {
         setError('Error fetching job data');
@@ -50,7 +50,7 @@ const JobEmployers = () => {
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/applications/${selectedJob._id}/apply`, {
+      await axios.post(`https://pseven-api-test.onrender.com/api/applications/${selectedJob._id}/apply`, {
         fullName,
         email,
         cvLink,

@@ -15,7 +15,7 @@ function Login() {
   
     try {
       // Send POST request to login API
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("https://pseven-api-test.onrender.com/api/auth/login", {
         email,
         password,
       });

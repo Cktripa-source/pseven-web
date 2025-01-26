@@ -11,7 +11,7 @@ const FeaturedProduct = ({ setCartCount }) => {
     // Fetch products from backend API
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products'); // Adjust the URL to your backend API
+        const response = await axios.get('https://pseven-api-test.onrender.com/api/products'); // Adjust the URL to your backend API
         setProducts(response.data); // Set fetched products to state
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -88,7 +88,7 @@ const FeaturedProduct = ({ setCartCount }) => {
               <a href="#" className="block">
               <img 
               className="w-full h-56 object-cover rounded-t-lg"
-              src={`http://localhost:5000/${product.image}`}
+              src={`https://pseven-api-test.onrender.com/${product.image}`}
               alt={product.name}
             />
 
