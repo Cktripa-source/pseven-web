@@ -4,6 +4,7 @@ import Carousel from './Carousel';
 import FeaturedProducts from './featuredproduct';
 import PopularProduct from './popularproduct';
 import Navbar from './nav';
+import Footer from './footer';
 import ViewCart from './viewcart'; 
 import Login from './login';
 import Register from './register';
@@ -22,14 +23,14 @@ import Payment from './payment';
 import OrderConfirmation from './order-confirmation';
 
 // Admin Components
-import Dashboard from './admin/dashboard';
+import DashboardOverview from './admin/dashboardoverview';
 import ProductManagement from './admin/productManagement';
 import Inbox from './admin/Inbox';
 import UserManagement from './admin/Users';
 import Jobs from './admin/Jobs';
 import ManageServices from './admin/Services';
 import Settings from './admin/Settings';
-import FaqAdmin from './admin/Faq';
+import JobApplications from './admin/jobapplication';
 import AboutAdmin from './admin/About';
 import Logout from './admin/Logout';
 import Signup from './admin/Signup';
@@ -44,16 +45,14 @@ function App() {
     localStorage.setItem('cartCount', cartCount);
   }, [cartCount]);
 
-  const location = useLocation(); // Get the current location
-  const isAdminRoute = location.pathname.startsWith('/admin'); // Check if route is under /admin
+  const location = useLocation(); 
+  const isAdminRoute = location.pathname.startsWith('/admin'); 
 
   return (
     <>
-      {/* Conditionally render Navbar */}
       {!isAdminRoute && <Navbar cartCount={cartCount} />}
 
       <Routes>
-        {/* Main Page */}
         <Route 
           path="/" 
           element={
@@ -64,8 +63,6 @@ function App() {
             </>
           } 
         />
-
-        {/* Page Routes */}
         <Route path="/job-employers" element={<JobEmployers />} />
         <Route path="/buy-sell" element={<BuySell />} />
         <Route path="/services" element={<Services />} />
@@ -73,8 +70,6 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/contact" element={<ContactUs />} />
-
-        {/* Other Routes */}
         <Route path="/viewcart" element={<ViewCart setCartCount={setCartCount} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -84,20 +79,22 @@ function App() {
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
 
         {/* Admin Routes */}
-        <Route path="/admin/" element={<Dashboard />} />
+        <Route path="/admin/dashboardoverview" element={<DashboardOverview />} />
         <Route path="/admin/inbox" element={<Inbox />} />
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/productmanagement" element={<ProductManagement />} />
         <Route path="/admin/jobs" element={<Jobs />} />
         <Route path="/admin/services" element={<ManageServices />} />
         <Route path="/admin/settings" element={<Settings />} />
-        <Route path="/admin/faq" element={<FaqAdmin />} />
+        <Route path="/admin/jobapplication" element={<JobApplications />} />
         <Route path="/admin/about" element={<AboutAdmin />} />
         <Route path="/admin/logout" element={<Logout />} />
         <Route path="/admin/signup" element={<Signup />} />
       </Routes>
+
+      {/* Conditionally render Footer */}
+      {!isAdminRoute && <Footer />}
     </>
   );
 }
-
 export default App;

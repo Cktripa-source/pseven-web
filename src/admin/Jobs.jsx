@@ -1,331 +1,483 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { FaEdit, FaTrashAlt, FaSave, FaSearch, FaPlus } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './dashboard';
 
-const AdminDashboard = () => {
+const JobManagement = () => {
   const [jobs, setJobs] = useState([]);
-  const [applications, setApplications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showApplications, setShowApplications] = useState(false);
-  const [newJob, setNewJob] = useState({
-    title: '',
-    description: '',
-    location: '',
-    salary: '',
-    employmentType: '',
-    skillsRequired: '',
-  });
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editJob, setEditJob] = useState({ title: '', location: '', salary: '', description: '' });
-  
-  const handleEditJob = (job) => {
-    setEditJob(job);
-    setEditModalOpen(true);
-  };
-  
-  const handleUpdateJob = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`https://pseven-api-test.onrender.com/api/jobs/${editJob._id}`, editJob);
-      setJobs(jobs.map((job) => (job._id === editJob._id ? editJob : job)));
-      setEditModalOpen(false);
-    } catch (error) {
-      console.error('Failed to update job', error);
-    }
-  };
-  
-  // Fetch jobs and applications
-  const fetchData = async () => {
-    try {
-      const jobsResponse = await axios.get('https://pseven-api-test.onrender.com/api/jobs');
-      const applicationsResponse = await axios.get('https://pseven-api-test.onrender.com/api/applications');
-      setJobs(jobsResponse.data);
-      setApplications(applicationsResponse.data);
-    } catch (err) {
-      setError('Error fetching data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [editingJobId, setEditingJobId] = useState(null);
+  const [editedJob, setEditedJob] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [jobsPerPage] = useState(3);
+  const [isAddingJob, setIsAddingJob] = useState(false); // Track adding a new job
 
   useEffect(() => {
-    fetchData(); // Initial fetch
-
-    // Polling every 10 seconds for data refresh
-    const interval = setInterval(() => {
-      fetchData();
-    }, 10000);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
+    fetchJobs();
   }, []);
 
-  // Handle new job creation
-  const handleCreateJob = async (e) => {
-    e.preventDefault();
-
-    const jobData = {
-      title: newJob.title,
-      description: newJob.description,
-      location: newJob.location,
-      salary: parseFloat(newJob.salary),
-      employmentType: newJob.employmentType,
-      skillsRequired: newJob.skillsRequired.split(',').map((skill) => skill.trim()),
-      postedBy: 'Admin',
-    };
-
+  const fetchJobs = async () => {
     try {
-      const response = await axios.post('https://pseven-api-test.onrender.com/api/jobs', jobData);
-      console.log('Job created:', response.data);
-      fetchData(); // Fetch updated data immediately after creating a job
+      const response = await fetch('https://pseven-api-test.onrender.com/api/jobs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch jobs');
+      }
+      const data = await response.json();
+      setJobs(data);
     } catch (err) {
-      console.error('Error creating job:', err.response ? err.response.data : err);
-      alert('Failed to create job');
+      console.error('Error fetching jobs:', err);
+      toast.error('Error fetching jobs!');
     }
   };
 
-  // Handle job deletion
-  const handleDeleteJob = async (jobId) => {
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page when search changes
+  };
+
+  const handleEditJob = (job) => {
+    setEditingJobId(job._id);
+    setEditedJob({ ...job });
+  };
+
+  const handleSaveEditedJob = async () => {
     try {
-      await axios.delete(`https://pseven-api-test.onrender.com/api/jobs/${jobId}`);
-      fetchData(); // Fetch updated data after deleting a job
-      alert('Job deleted successfully!');
+      toast.dismiss();
+
+      const response = await fetch(
+        `https://pseven-api-test.onrender.com/api/jobs/${editedJob._id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editedJob),
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to update job');
+
+      // Update the job in the list
+      setJobs((prevJobs) =>
+        prevJobs.map((job) => (job._id === editedJob._id ? editedJob : job))
+      );
+
+      setEditingJobId(null); // Hide the editing form after save
+      toast.success('Job updated successfully!');
     } catch (err) {
-      alert('Failed to delete job');
+      console.error('Error saving job:', err);
+      toast.error('Error saving job!');
     }
   };
 
-  if (loading) return <div className="text-center">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  const handleDeleteJob = async (id) => {
+    try {
+      toast.dismiss();
+
+      const response = await fetch(
+        `https://pseven-api-test.onrender.com/api/jobs/${id}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to delete job');
+
+      setJobs(jobs.filter((job) => job._id !== id));
+      toast.success('Job deleted successfully!');
+    } catch (err) {
+      console.error('Error deleting job:', err);
+      toast.error('Error deleting job!');
+    }
+  };
+
+  const handleAddJob = () => {
+    setIsAddingJob(true);
+    setEditedJob({
+      title: '',
+      description: '',
+      location: '',
+      salary: '',
+      employmentType: 'Full-time',
+      skillsRequired: [],
+      postedBy: 'Admin', // Assuming 'Admin' is posting jobs
+      status: 'Open',
+    });
+  };
+
+  const handleSaveNewJob = async () => {
+    try {
+      toast.dismiss();
+
+      const response = await fetch('https://pseven-api-test.onrender.com/api/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editedJob),
+      });
+
+      if (!response.ok) throw new Error('Failed to add new job');
+
+      const newJob = await response.json(); // Get the added job
+
+      // Add the new job to the start of the job list
+      setJobs((prevJobs) => [newJob, ...prevJobs]);
+
+      setIsAddingJob(false); // Hide the adding form after saving
+      toast.success('Job added successfully!');
+    } catch (err) {
+      console.error('Error adding job:', err);
+      toast.error('Error adding job!');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingJobId(null);
+    setEditedJob({});
+  };
+
+  const handleCancelAdd = () => {
+    setIsAddingJob(false);
+    setEditedJob({});
+  };
+
+  // Filter jobs based on search query
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const currentJobs = filteredJobs.slice(
+    (currentPage - 1) * jobsPerPage,
+    currentPage * jobsPerPage
+  );
 
   return (
     <>
-      <Dashboard />
-      <div className="p-20 min-h-screen sm:ml-64   bg-gray-900">
-        <div className="   bg-gray-800 p-4 border-2  border-dashed rounded-lg shadow-md   border-gray-700">
-          <h2 className="text-4xl font-bold text-center text-gray-100 mb-8">Admin Dashboard</h2>
+    <Dashboard/>
+    <div className="p-20 min-h-screen sm:ml-64 bg-gray-900">
 
-          {/* Job Management Section */}
-          <div className="mb-12">
-            <h3 className="text-2xl font-semibold text-gray-100 mb-4">Manage Jobs</h3>
-            <form
-              onSubmit={handleCreateJob}
-              className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  placeholder="Job Title"
-                  value={newJob.title}
-                  onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
-                  className="p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Location"
-                  value={newJob.location}
-                  onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
-                  className="p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <input
-                  type="number"
-                  placeholder="Salary"
-                  value={newJob.salary}
-                  onChange={(e) => setNewJob({ ...newJob, salary: e.target.value })}
-                  className="p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <select
-                  value={newJob.employmentType}
-                  onChange={(e) => setNewJob({ ...newJob, employmentType: e.target.value })}
-                  className="p-3 rounded-lg bg-gray-900 text-gray-400 border border-gray-700 focus:ring-2 focus:ring-blue-500"
-                  required
-                >
-                  <option value="">Select Employment Type</option>
-                  <option value="Full-time">Full-time</option>
-                  <option value="Part-time">Part-time</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Internship">Internship</option>
-                  <option value="Temporary">Temporary</option>
-                </select>
-              </div>
-              <textarea
-                placeholder="Job Description"
-                value={newJob.description}
-                onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
-                className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:ring-2 focus:ring-blue-500"
-                required
-              ></textarea>
-              <input
-                type="text"
-                placeholder="Skills Required (comma-separated)"
-                value={newJob.skillsRequired}
-                onChange={(e) => setNewJob({ ...newJob, skillsRequired: e.target.value })}
-                className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-300"
-              >
-                Create Job
-              </button>
-            </form>
-          </div>
-          <div className="mb-12">
-  <h3 className="text-2xl font-bold text-gray-100 mb-4">Posted Jobs</h3>
-  <table className="table-auto w-full text-gray-300 border-collapse border border-gray-700">
-    <thead>
-      <tr className="bg-gray-700 rou">
-        <th className="px-4 py-2 border-white border border-opacity-20 capitalize">Title</th>
-        <th className="px-4 py-2 border-white border border-opacity-20 capitalize">Location</th>
-        <th className="px-4 py-2 border-white border border-opacity-20 capitalize">Salary</th>
-        <th className="px-4 py-2 border-white border border-opacity-20 capitalize">Description</th>
-        <th className="px-4 py-2 border-white border border-opacity-20 capitalize">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {jobs.map((job) => (
-        <tr key={job._id} className="hover:bg-gray-600">
-          <td className="px-4 py-2 border-white border border-opacity-20 capitalize font-bold">{job.title}</td>
-          <td className="px-4 py-2 border-white border border-opacity-20 capitalize">{job.location}</td>
-          <td className="px-4 py-2 border-white border border-opacity-20 capitalize">${job.salary}</td>
-          <td className="px-4 py-2 border-white border border-opacity-20 capitalize">{job.description}</td>
-          <td className="px-4 py-2 border-white border border-opacity-20 capitalize flex gap-2">
-            <button
-              onClick={() => handleEditJob(job)}
-              className="bg-blue-500 px-3 py-1 rounded-lg hover:bg-blue-600"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDeleteJob(job._id)}
-              className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-600"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-
-  {/* Edit Modal */}
-  {editModalOpen && (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-gray-800 p-6 rounded-lg w-96 shadow-lg">
-        <h3 className="text-xl font-bold text-gray-100 mb-4">Edit Job</h3>
-        <form onSubmit={handleUpdateJob}>
-          <div className="mb-4">
-            <label htmlFor="title" className="block text-gray-300 mb-2">Title</label>
+      <div className="bg-gray-800 p-4 border-2 border-dashed rounded-lg shadow-md border-gray-700 w-full">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center space-x-2 w-2/3">
             <input
               type="text"
-              id="title"
-              value={editJob.title}
-              onChange={(e) => setEditJob({ ...editJob, title: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-200"
-              required
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="p-2 bg-gray-700 text-white rounded w-full"
+              placeholder="Search by title or category ........................"
             />
+            <FaSearch className="text-white text-3xl p-1 border rounded-full" />
           </div>
-          <div className="mb-4">
-            <label htmlFor="location" className="block text-gray-300 mb-2">Location</label>
-            <input
-              type="text"
-              id="location"
-              value={editJob.location}
-              onChange={(e) => setEditJob({ ...editJob, location: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-200"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="salary" className="block text-gray-300 mb-2">Salary</label>
-            <input
-              type="number"
-              id="salary"
-              value={editJob.salary}
-              onChange={(e) => setEditJob({ ...editJob, salary: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-200"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="description" className="block text-gray-300 mb-2">Description</label>
-            <textarea
-              id="description"
-              value={editJob.description}
-              onChange={(e) => setEditJob({ ...editJob, description: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-200"
-              required
-            ></textarea>
-          </div>
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => setEditModalOpen(false)}
-              className="bg-red-600 px-4 py-2 text-white rounded-lg hover:bg-red-700"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 px-4 text-white py-2 rounded-lg hover:bg-blue-600"
-            >
-              Update
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  )}
-</div>
-
-
-          {/* Applications Section */}
           <button
-            onClick={() => setShowApplications(!showApplications)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 mb-4"
+            onClick={handleAddJob}
+            className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg"
           >
-            {showApplications ? 'Hide Applications' : 'Show Applications'}
+            <FaPlus className="mr-2" /> Add New Job
           </button>
+        </div>
 
-          {showApplications && (
-            <div className="overflow-auto shadow-lg rounded-lg">
-              <table className="table-auto w-full text-gray-400 border-collapse bg-gray-800 border border-gray-700">
-                <thead>
-                  <tr className="bg-gray-700 text-gray-300">
-                    <th className="border border-gray-700 px-4 py-3 text-left">Full Name</th>
-                    <th className="border border-gray-700 px-4 py-3 text-left">Email</th>
-                    <th className="border border-gray-700 px-4 py-3 text-left">Job</th>
-                    <th className="border border-gray-700 px-4 py-3 text-center">Actions</th>
+        <h2 className="text-2xl font-semibold mb-6 text-white">Job Management</h2>
+
+        <div className="overflow-x-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left text-gray-400">
+            <thead className="text-xs uppercase bg-gray-700 text-gray-400">
+              <tr>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Job Title</th>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Description</th>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Salary</th>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Location</th>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Employment Type</th>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Skills Required</th>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Status</th>
+                <th className="px-3 py-2 text-xs font-semibold text-white">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* If adding a new job */}
+              {isAddingJob && (
+                <tr className="border-b bg-gray-800 border-gray-700 hover:bg-gray-600">
+                  <td className="px-3 py-4">
+                    <input
+                      type="text"
+                      value={editedJob.title || ''}
+                      onChange={(e) =>
+                        setEditedJob({ ...editedJob, title: e.target.value })
+                      }
+                      className="p-2 bg-gray-700 text-white rounded"
+                    />
+                  </td>
+                  
+                  <td className="px-3 py-4">
+                    <input
+                      type="text"
+                      value={editedJob.description || ''}
+                      onChange={(e) =>
+                        setEditedJob({ ...editedJob, description: e.target.value })
+                      }
+                      className="p-2 bg-gray-700 text-white rounded"
+                    />
+                  </td>
+                  <td className="px-3 py-4">
+                    <input
+                      type="number"
+                      value={editedJob.salary || ''}
+                      onChange={(e) =>
+                        setEditedJob({ ...editedJob, salary: e.target.value })
+                      }
+                      className="p-2 bg-gray-700 text-white rounded"
+                    />
+                  </td>
+                  <td className="px-3 py-4">
+                    <input
+                      type="text"
+                      value={editedJob.location || ''}
+                      onChange={(e) =>
+                        setEditedJob({ ...editedJob, location: e.target.value })
+                      }
+                      className="p-2 bg-gray-700 text-white rounded"
+                    />
+                  </td>
+                  <td className="px-3 py-4">
+                    <select
+                      value={editedJob.employmentType || 'Full-time'}
+                      onChange={(e) =>
+                        setEditedJob({ ...editedJob, employmentType: e.target.value })
+                      }
+                      className="p-2 bg-gray-700 text-white rounded"
+                    >
+                      <option value="Full-time">Full-time</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Contract">Contract</option>
+                      <option value="Internship">Internship</option>
+                      <option value="Temporary">Temporary</option>
+                    </select>
+                  </td>
+                  <td className="px-3 py-4">
+                    <input
+                      type="text"
+                      value={editedJob.skillsRequired.join(', ') || ''}
+                      onChange={(e) =>
+                        setEditedJob({
+                          ...editedJob,
+                          skillsRequired: e.target.value.split(',').map((item) => item.trim()),
+                        })
+                      }
+                      className="p-2 bg-gray-700 text-white rounded"
+                      placeholder="Enter skills separated by commas"
+                    />
+                  </td>
+                  <td className="px-3 py-4">
+                    <select
+                      value={editedJob.status || 'Open'}
+                      onChange={(e) =>
+                        setEditedJob({ ...editedJob, status: e.target.value })
+                      }
+                      className="p-2 bg-gray-700 text-white rounded"
+                    >
+                      <option value="Open">Open</option>
+                      <option value="Closed">Closed</option>
+                    </select>
+                  </td>
+                  <td className="px-3 py-4 flex items-center space-x-2">
+                    <button
+                      onClick={handleSaveNewJob}
+                      className="bg-blue-500 p-2 rounded-full text-white"
+                    >
+                      <FaSave />
+                    </button>
+                    <button
+                      onClick={handleCancelAdd}
+                      className="bg-red-500 p-2 rounded-full text-white"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              )}
+
+              {/* If editing an existing job */}
+              {!isAddingJob &&
+                currentJobs.map((job) => (
+                  <tr
+                    key={job._id}
+                    className="border-b bg-gray-800 border-gray-700 hover:bg-gray-600"
+                  >
+                    <td className="px-3 py-4">
+                      {editingJobId === job._id ? (
+                        <input
+                          type="text"
+                          value={editedJob.title || job.title}
+                          onChange={(e) =>
+                            setEditedJob({ ...editedJob, title: e.target.value })
+                          }
+                          className="p-2 bg-gray-700 text-white rounded"
+                        />
+                      ) : (
+                        job.title
+                      )}
+                    </td>
+                  
+                    <td className="px-3 py-4">
+                      {editingJobId === job._id ? (
+                        <input
+                          type="text"
+                          value={editedJob.description || job.description}
+                          onChange={(e) =>
+                            setEditedJob({ ...editedJob, description: e.target.value })
+                          }
+                          className="p-2 bg-gray-700 text-white rounded"
+                        />
+                      ) : (
+                        job.description
+                      )}
+                    </td>
+                    <td className="px-3 py-4">
+                      {editingJobId === job._id ? (
+                        <input
+                          type="number"
+                          value={editedJob.salary || job.salary}
+                          onChange={(e) =>
+                            setEditedJob({ ...editedJob, salary: e.target.value })
+                          }
+                          className="p-2 bg-gray-700 text-white rounded"
+                        />
+                      ) : (
+                        `$${job.salary}`
+                      )}
+                    </td>
+                    <td className="px-3 py-4">
+                      {editingJobId === job._id ? (
+                        <input
+                          type="text"
+                          value={editedJob.location || job.location}
+                          onChange={(e) =>
+                            setEditedJob({ ...editedJob, location: e.target.value })
+                          }
+                          className="p-2 bg-gray-700 text-white rounded"
+                        />
+                      ) : (
+                        job.location
+                      )}
+                    </td>
+                    <td className="px-3 py-4">
+                      {editingJobId === job._id ? (
+                        <select
+                          value={editedJob.employmentType || job.employmentType}
+                          onChange={(e) =>
+                            setEditedJob({ ...editedJob, employmentType: e.target.value })
+                          }
+                          className="p-2 bg-gray-700 text-white rounded"
+                        >
+                          <option value="Full-time">Full-time</option>
+                          <option value="Part-time">Part-time</option>
+                          <option value="Contract">Contract</option>
+                          <option value="Internship">Internship</option>
+                          <option value="Temporary">Temporary</option>
+                        </select>
+                      ) : (
+                        job.employmentType
+                      )}
+                    </td>
+                    <td className="px-3 py-4">
+                      {editingJobId === job._id ? (
+                        <input
+                          type="text"
+                          value={editedJob.skillsRequired.join(', ') || job.skillsRequired.join(', ')}
+                          onChange={(e) =>
+                            setEditedJob({
+                              ...editedJob,
+                              skillsRequired: e.target.value.split(',').map((item) => item.trim()),
+                            })
+                          }
+                          className="p-2 bg-gray-700 text-white rounded"
+                        />
+                      ) : (
+                        job.skillsRequired.join(', ')
+                      )}
+                    </td>
+                    <td className="px-3 py-4">
+                      {editingJobId === job._id ? (
+                        <select
+                          value={editedJob.status || job.status}
+                          onChange={(e) =>
+                            setEditedJob({ ...editedJob, status: e.target.value })
+                          }
+                          className="p-2 bg-gray-700 text-white rounded"
+                        >
+                          <option value="Open">Open</option>
+                          <option value="Closed">Closed</option>
+                        </select>
+                      ) : (
+                        job.status
+                      )}
+                    </td>
+                    <td className="px-3 py-4 flex items-center space-x-2">
+                      {editingJobId === job._id ? (
+                        <>
+                          <button
+                            onClick={handleSaveEditedJob}
+                            className="bg-blue-500 p-2 rounded-full text-white"
+                          >
+                            <FaSave />
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="bg-red-500 p-2 rounded-full text-white"
+                          >
+                            <FaTrashAlt />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handleEditJob(job)}
+                            className="bg-yellow-500 p-2 rounded-full text-white"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteJob(job._id)}
+                            className="bg-red-500 p-2 rounded-full text-white"
+                          >
+                            <FaTrashAlt />
+                          </button>
+                        </>
+                      )}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {applications.map((app) => (
-                    <tr key={app._id} className="hover:bg-gray-600 transition duration-200">
-                      <td className="border border-gray-700 px-4 py-2">{app.fullName}</td>
-                      <td className="border border-gray-700 px-4 py-2">{app.email}</td>
-                      <td className="border border-gray-700 px-4 py-2">
-                        {app.job?.title || 'JOD DISAPEARED'}
-                      </td>
-                      <td className="border border-gray-700 px-4 py-2 text-center">
-                        <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                          View CV
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                ))}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          <div className="flex justify-between items-center my-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+              Previous
+            </button>
+            <span className="text-white">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Next
+            </button>
+          </div>
         </div>
-        </div>
+      </div>
+      <ToastContainer />
+    </div>
     </>
   );
 };
 
-export default AdminDashboard;
+export default JobManagement;
+ 

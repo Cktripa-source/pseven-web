@@ -41,7 +41,7 @@ const Carousel = () => {
   }, [images.length]);
 
   return (
-    <div id="default-carousel" className="relative w-full h-svh md:mt-40 mt-64">
+    <div id="default-carousel" className="relative w-full h-svh md:mt-24 mt-64">
       {/* Carousel wrapper */}
       <div className="relative w-full h-full overflow-hidden">
         {images.map((image, index) => (

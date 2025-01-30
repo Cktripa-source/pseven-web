@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBars, FaUserCircle, FaTachometerAlt, FaInbox, FaUsers, FaProductHunt, FaSignInAlt, FaUserPlus, FaQuestionCircle, FaHome, FaCog, FaClipboardList, FaBox } from 'react-icons/fa';
+import { FaBars, FaTachometerAlt, FaInbox, FaUsers, FaProductHunt, FaSignInAlt, FaUserPlus, FaQuestionCircle, FaHome, FaCog, FaBox } from 'react-icons/fa';
 import Logo from "../images/logo.png";
 
 const Dashboard = () => {
@@ -28,7 +28,7 @@ const Dashboard = () => {
                 <span className="sr-only">Open sidebar</span>
                 <FaBars className="w-6 h-6" />
               </button>
-              <Link to="../adminadmin/" className="flex ms-2 md:me-24">
+              <Link to="../admin/" className="flex ms-2 md:me-24">
                 <img src={Logo} className="h-10 me-3 rounded-full" alt="Pseven" />
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap  text-white"> 
                   <span className="font-bold text-xl transition duration-300 hover:text-white">
@@ -53,38 +53,15 @@ const Dashboard = () => {
                 {isDropdownOpen && (
                   <div className="absolute right-0 top-12 z-50 w-48 text-base list-none divide-y rounded-lg shadow  bg-gray-700  divide-gray-600" id="dropdown-user">
                     <div className="px-4 py-3">
-                      <p className="text-sm  text-white">Neil Sims</p>
-                      <p className="text-sm font-medium truncate  text-gray-300">neil.sims@flowbite.com</p>
+                      <p className="text-sm  text-white mb-4 font-semibold">Pseven Rwanda</p>
+                      <p className="text-sm font-medium truncate  text-gray-300">psevenrwanda@gmail.com</p>
                     </div>
-                    <ul className="py-1">
-                      <li>
-                        <Link to="../admin/" className="flex items-center px-4 py-2 text-sm   text-gray-300  hover:bg-gray-600  hover:text-white">
-                          <FaTachometerAlt className="w-5 h-5 mr-2" />
-                          Dashboard
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="../admin/settings" className="flex items-center px-4 py-2 text-sm   text-gray-300  hover:bg-gray-600  hover:text-white">
-                          <FaCog className="w-5 h-5 mr-2" />
-                          Settings
-                        </Link>
-                      </li>
+                    <ul className="py-2">
+                      
                       <li>
                         <Link to="../admin/earnings" className="flex items-center px-4 py-2 text-sm  text-gray-300  hover:bg-gray-600  hover:text-white">
                           <FaBox className="w-5 h-5 mr-2" />
                           Earnings
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="../admin/jobs" className="flex items-center px-4 py-2 text-sm text-gray-300  hover:bg-gray-600  hover:text-white">
-                          <FaSignInAlt className="w-5 h-5 mr-2" />
-                          Jobs & Employers
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="../admin/services" className="flex items-center px-4 py-2 text-sm  text-gray-300  hover:bg-gray-600  hover:text-white">
-                          <FaBox className="w-5 h-5 mr-2" />
-                          Manage Services
                         </Link>
                       </li>
                       <li>
@@ -104,9 +81,9 @@ const Dashboard = () => {
 
       <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full border-r  sm:translate-x-0  bg-gray-800  border-gray-700" aria-label="Sidebar">
         <div className="h-full px-3 pb-4 overflow-y-auto  bg-gray-800">
-          <ul className="space-y-2 font-medium">
+          <ul className="space-y-6 font-medium">
             <li>
-              <Link to="../admin/" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
+              <Link to="../admin/dashboardoverview" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
                 <FaTachometerAlt className="w-5 h-5  transition duration-75  text-gray-400   group-hover:text-white" />
                 <span className="ms-3">Dashboard</span>
               </Link>
@@ -148,30 +125,8 @@ const Dashboard = () => {
                 <span className="ms-3">Settings</span>
               </Link>
             </li>
-            <li>
-              <Link to="../admin/faq"className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaQuestionCircle className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">FAQ</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/about" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaHome className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">About</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/logout" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaSignInAlt className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">Sign Out</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/signup" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaUserPlus className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">Sign Up</span>
-              </Link>
-            </li>
+    
+           
           </ul>
         </div>
       </aside>

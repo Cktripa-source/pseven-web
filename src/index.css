@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,4 +41,42 @@
 
 ::-webkit-scrollbar-corner {
   background: #f0f0f0; /* Color for the scrollbar corner in two-scrollable areas */
+}
+body{
+  font-family: 'DM Sans', sans-serif;
+  text-transform: capitalize;
+}
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-animation {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.card-animation.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.card-animation.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.card-animation.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.card-animation.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.card-animation.delay-500 {
+  animation-delay: 0.5s;
 }
