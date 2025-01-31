@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useCart } from "./CartContext"; // Import useCart
 
-const ViewCart = ({ setCartCount }) => {
+const ViewCart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const { setCart } = useCart(); // Get setCart from context
   const navigate = useNavigate();
 
-  // Load cart items from localStorage on component mount
   useEffect(() => {
     const savedCartItems = localStorage.getItem("cart");
     if (savedCartItems) {
-      const parsedCart = JSON.parse(savedCartItems);
+      const parsedCart = JSON.parse(savedCartItems).map(item => ({
+        ...item,
+        price: typeof item.price === "string" ? parseFloat(item.price.replace("$", "")) : item.price
+      }));
       setCartItems(parsedCart);
-      setCartCount(parsedCart.length); // Update cart count on load
+      setCart(parsedCart); // Update cart in context
+    } else {
+      setCartItems([]);
+      setCart([]); // Reset cart in context if no items
     }
-  }, [setCartCount]);
+  }, [setCart]);
 
-  // Update cart in state and localStorage
   const updateCart = (updatedCart) => {
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-    setCartCount(updatedCart.length); // Update the cart count
+    setCart(updatedCart); // Update the cart in context
   };
 
   const handleRemoveItem = (index) => {
@@ -41,30 +47,26 @@ const ViewCart = ({ setCartCount }) => {
     }
   };
 
- // ViewCart.js
-
-const calculateTotalPrice = () => {
-  return cartItems.reduce((total, item) => {
-    // Ensure price is a string and remove "$" symbol
-    const itemPrice = parseFloat(String(item.price).replace("$", "")) || 0;
-    return total + itemPrice * item.quantity;
-  }, 0).toFixed(2);
-};
-
-const calculateItemTotal = (item) => {
-  // Ensure price is a string and remove "$" symbol
-  const itemPrice = parseFloat(String(item.price).replace("$", "")) || 0;
-  return (itemPrice * item.quantity).toFixed(2);
-};
+  const calculateTotalPrice = () => {
+    return cartItems.reduce((total, item) => {
+      const itemPrice = parseFloat(typeof item.price === "string" ? item.price.replace("$", "") : item.price) || 0;
+      return total + itemPrice * item.quantity;
+    }, 0).toFixed(2);
+  };
 
   const handleCheckout = () => {
-    // Ensure there are items in the cart before proceeding to checkout
     if (cartItems.length === 0) {
       alert("Your cart is empty. Please add items before proceeding to checkout.");
       return;
     }
-    // Navigate to the checkout page
     navigate("/checkout");
+  };
+
+  const handleResetCart = () => {
+    localStorage.removeItem("cart");
+    setCartItems([]);
+    setCart([]); // Reset cart in context
+    localStorage.setItem("cartCount", 0);
   };
 
   return (
@@ -80,24 +82,23 @@ const calculateItemTotal = (item) => {
               Shop Now
             </button>
           </Link>
+          <button
+            onClick={handleResetCart}
+            className="mt-4 px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
+          >
+            Reset Cart
+          </button>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {cartItems.map((item, index) => (
-              <div
-                key={index}
-                className="bg-white shadow-lg p-4 rounded-lg space-y-4 border"
-              >
+              <div key={index} className="bg-white shadow-lg p-4 rounded-lg space-y-4 border">
                 <div className="flex items-center gap-4">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-16 object-cover rounded"
-                  />
+                  <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
                   <div>
                     <h2 className="text-xl font-semibold">{item.name}</h2>
-                    <p className="text-black">{item.price}</p>
+                    <p className="text-black">${item.price}</p>
                     <p className="text-black">Quantity: {item.quantity}</p>
                   </div>
                 </div>
@@ -117,7 +118,10 @@ const calculateItemTotal = (item) => {
                 </div>
                 <div>
                   <p className="text-lg font-semibold text-gray-900">
-                    Total: ${calculateItemTotal(item)}
+                    Total: ${(
+                      parseFloat(typeof item.price === "string" ? item.price.replace("$", "") : item.price) *
+                      item.quantity
+                    ).toFixed(2)}
                   </p>
                 </div>
                 <button

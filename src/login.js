@@ -1,94 +1,109 @@
 import React, { useState } from "react";
-import Shop from "./images/shop.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Lock, Mail } from "lucide-react";
+import { motion } from "framer-motion";
+import Shop from "./images/shop.png";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // To redirect after successful login
+  const navigate = useNavigate();
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      // Send POST request to login API
       const response = await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password,
       });
-  
-      // Assuming the response contains a token (JWT or session token)
+
+      // Store token in localStorage
       localStorage.setItem("userToken", response.data.token);
-  
-      // Redirect to the homepage or dashboard
-      navigate("/dashboard"); // or wherever you want to redirect
+
+      // Redirect to dashboard
+      navigate("/dashboard");
     } catch (error) {
-      // Display error if login fails
       setError(error.response?.data?.message || "An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row pt-20 md:mt-32 mt-40">
-      {/* Left Section with Image (Hidden on mobile and visible on larger screens) */}
-      <div className="w-full md:w-1/2 h-full hidden md:flex items-center justify-center bg-gray-900">
-        <img src={Shop} alt="Shop" className="max-w-full h-auto" />
-      </div>
+    <div className="w-full h-screen flex flex-col md:flex-row pt-20 md:mt-10 mt-10">
+      {/* Left Section with Image */}
+      <motion.div
+        className="hidden md:flex w-1/2  bg-gray-900 items-center justify-center h-screen"
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <img src={Shop} alt="Shop" className="max-w-full h-auto rounded-lg shadow-lg" />
+      </motion.div>
 
-      {/* Right Section with Form (Image as background on mobile) */}
-      <div
-        className="w-full md:w-1/2 h-full flex items-center justify-center bg-white"
-        style={{
-          backgroundImage: `url(${Shop})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+      {/* Right Section with Form */}
+      <motion.div
+        className="w-full md:w-1/2 h-full flex items-center justify-center bg-white px-6 py-12"
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
       >
         <form
-          className="max-w-md w-full p-8 shadow-lg rounded-lg border border-gray-200 bg-white opacity-95"
+          className="max-w-md w-full p-8 shadow-lg rounded-lg border border-gray-200"
           onSubmit={handleSubmit}
         >
-          <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-            Login to Your Account
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login to Your Account</h1>
 
-          {/* Error message */}
+          {/* Error Message */}
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
           {/* Email Field */}
-          <div className="mb-4">
+          <motion.div
+            className="mb-4"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+          >
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Your Email
             </label>
-            <input
-              type="email"
-              id="email"
-              className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-950"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-500" size={20} />
+              <input
+                type="email"
+                id="email"
+                className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+          </motion.div>
 
           {/* Password Field */}
-          <div className="mb-4">
+          <motion.div
+            className="mb-4"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+          >
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
               Your Password
             </label>
-            <input
-              type="password"
-              id="password"
-              className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-500" size={20} />
+              <input
+                type="password"
+                id="password"
+                className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </motion.div>
 
           {/* Forgot Password */}
           <div className="flex justify-end mb-6">
@@ -98,12 +113,13 @@ function Login() {
           </div>
 
           {/* Submit Button */}
-          <button
+          <motion.button
             type="submit"
             className="w-full bg-gray-900 text-white py-3 rounded-lg font-medium text-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-black"
+            whileHover={{ scale: 1.05 }}
           >
             Login
-          </button>
+          </motion.button>
 
           {/* Register Link */}
           <div className="mt-6 text-center">
@@ -115,7 +131,7 @@ function Login() {
             </p>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }

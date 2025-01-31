@@ -1,78 +1,83 @@
 import { Link } from "react-router-dom";
-import {
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaYoutube, FaQuestionCircle, FaInfoCircle, FaPhoneAlt,FaHome
-} from "react-icons/fa";
+import { motion } from "framer-motion";
+import { Facebook, Twitter, Instagram, Youtube, Home, HelpCircle, Info, Phone } from "lucide-react";
 import Logo from "./images/logo.png";
+
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-6 mt-12">
-      <div className="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-6 border-b mb-10">
+    <footer className="bg-gray-900 text-white py-8 mt-12">
+      <motion.div 
+        className="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-3 gap-8 border-b pb-6"
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.6 }}
+      >
         {/* About Section */}
-        <div>
-          <img src={Logo} alt="Web Logo" className="h-10 mb-2 rounded-full" />
+        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
+          <img src={Logo} alt="Web Logo" className="h-12 mb-3 rounded-full" />
           <h2 className="text-xl font-bold">Pseven Rwanda</h2>
           <p className="text-gray-400 mt-2">
             Your go-to destination for the latest electronic devices.
           </p>
-        </div>
-        
-        {/* Links Section */}
-        <div>
-          <h2 className="text-lg">Quick Links</h2>
-          <ul className="mt-2 space-y-2 ">
-            <li>
-              <Link to="/"  className="hover:text-red-500 transition text-md duration-300 flex items-center space-x-2">
-                    <FaHome className="h-5 w-5" />
-                    <span>Home</span>
-                  </Link>
-            </li>
-            <li>
-               <Link to="/faq" className="hover:text-red-500 transition text-md duration-300 flex items-center space-x-2">
-                    <FaQuestionCircle className="h-5 w-5" />
-                    <span>FAQ</span>
-                  </Link>
-            </li>
-            <li>
-              <Link to="/about"  className="hover:text-red-500 transition text-md duration-300 flex items-center space-x-2">
-                    <FaInfoCircle className="h-5 w-5" />
-                    <span>About Us</span>
-                  </Link>
-            </li>
-            <li>
-             <Link to="/contact"  className="hover:text-red-500 transition text-md duration-300 flex items-center space-x-2">
-                   <FaPhoneAlt className="h-5 w-5" />
-                   <span>Contact Us</span>
-                 </Link>
-            </li>
+        </motion.div>
+
+        {/* Quick Links */}
+        <motion.div>
+          <h2 className="text-lg font-semibold">Quick Links</h2>
+          <ul className="mt-3 space-y-3">
+            {[ 
+              { path: "/", label: "Home", icon: Home },
+              { path: "/faq", label: "FAQ", icon: HelpCircle },
+              { path: "/about", label: "About Us", icon: Info },
+              { path: "/contact", label: "Contact Us", icon: Phone },
+            ].map(({ path, label, icon: Icon }, idx) => (
+              <motion.li 
+                key={idx} 
+                whileHover={{ x: 5 }} 
+                transition={{ duration: 0.3 }}
+              >
+                <Link to={path} className="flex items-center space-x-2 text-gray-400 hover:text-red-500 transition duration-300">
+                  <Icon className="h-5 w-5" />
+                  <span>{label}</span>
+                </Link>
+              </motion.li>
+            ))}
           </ul>
-        </div>
-        
+        </motion.div>
+
         {/* Contact Section */}
-        <div>
-          <h2 className="text-lg">Contact Us</h2>
+        <motion.div>
+          <h2 className="text-lg font-semibold">Contact Us</h2>
           <p className="text-gray-400 mt-2">Email: psevenrwanda@gmail.com</p>
-          <div className="flex mt-4 sm:mt-0 space-x-6">
-            <a href="#" className="text-gray-400 hover:text-red-500">
-              <FaFacebookF className="w-5 h-5" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-red-500">
-              <FaTwitter className="w-5 h-5" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-red-500">
-              <FaInstagram className="w-5 h-5" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-red-500">
-              <FaYoutube className="w-5 h-5" />
-            </a>
+          <div className="flex mt-4 space-x-6">
+            {[ 
+              { href: "#", icon: Facebook },
+              { href: "#", icon: Twitter },
+              { href: "#", icon: Instagram },
+              { href: "#", icon: Youtube },
+            ].map(({ href, icon: Icon }, idx) => (
+              <motion.a 
+                key={idx} 
+                href={href} 
+                className="text-gray-400 hover:text-red-500 transition duration-300"
+                whileHover={{ scale: 1.2 }} 
+              >
+                <Icon className="w-6 h-6" />
+              </motion.a>
+            ))}
           </div>
-        </div>
-      </div>
-      <div className="text-center text-gray-500 text-sm mt-6">
+        </motion.div>
+      </motion.div>
+
+      {/* Copyright Section */}
+      <motion.div 
+        className="text-center text-gray-500 text-sm mt-6"
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
         &copy; {new Date().getFullYear()} Pseven Rwanda. All rights reserved.
-      </div>
+      </motion.div>
     </footer>
   );
 };
