@@ -4,7 +4,7 @@ import { Heart, Plus, Minus, X, MenuIcon } from "lucide-react";
 import Navbar from "./nav";
 import { useCart } from "./CartContext";
 
-const API_URL = "https://pseven-api-test.onrender.com/api/"; // Change this if hosted on Railway
+const API_URL = "https://pseven-api-test.onrender.com/api"; // Change this if hosted on Railway
 
 function ShoppingSection() {
   const [categories, setCategories] = useState([]);
