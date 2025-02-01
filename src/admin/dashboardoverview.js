@@ -97,7 +97,7 @@ const DashboardOverview = () => {
   };
 
   const cards = [
-    { title: 'Total Applications', icon: <FaClipboardList className="text-4xl text-blue-500" />, content: 'Applications', data: data.totalApplications, chart: <Pie data={applicationsChartData} />, link: "../admin/jobapplication" },
+    { title: 'Total Applications', icon: <FaClipboardList className="text-4xl text-green-500" />, content: 'Applications', data: data.totalApplications, chart: <Pie data={applicationsChartData} />, link: "../admin/jobapplication" },
     { title: 'Total Jobs', icon: <FaBriefcase className="text-4xl text-green-500" />, content: 'Jobs', data: data.totalJobs, chart: <Pie data={jobsChartData} />, link: "../admin/jobs" },
     { title: 'Total Products', icon: <FaBox className="text-4xl text-orange-500" />, content: 'Products', data: data.totalProducts, chart: <Bar data={productChartData} />, link: "../admin/productmanagement" },
     { title: 'Service Requests', icon: <FaCogs className="text-4xl text-yellow-500" />, content: 'Requests', data: data.totalServiceRequests, chart: <Pie data={serviceRequestsChartData} />, link: "../admin/services" },
@@ -148,7 +148,7 @@ const DashboardOverview = () => {
                   <div className="w-64 h-48 mt-4">
                     {card.chart}
                   </div>
-                  <Link to={card.link} className="text-blue-400 mt-4 inline-block">View Details</Link>
+                  <Link to={card.link} className="text-green-400 mt-4 inline-block">View Details</Link>
                 </div>
               </div>
             </div>

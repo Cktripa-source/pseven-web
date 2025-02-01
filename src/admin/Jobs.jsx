@@ -172,7 +172,7 @@ const JobManagement = () => {
           </div>
           <button
             onClick={handleAddJob}
-            className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg"
+            className="flex items-center bg-green-500 text-white px-4 py-2 rounded-lg"
           >
             <FaPlus className="mr-2" /> Add New Job
           </button>
@@ -283,7 +283,7 @@ const JobManagement = () => {
                   <td className="px-3 py-4 flex items-center space-x-2">
                     <button
                       onClick={handleSaveNewJob}
-                      className="bg-blue-500 p-2 rounded-full text-white"
+                      className="bg-green-500 p-2 rounded-full text-white"
                     >
                       <FaSave />
                     </button>
@@ -418,7 +418,7 @@ const JobManagement = () => {
                         <>
                           <button
                             onClick={handleSaveEditedJob}
-                            className="bg-blue-500 p-2 rounded-full text-white"
+                            className="bg-green-500 p-2 rounded-full text-white"
                           >
                             <FaSave />
                           </button>
@@ -466,7 +466,7 @@ const JobManagement = () => {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-green-500 text-white rounded"
             >
               Next
             </button>

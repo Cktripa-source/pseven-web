@@ -74,7 +74,7 @@ const Checkout = ({ setCartCount }) => {
                   className="flex justify-between items-center py-2 px-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 transition duration-300"
                 >
                   <span>{item.name} (x{item.quantity})</span>
-                  <span className="font-semibold text-blue-600">
+                  <span className="font-semibold text-green-600">
                     ${(parseFloat(String(item.price).replace("$", "")) * item.quantity).toFixed(2)}
                   </span>
                 </div>
@@ -96,7 +96,7 @@ const Checkout = ({ setCartCount }) => {
                   value={shippingDetails.name}
                   onChange={handleInputChange}
                   placeholder="Full Name"
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                   required
                 />
                 <input
@@ -105,7 +105,7 @@ const Checkout = ({ setCartCount }) => {
                   value={shippingDetails.address}
                   onChange={handleInputChange}
                   placeholder="Shipping Address"
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                   required
                 />
                 <input
@@ -114,7 +114,7 @@ const Checkout = ({ setCartCount }) => {
                   value={shippingDetails.city}
                   onChange={handleInputChange}
                   placeholder="City"
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                   required
                 />
                 <input
@@ -123,7 +123,7 @@ const Checkout = ({ setCartCount }) => {
                   value={shippingDetails.zipCode}
                   onChange={handleInputChange}
                   placeholder="Zip Code"
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                   required
                 />
                 <input
@@ -132,7 +132,7 @@ const Checkout = ({ setCartCount }) => {
                   value={shippingDetails.email}
                   onChange={handleInputChange}
                   placeholder="Email Address"
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                   required
                 />
               </div>
@@ -145,14 +145,14 @@ const Checkout = ({ setCartCount }) => {
                   value={paymentDetails.phoneNumber}
                   onChange={handlePaymentChange}
                   placeholder="Enter your MTN number"
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+                className="w-full px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 transform hover:scale-105"
               >
                 Confirm Order & Pay with MTN
               </button>

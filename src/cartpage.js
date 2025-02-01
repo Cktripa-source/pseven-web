@@ -30,7 +30,7 @@ const CartPage = () => {
               </div>
               <button
                 onClick={() => handleRemoveFromCart(item.name)}
-                className="bg-red-600 text-white px-4 py-2 rounded-md"
+                className="bg-green-600 text-white px-4 py-2 rounded-md"
               >
                 Remove from cart
               </button>

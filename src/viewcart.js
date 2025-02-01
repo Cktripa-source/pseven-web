@@ -84,7 +84,7 @@ const ViewCart = () => {
           </Link>
           <button
             onClick={handleResetCart}
-            className="mt-4 px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
+            className="mt-4 px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
           >
             Reset Cart
           </button>
@@ -105,7 +105,7 @@ const ViewCart = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDecreaseQuantity(index)}
-                    className="px-4 py-2 bg-red-800 text-white rounded hover:bg-red-500 transition duration-300"
+                    className="px-4 py-2 bg-green-800 text-white rounded hover:bg-green-500 transition duration-300"
                   >
                     -
                   </button>
@@ -126,7 +126,7 @@ const ViewCart = () => {
                 </div>
                 <button
                   onClick={() => handleRemoveItem(index)}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
+                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
                 >
                   Remove
                 </button>

@@ -66,7 +66,7 @@ function Register() {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row pt-20 md:mt-10 mt-10">
+    <div className="w-full min-h-screen flex flex-col md:flex-row pt-20 md:mt-10 mt-10">
       {/* Left Section - Image */}
       <motion.div
         className="hidden md:flex w-1/3 bg-gray-900 items-center justify-center h-screen"
@@ -91,7 +91,7 @@ function Register() {
           <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Register New Account</h1>
 
           {/* Error & Success Messages */}
-          {error && <p className="mb-4 text-red-500 text-sm text-center">{error}</p>}
+          {error && <p className="mb-4 text-green-500 text-sm text-center">{error}</p>}
           {success && <p className="mb-4 text-green-500 text-sm text-center">{success}</p>}
 
           {/* Input Fields - Split into Two Columns */}
@@ -157,7 +157,7 @@ function Register() {
             />
             <label htmlFor="agreeToTerms" className="ml-2 text-sm text-gray-700">
               I agree to the{" "}
-              <Link to="/terms" className="text-blue-500 hover:underline">terms and conditions</Link>.
+              <Link to="/terms" className="text-green-500 hover:underline">terms and conditions</Link>.
             </label>
           </motion.div>
 
@@ -174,7 +174,7 @@ function Register() {
           {/* Login Redirect */}
           <p className="text-sm text-gray-500 text-center mt-4">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-500 hover:underline">Log in</Link>
+            <Link to="/login" className="text-green-500 hover:underline">Log in</Link>
           </p>
         </form>
       </motion.div>

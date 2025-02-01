@@ -88,10 +88,10 @@ const BuySell = ({ setCartCount }) => {
                 <p className="text-sm text-gray-600 mb-4">{product.description}</p>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xl font-bold text-gray-900">{product.price}</span>
-                  <span className="text-xs font-medium text-red-500 bg-yellow-100 px-2 py-0.5 rounded">{product.discount} OFF</span>
+                  <span className="text-xs font-medium text-green-500 bg-yellow-100 px-2 py-0.5 rounded">{product.discount} OFF</span>
                   <button
                     onClick={() => isProductInCart(product) ? handleRemoveFromCart(product) : handleAddToCart(product)}
-                    className={`text-white ${isProductInCart(product) ? 'bg-red-600 hover:bg-red-700 text-md' : 'bg-black hover:bg-red-600'}  text-white px-4 py-1 rounded-full shadow-md transition-transform transform hover:scale-105`}
+                    className={`text-white ${isProductInCart(product) ? 'bg-green-600 hover:bg-green-700 text-md' : 'bg-black hover:bg-green-600'}  text-white px-4 py-1 rounded-full shadow-md transition-transform transform hover:scale-105`}
                   >
                     {isProductInCart(product) ? 'Remove ' : 'Add to cart'}
                   </button>

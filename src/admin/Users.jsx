@@ -188,7 +188,7 @@ const UserManagement = () => {
                         <>
                           <button
                             onClick={handleSaveEditedUser}
-                            className="bg-blue-500 p-2 rounded-full text-white"
+                            className="bg-green-500 p-2 rounded-full text-white"
                           >
                             <FaSave />
                           </button>
@@ -236,7 +236,7 @@ const UserManagement = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="px-4 py-2 bg-green-500 text-white rounded"
               >
                 Next
               </button>

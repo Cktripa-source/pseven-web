@@ -24,7 +24,7 @@ const Services = () => {
   }, []);
 
   if (loading) return <div className="text-center text-green-500 bg-green-400 p-2 rounded-md">Loading...</div>;
-  if (error) return <div className="text-center text-red-500 bg-red-400 p-2 rounded-md">{error}</div>;
+  if (error) return <div className="text-center text-green-500 bg-green-400 p-2 rounded-md">{error}</div>;
 
   return (
     <div className="min-h-screen text-white py-16 px-6 md:mt-40 mt-56 ">
@@ -55,7 +55,7 @@ const Services = () => {
               <p className="text-gray-900 text-center max-w-sm mb-6">
                 {service.description}
               </p>
-              <button className="bg-black hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition-transform transform hover:scale-105">
+              <button className="bg-black hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition-transform transform hover:scale-105">
                 Learn More
               </button>
             </div>

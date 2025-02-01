@@ -50,7 +50,7 @@ const OrderConfirmation = () => {
         <p>Your order will be shipped soon. Thank you for shopping with us!</p>
         <button
           onClick={() => navigate("/")}
-          className="mt-4 px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
+          className="mt-4 px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300"
         >
           Back to Home
         </button>

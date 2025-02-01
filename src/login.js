@@ -73,7 +73,7 @@ function Login() {
           <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login to Your Account</h1>
 
           {/* Error Message */}
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {error && <p className="text-green-500 text-center mb-4">{error}</p>}
 
           {/* Email Field */}
           <motion.div
@@ -123,7 +123,7 @@ function Login() {
 
           {/* Forgot Password */}
           <div className="flex justify-end mb-6">
-            <a href="#" className="text-sm text-blue-500 hover:underline">
+            <a href="#" className="text-sm text-green-500 hover:underline">
               Forgot your password?
             </a>
           </div>
@@ -141,7 +141,7 @@ function Login() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-700">
               Don't have an account?{" "}
-              <Link to="/register" className="text-blue-500 hover:underline">
+              <Link to="/register" className="text-green-500 hover:underline">
                 Register here
               </Link>
             </p>

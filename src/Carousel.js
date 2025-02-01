@@ -67,9 +67,9 @@ const Carousel = () => {
                 alt={image.caption}
               />
               <div className="absolute top-0 left-0 w-full h-full bg-black/50 flex flex-col items-center justify-center text-center">
-                <h1 className="text-blue-400 mb-4 text-5xl font-bold">{image.caption}</h1>
+                <h1 className="text-green-400 mb-4 text-5xl font-bold">{image.caption}</h1>
                 <p className="text-white text-2xl">{image.p}</p>
-                <a href="#" className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-700">View Details</a>
+                <a href="#" className="mt-4 px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-700">View Details</a>
               </div>
             </motion.div>
           )

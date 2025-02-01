@@ -61,7 +61,7 @@ const ProductManagement = () => {
             </div>
             <button
               onClick={() => setIsAddingProduct(true)}
-              className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg"
+              className="flex items-center bg-green-500 text-white px-4 py-2 rounded-lg"
             >
               <FaPlus className="mr-2" /> Add New Product
             </button>

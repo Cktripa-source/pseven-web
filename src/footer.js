@@ -36,7 +36,7 @@ const Footer = () => {
                 whileHover={{ x: 5 }} 
                 transition={{ duration: 0.3 }}
               >
-                <Link to={path} className="flex items-center space-x-2 text-gray-400 hover:text-red-500 transition duration-300">
+                <Link to={path} className="flex items-center space-x-2 p-1 rounded-md text-gray-400 hover:text-green-500 hover:bg-gray-800 hover:border-l-8 border-gray-950 transition duration-300">
                   <Icon className="h-5 w-5" />
                   <span>{label}</span>
                 </Link>
@@ -59,7 +59,7 @@ const Footer = () => {
               <motion.a 
                 key={idx} 
                 href={href} 
-                className="text-gray-400 hover:text-red-500 transition duration-300"
+                className="text-gray-400 hover:text-green-500 transition duration-300"
                 whileHover={{ scale: 1.2 }} 
               >
                 <Icon className="w-6 h-6" />

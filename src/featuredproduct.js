@@ -88,7 +88,7 @@ function ShoppingSection() {
           {categories.map((category) => (
             <button
               key={category}
-              className={`text-lg p-2 rounded-lg ${selectedCategory === category ? "bg-blue-600" : "bg-black"} text-white w-48 text-center`}
+              className={`text-lg p-2 rounded-lg ${selectedCategory === category ? "bg-green-600" : "bg-black"} text-white w-48 text-center`}
               onClick={() => {
                 setSelectedCategory(category);
                 setCurrentPage(1);

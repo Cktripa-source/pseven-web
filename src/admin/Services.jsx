@@ -190,7 +190,7 @@ const ServiceManagement = () => {
             </div>
             <button
               onClick={handleAddService}
-              className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg"
+              className="flex items-center bg-green-500 text-white px-4 py-2 rounded-lg"
             >
               <FaPlus className="mr-2" /> Add New Service
             </button>
@@ -263,7 +263,7 @@ const ServiceManagement = () => {
                       />
                       <button
                         onClick={handleSaveNewService}
-                        className="bg-blue-500 p-2 rounded-full text-white"
+                        className="bg-green-500 p-2 rounded-full text-white"
                       >
                         <FaSave />
                       </button>
@@ -371,7 +371,7 @@ const ServiceManagement = () => {
                             />
                             <button
                               onClick={handleSaveEditedService}
-                              className="bg-blue-500 p-2 rounded-full text-white"
+                              className="bg-green-500 p-2 rounded-full text-white"
                             >
                               <FaSave />
                             </button>
@@ -417,7 +417,7 @@ const ServiceManagement = () => {
               </span>
               <button
                 disabled={currentPage === totalPages}
-                className="bg-blue-500 text-white p-2 rounded"
+                className="bg-green-500 text-white p-2 rounded"
               >
                 Next
               </button>

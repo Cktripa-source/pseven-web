@@ -79,7 +79,7 @@ const Payment = () => {
         <div className="mt-6 text-center text-green-600">Payment successful!</div>
       )}
       {paymentStatus === "failure" && (
-        <div className="mt-6 text-center text-red-600">Payment failed! Please try again.</div>
+        <div className="mt-6 text-center text-green-600">Payment failed! Please try again.</div>
       )}
     </div>
   );

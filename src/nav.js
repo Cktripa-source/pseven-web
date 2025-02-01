@@ -30,11 +30,11 @@ function Navbar() {
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
         <div className="flex items-center space-x-4">
-          <Link to="/login" className="flex items-center space-x-2 hover:text-red-500">
+          <Link to="/login" className="flex items-center space-x-2 hover:text-green-500">
             <LogIn className="h-5 w-5" />
             <span>Login</span>
           </Link>
-          <Link to="/register" className="flex items-center space-x-2 hover:text-red-500">
+          <Link to="/register" className="flex items-center space-x-2 hover:text-green-500">
             <UserPlus className="h-5 w-5" />
             <span>Register</span>
           </Link>
@@ -48,7 +48,7 @@ function Navbar() {
             <Phone className="h-5 w-5 text-white" />
             <span>+250791855396</span>
           </p>
-          <a href="mailto:psevenrwanda@gmail.com" className="flex items-center space-x-2 hover:text-red-500">
+          <a href="mailto:psevenrwanda@gmail.com" className="flex items-center space-x-2 hover:text-green-500">
             <Mail className="h-5 w-5 text-white" />
             <span>psevenrwanda@gmail.com</span>
           </a>
@@ -60,7 +60,7 @@ function Navbar() {
             <motion.a 
               key={idx} 
               href="#" 
-              className="hover:text-red-500"
+              className="hover:text-green-500"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 * idx, duration: 0.3 }}
@@ -72,11 +72,11 @@ function Navbar() {
 
         {/* Login/Register */}
         <div className="flex space-x-4">
-          <Link to="/login" className="flex items-center space-x-2 hover:text-red-500">
+          <Link to="/login" className="flex items-center space-x-2 hover:text-green-500">
             <LogIn className="h-5 w-5" />
             <span>Login</span>
           </Link>
-          <Link to="/register" className="flex items-center space-x-2 hover:text-red-500">
+          <Link to="/register" className="flex items-center space-x-2 hover:text-green-500">
             <UserPlus className="h-5 w-5" />
             <span>Register</span>
           </Link>
@@ -92,7 +92,7 @@ function Navbar() {
             className="h-14 rounded-full" 
             whileHover={{ scale: 1, rotate: 100 }}
           />
-          <span className="font-bold text-lg hover:text-red-400">P<span className="hover:text-red-400">SEVEN</span></span>
+          <span className="font-bold text-lg hover:text-green-400">P<span className="hover:text-green-400">SEVEN</span></span>
         </Link>
         
         {/* Search Input (Desktop Only) */}
@@ -107,9 +107,9 @@ function Navbar() {
         {/* Cart Icon */}
         <div className="relative flex items-center space-x-4">
           <Link to="/viewcart" className="relative">
-            <ShoppingCart className="w-8 h-10 text-white hover:text-red-500" />
+            <ShoppingCart className="w-8 h-10 text-white hover:text-green-500" />
             <motion.span 
-              className="absolute -top-2 -right-2 bg-red-500 text-xs text-white rounded-full w-5 h-5 flex items-center justify-center"
+              className="absolute -top-2 -right-2 bg-green-500 text-xs text-white rounded-full w-5 h-5 flex items-center justify-center"
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: Infinity, duration: 1.5 }}
             >
@@ -129,7 +129,7 @@ function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * idx, duration: 0.3 }}
             >
-              <Link to={path} className="flex items-center space-x-2 hover:text-red-500">
+              <Link to={path} className="flex items-center space-x-2 hover:text-green-500  hover:border-b-2 p-1 border-green-500 rounded-md transition-all">
                 <Icon className="h-5 w-5" />
                 <span>{label}</span>
               </Link>
@@ -153,7 +153,7 @@ function Navbar() {
       <Link 
         key={idx} 
         to={path} 
-        className="flex items-center space-x-2 hover:text-red-500"
+        className="flex items-center space-x-2 hover:text-green-500"
         onClick={toggleMobileMenu} // Close the menu when a link is clicked
       >
         <Icon className="h-5 w-5" />

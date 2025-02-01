@@ -112,7 +112,7 @@ function ShoppingSection() {
           {categories.map((category) => (
             <button
               key={category}
-              className={`text-lg p-2 rounded-lg ${selectedCategory === category ? "bg-blue-600" : "bg-black"} text-white w-48 text-center`}
+              className={`text-lg p-2 rounded-lg ${selectedCategory === category ? "bg-green-600" : "bg-black"} text-white w-48 text-center`}
               onClick={() => {
                 setSelectedCategory(category);
                 setCurrentPage(1);
@@ -158,7 +158,7 @@ function ShoppingSection() {
 
             <button
               className={`mt-3 px-4 py-2 rounded-lg w-full ${cart.some((item) => item.id === product._id && item.selectedColor === productData[product._id]?.selectedColor)
-                ? "bg-red-600 hover:bg-red-700 text-white"
+                ? "bg-green-600 hover:bg-green-700 text-white"
                 : "bg-black hover:bg-gray-950 text-white"
               }`}
               onClick={() => {

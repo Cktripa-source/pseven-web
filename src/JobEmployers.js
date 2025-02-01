@@ -106,7 +106,7 @@ const JobEmployers = () => {
     );
   }
 
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (error) return <div className="text-center text-green-500">{error}</div>;
 
   return (
     <div className="min-h-screen bg-transparent text-white py-16 px-6 pt-20 mt-20">
@@ -139,14 +139,14 @@ const JobEmployers = () => {
               <p className="flex items-center mb-2">
                 <PenSquare className="text-gray-600 mr-2" size={20} />
                 <span className="font-semibold text-gray-600 capitalize">Skills:</span>{" "}
-                <span className="text-blue-500 capitalize font-mono font-semibold">
+                <span className="text-green-500 capitalize font-mono font-semibold">
                   {(job.skillsRequired || []).join(", ")}
                 </span>
               </p>
             </div>
             <button
               onClick={() => handleApplyClick(job)}
-              className="w-full bg-black text-white font-medium py-3 rounded-lg hover:bg-red-500 transition duration-300 shadow-md"
+              className="w-full bg-black text-white font-medium py-3 rounded-lg hover:bg-green-500 transition duration-300 shadow-md"
             >
               Apply Now
             </button>
@@ -164,7 +164,7 @@ const JobEmployers = () => {
         >
           <button
             onClick={() => setIsFormOpen(false)} // Close form when clicked
-            className="absolute top-4 right-4 p-2 bg-red-500 rounded-md"
+            className="absolute top-4 right-4 p-2 bg-green-500 rounded-md"
           >
             <span className="text-white text-xl">X</span>
           </button>
@@ -301,7 +301,7 @@ const JobEmployers = () => {
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="bg-red-600 text-gray-50 font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
+                  className="bg-green-600 text-gray-50 font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
                 >
                   Cancel
                 </button>

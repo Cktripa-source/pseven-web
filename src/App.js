@@ -115,11 +115,11 @@ function App() {
 
       {/* Network Warning */}
       {isOfflineMessageVisible && isOffline && (
-        <div className="bg-red-400 text-white p-4 fixed top-0 w-full text-center z-50 flex justify-between items-center">
+        <div className="bg-green-400 text-white p-4 fixed top-0 w-full text-center z-50 flex justify-between items-center">
           <AlertTriangle /> <span>  You are offline. Please check your internet connection.</span>
           <button 
             onClick={handleCloseOfflineMessage}
-            className="bg-white text-red-500 py-2 px-4 rounded-full"
+            className="bg-white text-green-500 py-2 px-4 rounded-full"
           >
             X
           </button>
@@ -182,7 +182,7 @@ function App() {
         </Routes>
       ) : (
         // Show the message and block interaction when offline
-        <div className="flex flex-col justify-center items-center min-h-screen bg-red-200">
+        <div className="flex flex-col justify-center items-center min-h-screen bg-green-200">
           <AlertTriangle className='text-gray-950 h-20 w-20 p-4' />
           <h1 className="text-2xl text-center">You are offline. Please check your internet connection.</h1>
           <p className="mt-4">Content is unavailable while offline. Please reconnect to the internet.</p>
