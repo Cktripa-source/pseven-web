@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {AlertTriangle} from "lucide-react"
+import { AlertTriangle } from "lucide-react";
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './CartContext'; // Import CartProvider
 import Carousel from './Carousel';
@@ -48,6 +48,7 @@ function App() {
   const [isOffline, setIsOffline] = useState(!navigator.onLine); // Check initial offline status
   const [isSlowNetwork, setIsSlowNetwork] = useState(false); // To track slow network
   const [isOfflineMessageVisible, setIsOfflineMessageVisible] = useState(isOffline); // Control offline message visibility
+  const [isSlowNetworkMessageVisible, setIsSlowNetworkMessageVisible] = useState(isSlowNetwork); // Control slow network message visibility
 
   useEffect(() => {
     // Check for initial offline status
@@ -103,6 +104,11 @@ function App() {
     setIsOfflineMessageVisible(false);
   };
 
+  // Function to close slow network message
+  const handleCloseSlowNetworkMessage = () => {
+    setIsSlowNetworkMessageVisible(false);
+  };
+
   return (
     <CartProvider> {/* Wrap your app with CartProvider */}
       {!isAdminRoute && <Navbar />}
@@ -110,7 +116,7 @@ function App() {
       {/* Network Warning */}
       {isOfflineMessageVisible && isOffline && (
         <div className="bg-red-400 text-white p-4 fixed top-0 w-full text-center z-50 flex justify-between items-center">
-         <AlertTriangle /> <span>  You are offline. Please check your internet connection.</span>
+          <AlertTriangle /> <span>  You are offline. Please check your internet connection.</span>
           <button 
             onClick={handleCloseOfflineMessage}
             className="bg-white text-red-500 py-2 px-4 rounded-full"
@@ -120,9 +126,15 @@ function App() {
         </div>
       )}
 
-      {isSlowNetwork && (
-        <div className="bg-yellow-500 text-white p-4 fixed top-0 w-full text-center z-50">
-          Your network is slow. Please wait while we load the content.
+      {isSlowNetworkMessageVisible && isSlowNetwork && (
+        <div className="bg-yellow-500 text-white p-4 fixed top-0 w-full text-center z-50 flex justify-between items-center">
+          <AlertTriangle /> <span>Your network is slow. Please wait while we load the content.</span>
+          <button 
+            onClick={handleCloseSlowNetworkMessage}
+            className="bg-white text-yellow-500 py-2 px-4 rounded-full"
+          >
+            X
+          </button>
         </div>
       )}
 
@@ -171,9 +183,9 @@ function App() {
       ) : (
         // Show the message and block interaction when offline
         <div className="flex flex-col justify-center items-center min-h-screen bg-red-200">
-            <AlertTriangle className='text-gray-950 h-20 w-20 p-4  ' />
-          <h1 className="text-2xl text-center"> You are offline. Please check your internet connection.</h1>
-          <p className="mt-4"> Content is unavailable while offline. Please reconnect to the internet.</p>
+          <AlertTriangle className='text-gray-950 h-20 w-20 p-4' />
+          <h1 className="text-2xl text-center">You are offline. Please check your internet connection.</h1>
+          <p className="mt-4">Content is unavailable while offline. Please reconnect to the internet.</p>
         </div>
       )}
 
