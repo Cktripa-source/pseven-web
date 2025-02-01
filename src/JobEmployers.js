@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { User, AtSign, FileText, Edit3, Phone, MapPin, DollarSign,PenSquare } from 'lucide-react';
-
+import Loading from './loading';
 const JobEmployers = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -101,8 +101,7 @@ const JobEmployers = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
-        <div className="w-16 h-16 border-4 border-t-4 border-black rounded-full animate-spin"></div>
-        Loading .......
+        <Loading />
       </div>
     );
   }

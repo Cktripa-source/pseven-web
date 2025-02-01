@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Lock, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import Shop from "./images/shop.png";
+import Loading from "./loading"; // Make sure you import the Loading component
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
+
+  // Simulate loading before showing the form
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false); // After 3 seconds, show the login form
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -31,11 +42,16 @@ function Login() {
     }
   };
 
+  // If loading, show the loading page
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <div className="w-full h-screen flex flex-col md:flex-row pt-20 md:mt-10 mt-10">
       {/* Left Section with Image */}
       <motion.div
-        className="hidden md:flex w-1/2  bg-gray-900 items-center justify-center h-screen"
+        className="hidden md:flex w-1/2 bg-gray-900 items-center justify-center h-screen"
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}

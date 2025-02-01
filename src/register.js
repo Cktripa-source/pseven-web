@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Lock, User, ShieldCheck } from "lucide-react";
 import Shop from "./images/shop.png";
+import Loading from "./loading"; // Make sure you import the Loading component
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -59,6 +60,11 @@ function Register() {
     }
   };
 
+  // Display the loading page while the registration is in progress
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="w-full h-screen flex flex-col md:flex-row pt-20 md:mt-10 mt-10">
       {/* Left Section - Image */}
@@ -73,13 +79,13 @@ function Register() {
 
       {/* Right Section - Form */}
       <motion.div
-        className="w-full md:w-3/42 flex items-center justify-center bg-white px-6 py-12 h-screen"
+        className="w-full md:w-2/3 flex items-center justify-center bg-white px-6 py-12 h-screen"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
       >
         <form
-          className="w-full  bg-white p-8 shadow-lg rounded-lg border border-gray-200"
+          className="w-full bg-white p-8 shadow-lg rounded-lg border border-gray-200"
           onSubmit={handleSubmit}
         >
           <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Register New Account</h1>

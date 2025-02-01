@@ -33,7 +33,7 @@ const Carousel = () => {
   }, [images.length]);
 
   return (
-    <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+    <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
       {/* Controls at the top center */}
       <div className="absolute top-5 left-1/2 transform -translate-x-1/2 flex space-x-4">
         <button

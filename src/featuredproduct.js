@@ -4,7 +4,7 @@ import { Heart, Plus, Minus, X, MenuIcon } from "lucide-react";
 import Navbar from "./nav";
 import { useCart } from "./CartContext";
 
-const API_URL = "http://localhost:5000/api"; // Change this if hosted on Railway
+const API_URL = "https://pseven-api-test.onrender.com/api"; // Change this if hosted on Railway
 
 function ShoppingSection() {
   const [categories, setCategories] = useState([]);
@@ -15,6 +15,7 @@ function ShoppingSection() {
   const [favorites, setFavorites] = useState({});
   const [selectedColors, setSelectedColors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const productsPerPage = 6;
 
   const { cart, addToCart, removeFromCart, getCartCount } = useCart();
@@ -39,12 +40,15 @@ function ShoppingSection() {
   useEffect(() => {
     if (!selectedCategory) return;
     const fetchProducts = async () => {
+      setIsLoading(true); // Set loading to true when starting to fetch
       try {
         const res = await fetch(`${API_URL}/products?category=${selectedCategory}`);
         const data = await res.json();
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false); // Set loading to false after fetching
       }
     };
 
@@ -96,47 +100,54 @@ function ShoppingSection() {
         </motion.div>
       )}
 
-      {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {currentProducts.map((product) => (
-          <motion.div key={product._id} whileHover={{ scale: 1.05 }}
-            className="relative bg-white p-4 rounded-lg shadow-lg transition-all overflow-hidden">
-            <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded-md" />
-            <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
-            <p className="text-gray-600">{product.description}</p>
-            <p className="text-gray-900 font-bold">${product.price}</p>
+      {/* Loading Indicator */}
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <span className="text-xl font-semibold">Loading Products...</span>
+        </div>
+      ) : (
+        // Product Grid
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {currentProducts.map((product) => (
+            <motion.div key={product._id} whileHover={{ scale: 1.05 }}
+              className="relative bg-white p-4 rounded-lg shadow-lg transition-all overflow-hidden">
+              <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded-md" />
+              <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
+              <p className="text-gray-600">{product.description}</p>
+              <p className="text-gray-900 font-bold">${product.price}</p>
 
-            <div className="flex items-center mt-3 space-x-2">
-              <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: Math.max((prev[product._id] || 0) - 1, 0) }))} className="bg-gray-300 px-2 py-1 rounded">
-                <Minus size={16} />
+              <div className="flex items-center mt-3 space-x-2">
+                <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: Math.max((prev[product._id] || 0) - 1, 0) }))} className="bg-gray-300 px-2 py-1 rounded">
+                  <Minus size={16} />
+                </button>
+                <span className="text-lg">{quantities[product._id] || 0}</span>
+                <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: (prev[product._id] || 0) + 1 }))} className="bg-gray-300 px-2 py-1 rounded">
+                  <Plus size={16} />
+                </button>
+              </div>
+
+              {/* Colors */}
+              <div className="mt-3 flex space-x-2">
+                {product.colors.map((color) => (
+                  <button
+                    key={color}
+                    className={`w-6 h-6 rounded-full border-2 ${selectedColors[product._id] === color ? "border-black" : "border-transparent"}`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setSelectedColors({ ...selectedColors, [product._id]: color })}
+                  ></button>
+                ))}
+              </div>
+
+              <button
+                className="mt-3 bg-black text-white px-4 py-2 rounded-lg w-full hover:bg-gray-950"
+                onClick={() => addToCart({ ...product, selectedColor: selectedColors[product._id], quantity: quantities[product._id] || 1 })}
+              >
+                Add to Cart
               </button>
-              <span className="text-lg">{quantities[product._id] || 0}</span>
-              <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: (prev[product._id] || 0) + 1 }))} className="bg-gray-300 px-2 py-1 rounded">
-                <Plus size={16} />
-              </button>
-            </div>
-
-            {/* Colors */}
-            <div className="mt-3 flex space-x-2">
-              {product.colors.map((color) => (
-                <button
-                  key={color}
-                  className={`w-6 h-6 rounded-full border-2 ${selectedColors[product._id] === color ? "border-black" : "border-transparent"}`}
-                  style={{ backgroundColor: color }}
-                  onClick={() => setSelectedColors({ ...selectedColors, [product._id]: color })}
-                ></button>
-              ))}
-            </div>
-
-            <button
-              className="mt-3 bg-black text-white px-4 py-2 rounded-lg w-full hover:bg-gray-950"
-              onClick={() => addToCart({ ...product, selectedColor: selectedColors[product._id], quantity: quantities[product._id] || 1 })}
-            >
-              Add to Cart
-            </button>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

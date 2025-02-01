@@ -23,8 +23,26 @@ function Navbar() {
 
   return (
     <nav className="bg-black/50 backdrop-blur-md text-white fixed top-0 left-0 right-0 z-50 shadow-lg">
-      {/* Top Section */}
-      <div className="flex flex-wrap justify-between items-center px-6 py-2 bg-black text-sm">
+      
+      {/* Top Section - Mobile Only */}
+      <div className="md:hidden flex justify-between items-center px-6 py-2 bg-black text-sm">
+        <button onClick={toggleMobileMenu} className="text-white">
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+        <div className="flex items-center space-x-4">
+          <Link to="/login" className="flex items-center space-x-2 hover:text-red-500">
+            <LogIn className="h-5 w-5" />
+            <span>Login</span>
+          </Link>
+          <Link to="/register" className="flex items-center space-x-2 hover:text-red-500">
+            <UserPlus className="h-5 w-5" />
+            <span>Register</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Top Section - Desktop Only */}
+      <div className="hidden md:flex justify-between items-center px-6 py-2 bg-gray-950  text-sm">
         <div className="flex items-center space-x-4">
           <p className="flex items-center space-x-2">
             <Phone className="h-5 w-5 text-white" />
@@ -35,6 +53,7 @@ function Navbar() {
             <span>psevenrwanda@gmail.com</span>
           </a>
         </div>
+
         {/* Social Icons */}
         <div className="flex space-x-4">
           {[Youtube, Facebook, Twitter, Instagram].map((Icon, idx) => (
@@ -42,7 +61,6 @@ function Navbar() {
               key={idx} 
               href="#" 
               className="hover:text-red-500"
-              aria-label={Icon.name}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 * idx, duration: 0.3 }}
@@ -51,6 +69,7 @@ function Navbar() {
             </motion.a>
           ))}
         </div>
+
         {/* Login/Register */}
         <div className="flex space-x-4">
           <Link to="/login" className="flex items-center space-x-2 hover:text-red-500">
@@ -65,26 +84,30 @@ function Navbar() {
       </div>
 
       {/* Middle Section */}
-      <div className="flex justify-between items-center px-6 py-3 bg-gray-900">
+      <div className="flex justify-between items-center px-6 py-0 bg-gray-900 border-b transition-all">
         <Link to="/" className="flex items-center space-x-2">
           <motion.img 
             src={Logo} 
             alt="Logo" 
-            className="h-10 rounded-full" 
-            whileHover={{ scale: 1.1, rotate: 10 }}
+            className="h-14 rounded-full" 
+            whileHover={{ scale: 1, rotate: 100 }}
           />
-          <span className="font-bold text-lg hover:text-gray-400">P<span className="text-gray-400">SEVEN</span></span>
+          <span className="font-bold text-lg hover:text-red-400">P<span className="hover:text-red-400">SEVEN</span></span>
         </Link>
-        <div className="relative w-full max-w-sm">
+        
+        {/* Search Input (Desktop Only) */}
+        <div className="relative w-full max-w-sm hidden md:block">
           <input 
             type="text" 
             placeholder="Search Product..." 
             className="w-full py-2 px-4 rounded-lg bg-gray-800 text-white focus:outline-none"
           />
         </div>
-        <div className="relative">
+
+        {/* Cart Icon */}
+        <div className="relative flex items-center space-x-4">
           <Link to="/viewcart" className="relative">
-            <ShoppingCart className="w-8 h-8 text-white hover:text-red-500" />
+            <ShoppingCart className="w-8 h-10 text-white hover:text-red-500" />
             <motion.span 
               className="absolute -top-2 -right-2 bg-red-500 text-xs text-white rounded-full w-5 h-5 flex items-center justify-center"
               animate={{ scale: [1, 1.2, 1] }}
@@ -97,7 +120,7 @@ function Navbar() {
       </div>
 
       {/* Desktop Menu */}
-      <div className="hidden md:flex justify-center py-3 bg-gray-800">
+      <div className="hidden md:flex justify-center py-2 bg-gray-950">
         <div className="flex space-x-8">
           {[{ path: '/', label: 'Home', icon: Home }, { path: '/job-employers', label: 'Jobs', icon: Briefcase }, { path: '/buy-sell', label: 'Buy & Sell', icon: ShoppingBag }, { path: '/services', label: 'Services', icon: Settings }, { path: '/others', label: 'Others', icon: Tag }].map(({ path, label, icon: Icon }, idx) => (
             <motion.div
@@ -115,34 +138,31 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Button */}
-      <button onClick={toggleMobileMenu} className="md:hidden absolute top-4 right-6">
-        {isMobileMenuOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
-      </button>
-
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          exit={{ opacity: 0, y: -20 }}
-          className="md:hidden bg-gray-900 text-white py-4 px-6 flex flex-col space-y-4 absolute top-14 w-full left-0"
-        >
-          {[{ path: '/', label: 'Home', icon: Home }, { path: '/job-employers', label: 'Jobs', icon: Briefcase }, { path: '/buy-sell', label: 'Buy & Sell', icon: ShoppingBag }, { path: '/services', label: 'Services', icon: Settings }, { path: '/others', label: 'Others', icon: Tag }].map(({ path, label, icon: Icon }, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * idx, duration: 0.3 }}
-            >
-              <Link to={path} className="flex items-center space-x-2 hover:text-red-500">
-                <Icon className="h-5 w-5" />
-                <span>{label}</span>
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
+  <motion.div 
+    initial={{ opacity: 0, y: -20 }} 
+    animate={{ opacity: 1, y: 0 }} 
+    exit={{ opacity: 0, y: -20 }}
+    className="md:hidden bg-gray-900 text-white py-4 px-6 flex flex-col space-y-10 absolute top-0 w-full left-0 h-screen"
+  >
+    <button onClick={toggleMobileMenu} className="text-white">
+      {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+    </button>
+    {[{ path: '/', label: 'Home', icon: Home }, { path: '/job-employers', label: 'Jobs', icon: Briefcase }, { path: '/buy-sell', label: 'Buy & Sell', icon: ShoppingBag }, { path: '/services', label: 'Services', icon: Settings }, { path: '/others', label: 'Others', icon: Tag }].map(({ path, label, icon: Icon }, idx) => (
+      <Link 
+        key={idx} 
+        to={path} 
+        className="flex items-center space-x-2 hover:text-red-500"
+        onClick={toggleMobileMenu} // Close the menu when a link is clicked
+      >
+        <Icon className="h-5 w-5" />
+        <span>{label}</span>
+      </Link>
+    ))}
+  </motion.div>
+)}
+
     </nav>
   );
 }
