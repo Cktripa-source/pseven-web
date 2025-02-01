@@ -38,9 +38,17 @@ function Navbar() {
         {/* Social Icons */}
         <div className="flex space-x-4">
           {[Youtube, Facebook, Twitter, Instagram].map((Icon, idx) => (
-            <a key={idx} href="#" className="hover:text-red-500" aria-label={Icon.name}>
+            <motion.a 
+              key={idx} 
+              href="#" 
+              className="hover:text-red-500"
+              aria-label={Icon.name}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 * idx, duration: 0.3 }}
+            >
               <Icon className="h-6 w-6 text-white" />
-            </a>
+            </motion.a>
           ))}
         </div>
         {/* Login/Register */}
@@ -63,7 +71,7 @@ function Navbar() {
             src={Logo} 
             alt="Logo" 
             className="h-10 rounded-full" 
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.1, rotate: 10 }}
           />
           <span className="font-bold text-lg hover:text-gray-400">P<span className="text-gray-400">SEVEN</span></span>
         </Link>
@@ -91,11 +99,18 @@ function Navbar() {
       {/* Desktop Menu */}
       <div className="hidden md:flex justify-center py-3 bg-gray-800">
         <div className="flex space-x-8">
-          {[{ path: '/', label: 'Home', icon: Home }, { path: '/job-employers', label: 'Jobs', icon: Briefcase }, { path: '/shopping', label: 'Buy & Sell', icon: ShoppingBag }, { path: '/services', label: 'Services', icon: Settings }, { path: '/others', label: 'Others', icon: Tag }].map(({ path, label, icon: Icon }, idx) => (
-            <Link key={idx} to={path} className="flex items-center space-x-2 hover:text-red-500">
-              <Icon className="h-5 w-5" />
-              <span>{label}</span>
-            </Link>
+          {[{ path: '/', label: 'Home', icon: Home }, { path: '/job-employers', label: 'Jobs', icon: Briefcase }, { path: '/buy-sell', label: 'Buy & Sell', icon: ShoppingBag }, { path: '/services', label: 'Services', icon: Settings }, { path: '/others', label: 'Others', icon: Tag }].map(({ path, label, icon: Icon }, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * idx, duration: 0.3 }}
+            >
+              <Link to={path} className="flex items-center space-x-2 hover:text-red-500">
+                <Icon className="h-5 w-5" />
+                <span>{label}</span>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -113,11 +128,18 @@ function Navbar() {
           exit={{ opacity: 0, y: -20 }}
           className="md:hidden bg-gray-900 text-white py-4 px-6 flex flex-col space-y-4 absolute top-14 w-full left-0"
         >
-          {[{ path: '/', label: 'Home', icon: Home }, { path: '/job-employers', label: 'Jobs', icon: Briefcase }, { path: '/shopping', label: 'Buy & Sell', icon: ShoppingBag }, { path: '/services', label: 'Services', icon: Settings }, { path: '/others', label: 'Others', icon: Tag }].map(({ path, label, icon: Icon }, idx) => (
-            <Link key={idx} to={path} className="flex items-center space-x-2 hover:text-red-500">
-              <Icon className="h-5 w-5" />
-              <span>{label}</span>
-            </Link>
+          {[{ path: '/', label: 'Home', icon: Home }, { path: '/job-employers', label: 'Jobs', icon: Briefcase }, { path: '/buy-sell', label: 'Buy & Sell', icon: ShoppingBag }, { path: '/services', label: 'Services', icon: Settings }, { path: '/others', label: 'Others', icon: Tag }].map(({ path, label, icon: Icon }, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * idx, duration: 0.3 }}
+            >
+              <Link to={path} className="flex items-center space-x-2 hover:text-red-500">
+                <Icon className="h-5 w-5" />
+                <span>{label}</span>
+              </Link>
+            </motion.div>
           ))}
         </motion.div>
       )}

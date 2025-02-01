@@ -4,16 +4,14 @@ import { Heart, Plus, Minus, X, MenuIcon } from "lucide-react";
 import Navbar from "./nav";
 import { useCart } from "./CartContext";
 
-const API_URL = "http://localhost:5000/api"; // Change this if hosted on Railway
+const API_URL = "http://localhost:5000/api";
 
 function ShoppingSection() {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(""); // Empty initially
+  const [selectedCategory, setSelectedCategory] = useState(""); 
   const [products, setProducts] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [quantities, setQuantities] = useState({});
-  const [favorites, setFavorites] = useState({});
-  const [selectedColors, setSelectedColors] = useState({});
+  const [productData, setProductData] = useState({}); // Store per-product data like quantities and colors
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
 
@@ -43,6 +41,14 @@ function ShoppingSection() {
         const res = await fetch(`${API_URL}/products?category=${selectedCategory}`);
         const data = await res.json();
         setProducts(data);
+        const initialData = data.reduce((acc, product) => {
+          acc[product._id] = {
+            quantity: 1, 
+            selectedColor: product.colors[0], // Set default color to first color
+          };
+          return acc;
+        }, {});
+        setProductData(initialData); // Initialize product data state
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -57,6 +63,28 @@ function ShoppingSection() {
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
+
+  // Update quantity of specific product
+  const updateQuantity = (productId, delta) => {
+    setProductData((prev) => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        quantity: Math.max(prev[productId].quantity + delta, 1), // Ensure quantity is at least 1
+      },
+    }));
+  };
+
+  // Update selected color of a specific product
+  const updateColor = (productId, color) => {
+    setProductData((prev) => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        selectedColor: color,
+      },
+    }));
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 p-6 relative">
@@ -107,11 +135,11 @@ function ShoppingSection() {
             <p className="text-gray-900 font-bold">${product.price}</p>
 
             <div className="flex items-center mt-3 space-x-2">
-              <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: Math.max((prev[product._id] || 0) - 1, 0) }))} className="bg-gray-300 px-2 py-1 rounded">
+              <button onClick={() => updateQuantity(product._id, -1)} className="bg-gray-300 px-2 py-1 rounded">
                 <Minus size={16} />
               </button>
-              <span className="text-lg">{quantities[product._id] || 0}</span>
-              <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: (prev[product._id] || 0) + 1 }))} className="bg-gray-300 px-2 py-1 rounded">
+              <span className="text-lg">{productData[product._id]?.quantity}</span>
+              <button onClick={() => updateQuantity(product._id, 1)} className="bg-gray-300 px-2 py-1 rounded">
                 <Plus size={16} />
               </button>
             </div>
@@ -121,35 +149,31 @@ function ShoppingSection() {
               {product.colors.map((color) => (
                 <button
                   key={color}
-                  className={`w-6 h-6 rounded-full border-2 ${selectedColors[product._id] === color ? "border-black" : "border-transparent"}`}
+                  className={`w-6 h-6 rounded-full border-2 ${productData[product._id]?.selectedColor === color ? "border-black" : "border-transparent"}`}
                   style={{ backgroundColor: color }}
-                  onClick={() => setSelectedColors({ ...selectedColors, [product._id]: color })}
+                  onClick={() => updateColor(product._id, color)}
                 ></button>
               ))}
             </div>
+
             <button
-  className={`mt-3 px-4 py-2 rounded-lg w-full ${
-    cart.some((item) => item.id === product._id)
-      ? "bg-red-600 hover:bg-red-700 text-white"
-      : "bg-black hover:bg-gray-950 text-white"
-  }`}
-  onClick={() => {
-    const quantity = quantities[product._id] || 1; // Get selected quantity
-    if (cart.some((item) => item.id === product._id)) {
-      removeFromCart(product._id); // Use _id for consistency
-    } else {
-      addToCart({
-        ...product,
-        selectedColor: selectedColors[product._id],
-        quantity: quantity,
-      });
-    }
-  }}
->
-  {cart.some((item) => item.id === product._id) ? "Remove from Cart" : "Add to Cart"}
-</button>
-
-
+              className={`mt-3 px-4 py-2 rounded-lg w-full ${cart.some((item) => item.id === product._id && item.selectedColor === productData[product._id]?.selectedColor)
+                ? "bg-red-600 hover:bg-red-700 text-white"
+                : "bg-black hover:bg-gray-950 text-white"
+              }`}
+              onClick={() => {
+                if (cart.some((item) => item.id === product._id && item.selectedColor === productData[product._id]?.selectedColor)) {
+                  removeFromCart(product._id);
+                } else {
+                  addToCart({ ...product, selectedColor: productData[product._id]?.selectedColor, quantity: productData[product._id]?.quantity });
+                }
+              }}
+            >
+              {cart.some((item) => item.id === product._id && item.selectedColor === productData[product._id]?.selectedColor)
+                ? "Remove from Cart"
+                : "Add to Cart"
+              }
+            </button>
           </motion.div>
         ))}
       </div>
