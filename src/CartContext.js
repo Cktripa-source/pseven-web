@@ -3,17 +3,15 @@ import React, { createContext, useState, useEffect } from 'react';
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
-
-  // Load cart from localStorage after mount
-  useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    setCart(savedCart);
-  }, []);
+  const [cart, setCart] = useState(() => {
+    // Load cart from localStorage only once on mount
+    const savedCart = localStorage.getItem('cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
-  }, [JSON.stringify(cart)]);
+  }, [cart]); // ✅ This ensures the cart is stored correctly on changes
 
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -42,13 +40,16 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  const clearCart = () => setCart([]);
+  const clearCart = () => {
+    setCart([]);
+    localStorage.removeItem('cart'); // ✅ Ensures localStorage is cleared
+  };
 
   const getCartCount = () =>
     cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, getCartCount }}>
+    <CartContext.Provider value={{ cart, setCart, addToCart, removeFromCart, clearCart, getCartCount }}>
       {children}
     </CartContext.Provider>
   );

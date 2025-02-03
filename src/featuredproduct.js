@@ -18,7 +18,32 @@ function ShoppingSection() {
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const productsPerPage = 6;
 
-  const { cart, addToCart, removeFromCart, getCartCount } = useCart();
+  const { cart, setCart, removeFromCart, getCartCount } = useCart(); // Access setCart here
+  
+  const addToCart = (product) => {
+    setCart((prevCart) => {
+      const newCart = [...prevCart];
+
+      // Check if the product already exists in the cart using _id
+      const existingProductIndex = newCart.findIndex(
+        (item) => item._id === product._id // Compare using _id instead of name
+      );
+
+      if (existingProductIndex !== -1) {
+        // If the product already exists, increase its quantity
+        newCart[existingProductIndex].quantity += product.quantity || 1;
+      } else {
+        // Otherwise, add the product with quantity 1
+        newCart.push({ ...product, quantity: product.quantity || 1 });
+      }
+
+      return newCart;
+    });
+  };
+
+  const removeFromCartHandler = (product) => {
+    setCart((prevCart) => prevCart.filter(item => item._id !== product._id));
+  };
 
   // Fetch categories from backend
   useEffect(() => {
@@ -138,11 +163,19 @@ function ShoppingSection() {
                 ))}
               </div>
 
+              {/* Conditional Button: Add or Remove */}
               <button
                 className="mt-3 bg-black text-white px-4 py-2 rounded-lg w-full hover:bg-gray-950"
-                onClick={() => addToCart({ ...product, selectedColor: selectedColors[product._id], quantity: quantities[product._id] || 1 })}
+                onClick={() => {
+                  const isProductInCart = cart.some(item => item._id === product._id);
+                  if (isProductInCart) {
+                    removeFromCartHandler(product);
+                  } else {
+                    addToCart(product);
+                  }
+                }}
               >
-                Add to Cart
+                {cart.some(item => item._id === product._id) ? "Remove from Cart" : "Add to Cart"}
               </button>
             </motion.div>
           ))}

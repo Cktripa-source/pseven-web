@@ -4,7 +4,8 @@ import { useCart } from "./CartContext"; // Import useCart
 
 const ViewCart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const { setCart } = useCart(); // Get setCart from context
+  const { setCart } = useCart();
+ // Get setCart from context
   const navigate = useNavigate();
 
   useEffect(() => {

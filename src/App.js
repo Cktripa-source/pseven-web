@@ -157,7 +157,7 @@ function App() {
 
           {/* New Routes */}
           <Route path="/job-employers" element={<JobEmployers />} />
-          <Route path="/buy-sell" element={<BuySell />} />
+          <Route path="/shopping" element={<BuySell />} />
           <Route path="/services" element={<Services />} />
           <Route path="/others" element={<Others />} />
           <Route path="/about" element={<AboutUs />} />
