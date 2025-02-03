@@ -13,7 +13,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
-  }, [JSON.stringify(cart)]);
+  }, [cart]);
 
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -48,7 +48,7 @@ export const CartProvider = ({ children }) => {
     cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, getCartCount }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, getCartCount, setCart }}>
       {children}
     </CartContext.Provider>
   );
