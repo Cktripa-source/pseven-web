@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "./CartContext"; // Import useCart
+import { useCart } from "./CartContext";
 
 const ViewCart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const { setCart } = useCart(); // Get setCart from context
+  const { setCart } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("useCart setCart:", setCart); // Debugging line
+    if (typeof setCart !== "function") {
+      console.error("setCart is not a function", setCart);
+      return;
+    }
+
     const savedCartItems = localStorage.getItem("cart");
     if (savedCartItems) {
       const parsedCart = JSON.parse(savedCartItems).map(item => ({
@@ -15,17 +21,17 @@ const ViewCart = () => {
         price: typeof item.price === "string" ? parseFloat(item.price.replace("$", "")) : item.price
       }));
       setCartItems(parsedCart);
-      setCart(parsedCart); // Update cart in context
+      setCart(parsedCart);
     } else {
       setCartItems([]);
-      setCart([]); // Reset cart in context if no items
+      setCart([]);
     }
   }, [setCart]);
 
   const updateCart = (updatedCart) => {
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-    setCart(updatedCart); // Update the cart in context
+    setCart(updatedCart);
   };
 
   const handleRemoveItem = (index) => {
@@ -65,29 +71,20 @@ const ViewCart = () => {
   const handleResetCart = () => {
     localStorage.removeItem("cart");
     setCartItems([]);
-    setCart([]); // Reset cart in context
+    setCart([]);
     localStorage.setItem("cartCount", 0);
   };
 
   return (
     <div className="container mx-auto p-4 mt-40">
-      <h2 className="text-center mb-4 font-extrabold text-2xl">
-        Welcome to Your Shopping Cart
-      </h2>
+      <h2 className="text-center mb-4 font-extrabold text-2xl">Welcome to Your Shopping Cart</h2>
       {cartItems.length === 0 ? (
         <div className="text-center mt-10">
           <p className="text-xl text-gray-500">Your cart is empty.</p>
           <Link to="/">
-            <button className="mt-4 px-6 py-2 bg-black text-white rounded hover:bg-gray-700 transition duration-300">
-              Shop Now
-            </button>
+            <button className="mt-4 px-6 py-2 bg-black text-white rounded hover:bg-gray-700 transition duration-300">Shop Now</button>
           </Link>
-          <button
-            onClick={handleResetCart}
-            className="mt-4 px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
-          >
-            Reset Cart
-          </button>
+          <button onClick={handleResetCart} className="mt-4 px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300">Reset Cart</button>
         </div>
       ) : (
         <>
@@ -103,33 +100,13 @@ const ViewCart = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleDecreaseQuantity(index)}
-                    className="px-4 py-2 bg-green-800 text-white rounded hover:bg-green-500 transition duration-300"
-                  >
-                    -
-                  </button>
-                  <button
-                    onClick={() => handleIncreaseQuantity(index)}
-                    className="px-4 py-2 text-white bg-black rounded hover:bg-gray-700 transition duration-300"
-                  >
-                    +
-                  </button>
+                  <button onClick={() => handleDecreaseQuantity(index)} className="px-4 py-2 bg-green-800 text-white rounded hover:bg-green-500 transition duration-300">-</button>
+                  <button onClick={() => handleIncreaseQuantity(index)} className="px-4 py-2 text-white bg-black rounded hover:bg-gray-700 transition duration-300">+</button>
                 </div>
                 <div>
-                  <p className="text-lg font-semibold text-gray-900">
-                    Total: ${(
-                      parseFloat(typeof item.price === "string" ? item.price.replace("$", "") : item.price) *
-                      item.quantity
-                    ).toFixed(2)}
-                  </p>
+                  <p className="text-lg font-semibold text-gray-900">Total: ${(parseFloat(typeof item.price === "string" ? item.price.replace("$", "") : item.price) * item.quantity).toFixed(2)}</p>
                 </div>
-                <button
-                  onClick={() => handleRemoveItem(index)}
-                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
-                >
-                  Remove
-                </button>
+                <button onClick={() => handleRemoveItem(index)} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300">Remove</button>
               </div>
             ))}
           </div>
@@ -137,12 +114,7 @@ const ViewCart = () => {
             <p>Total Price: ${calculateTotalPrice()}</p>
           </div>
           <div className="mt-6 flex justify-center">
-            <button
-              onClick={handleCheckout}
-              className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300"
-            >
-              Proceed to Checkout
-            </button>
+            <button onClick={handleCheckout} className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300">Proceed to Checkout</button>
           </div>
         </>
       )}
