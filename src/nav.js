@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Briefcase, ShoppingBag, Settings, Tag, Phone, Mail, Facebook, Twitter, Instagram, Youtube, LogIn, UserPlus, Menu, X, ShoppingCart } from 'lucide-react';
+import { Home, Briefcase, ShoppingBag, Settings, Tag, Phone, Mail, Facebook, Twitter, Instagram, Youtube, LogIn, UserPlus, Menu, X, ShoppingCart,SearchIcon } from 'lucide-react';
 import Logo from './images/logo.png';
 import { useCart } from './CartContext'; // Import the cart context
 
@@ -89,7 +89,11 @@ function Navbar() {
             P<span className="hover:text-green-400">SEVEN</span>
           </span>
         </Link>
-
+               {/*Searching bar */}
+               <div className='w-2/6 flex space-x-1 bg-slate-800 rounded-full text-sm px-2'>
+                <input type="search"  placeholder="Search by name and categories ........" className='py-2 px-2 rounded-full w-full outline-none border-none bg-slate-800'/>
+                 <button  className='p-1 rounded-full  outline-none border-none bg-slate-800 hover:text-green-500'><SearchIcon/></button>
+               </div>
         {/* Cart Icon */}
         <div className="relative flex items-center space-x-4">
           <Link to="/viewcart" className="relative">

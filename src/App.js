@@ -13,7 +13,7 @@ import Shopping from './shopping';
 
 // Import new page components
 import JobEmployers from './JobEmployers';
-import BuySell from './BuySell';
+import BuySell from './shopping';
 import Others from './Others';
 import AboutUs from './AboutUs';
 import Faq from './Faq';

@@ -87,6 +87,11 @@ function ShoppingSection() {
     currentPage * productsPerPage
   );
 
+  // Fallback image if the product image is not available
+  const handleImageError = (e) => {
+    e.target.src = "https://via.placeholder.com/300"; // Fallback to placeholder image
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 p-6 relative">
       <Navbar cartCount={getCartCount()} />
@@ -136,7 +141,12 @@ function ShoppingSection() {
           {currentProducts.map((product) => (
             <motion.div key={product._id} whileHover={{ scale: 1.05 }}
               className="relative bg-white p-4 rounded-lg shadow-lg transition-all overflow-hidden">
-              <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded-md" />
+              <img 
+                src={product.image} 
+                alt={product.name} 
+                className="w-full h-40 object-cover rounded-md" 
+                onError={handleImageError} // Handle image error
+              />
               <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
               <p className="text-gray-600">{product.description}</p>
               <p className="text-gray-900 font-bold">${product.price}</p>
@@ -145,7 +155,7 @@ function ShoppingSection() {
                 <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: Math.max((prev[product._id] || 0) - 1, 0) }))} className="bg-gray-300 px-2 py-1 rounded">
                   <Minus size={16} />
                 </button>
-                <span className="text-lg">{quantities[product._id] || 0}</span>
+                <span className="text-lg">{quantities[product._id] || 1}</span>
                 <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: (prev[product._id] || 0) + 1 }))} className="bg-gray-300 px-2 py-1 rounded">
                   <Plus size={16} />
                 </button>
