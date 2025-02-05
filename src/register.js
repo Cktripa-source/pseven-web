@@ -40,10 +40,10 @@ function Register() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch("https://pseven-api-test.onrender.com/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ fullName, email, password, agreeToTerms }),
       });
 
       const data = await response.json();
