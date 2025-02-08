@@ -196,8 +196,8 @@ function ShoppingSection() {
                   whileTap={{ scale: 0.95 }}
                   className={`flex-1 py-3 px-6 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 ${
                     cart.some(item => item._id === product._id)
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-green-500 hover:bg-green-600"
+                      ? "bg-green-500 hover:bg-green-600"
+                      : "bg-black hover:bg-black/90"
                   }`}
                   onClick={() => {
                     const isProductInCart = cart.some(item => item._id === product._id);

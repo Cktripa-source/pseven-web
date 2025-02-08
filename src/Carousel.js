@@ -37,7 +37,7 @@ const Carousel = () => {
   }, [services.length]);
 
   return (
-    <div className="relative w-full mx-auto max-w-7xl h-[600px] flex items-center justify-center overflow-hidden md:mt-28 mt-24">
+    <div className="relative w-full mx-auto h-[600px] flex items-center justify-center overflow-hidden md:mt-28 mt-24">
       {/* Navigation Buttons */}
       <button 
         onClick={handlePrev}
