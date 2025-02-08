@@ -72,7 +72,7 @@ function ViewProductDetail() {
       {/* Product Images */}
       <div className="bg-white p-4 rounded-lg shadow-md">
         <img
-          src={`http://localhost:5000/api/${product.image}`}
+          src={`https://pseven-api-test.onrender.com/api/${product.image}`}
           alt={product.name}
           className="w-full object-cover rounded-md"
         />
