@@ -110,7 +110,7 @@ const DashboardOverview = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/dashboard/overview');
+      const res = await fetch('https://pseven-api-test.onrender.com/api/dashboard/overview');
       const dashboardData = await res.json();
       setData({
         totalApplications: dashboardData.totalApplications || 0,

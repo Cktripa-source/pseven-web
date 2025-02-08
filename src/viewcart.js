@@ -93,7 +93,7 @@ const ViewCart = () => {
             {cartItems.map((item, index) => (
               <div key={index} className="bg-white shadow-lg p-4 rounded-lg space-y-4 border">
                 <div className="flex items-center gap-4">
-                  <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                  <img src={`https://pseven-api-test.onrender.com/api/${item.image}`}  alt={item.name} className="w-16 h-16 object-cover rounded" />
                   <div>
                     <h2 className="text-xl font-semibold">{item.name}</h2>
                     <p className="text-black">${item.price}</p>

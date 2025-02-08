@@ -123,23 +123,23 @@ const JobEmployers = () => {
           >
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-gray-950 capitalize mb-2 bg-gray-50 p-2 rounded-full text-center">{job.title}</h3>
-              <p className="text-gray-700 leading-relaxed capitalize font-mono font-semibold">{job.description}</p>
+              <p className="text-gray-700 leading-relaxed capitalize   font-semibold">{job.description}</p>
             </div>
             <div className="text-sm mb-6">
               <p className="flex items-center mb-2">
                 <MapPin className="text-gray-600 mr-2" size={20} />
                 <span className="font-semibold text-gray-600 capitalize">Location:</span>{" "}
-                <span className="text-orange-500 capitalize font-mono font-semibold">{job.location}</span>
+                <span className="text-orange-500 capitalize   font-semibold">{job.location}</span>
               </p>
               <p className="flex items-center mb-2">
                 <DollarSign className="text-gray-600 mr-2" size={20} />
                 <span className="font-semibold text-gray-600 capitalize">Salary:</span>{" "}
-                <span className="text-green-500 capitalize font-mono font-semibold">${job.salary}</span>
+                <span className="text-green-500 capitalize   font-semibold">${job.salary}</span>
               </p>
               <p className="flex items-center mb-2">
                 <PenSquare className="text-gray-600 mr-2" size={20} />
                 <span className="font-semibold text-gray-600 capitalize">Skills:</span>{" "}
-                <span className="text-green-500 capitalize font-mono font-semibold">
+                <span className="text-green-500 capitalize   font-semibold">
                   {(job.skillsRequired || []).join(", ")}
                 </span>
               </p>

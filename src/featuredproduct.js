@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import { Heart, Plus, Minus, X, MenuIcon } from "lucide-react";
 import Navbar from "./nav";
 import { useCart } from "./CartContext";
+import { Link } from "react-router-dom";  // Import Link for navigation
 
 const API_URL = "https://pseven-api-test.onrender.com/api"; // Change this if hosted on Railway
 
 function ShoppingSection() {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(""); // Empty initially
+  const [selectedCategory, setSelectedCategory] = useState(""); // Empty initially to show all products
   const [products, setProducts] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [quantities, setQuantities] = useState({});
@@ -19,7 +20,7 @@ function ShoppingSection() {
   const productsPerPage = 6;
 
   const { cart, setCart, removeFromCart, getCartCount } = useCart(); // Access setCart here
-  
+
   const addToCart = (product) => {
     setCart((prevCart) => {
       const newCart = [...prevCart];
@@ -51,8 +52,7 @@ function ShoppingSection() {
       try {
         const res = await fetch(`${API_URL}/categories`);
         const data = await res.json();
-        setCategories(data);
-        setSelectedCategory(data[0]); // Set first category by default
+        setCategories(["All", ...data]); // Add "All" as the first category
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -63,11 +63,14 @@ function ShoppingSection() {
 
   // Fetch products whenever category or page changes
   useEffect(() => {
-    if (!selectedCategory) return;
     const fetchProducts = async () => {
       setIsLoading(true); // Set loading to true when starting to fetch
       try {
-        const res = await fetch(`${API_URL}/products?category=${selectedCategory}`);
+        const categoryQuery = selectedCategory && selectedCategory !== "All" 
+          ? `?category=${selectedCategory}` 
+          : ""; // Only add category filter if it's not "All"
+          
+        const res = await fetch(`${API_URL}/products${categoryQuery}`);
         const data = await res.json();
         setProducts(data);
       } catch (error) {
@@ -96,7 +99,7 @@ function ShoppingSection() {
     <div className="flex flex-col min-h-screen bg-gray-100 p-6 relative">
       <Navbar cartCount={getCartCount()} />
 
-      <button className="bg-black text-white p-2 rounded-lg mb-4 flex items-center space-x-2"
+      <button className="bg-black text-white p-2 rounded-lg mb-4 flex items-center space-x-2 max-w-7xl m-auto"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
         <MenuIcon size={24} />
         <span>Open Categories</span>
@@ -137,56 +140,51 @@ function ShoppingSection() {
         </div>
       ) : (
         // Product Grid
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl m-auto">
           {currentProducts.map((product) => (
             <motion.div key={product._id} whileHover={{ scale: 1.05 }}
-              className="relative bg-white p-4 rounded-lg shadow-lg transition-all overflow-hidden">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-40 object-cover rounded-md" 
-                onError={handleImageError} // Handle image error
-              />
-              <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
-              <p className="text-gray-600">{product.description}</p>
-              <p className="text-gray-900 font-bold">${product.price}</p>
+              className="relative bg-white p-4 rounded-2xl shadow-md transition-all transform hover:bg-green-100 hover:border-green-500 hover:shadow-xl hover:scale-105 overflow-hidden border border-gray-300">
+              {/* Link to Product Detail Page */}
+              <Link to={`/product/${product._id}`} className="block">
+                <div className="relative w-full h-56 overflow-hidden rounded-xl">
+                  <img 
+                    src={`https://pseven-api-test.onrender.com/api/${product.image}`} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover rounded-xl" 
+                    onError={handleImageError} // Handle image error
+                  />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mt-3">{product.name}</h3>
+                <p className="text-sm text-gray-500 mb-3">{product.description}</p>
+                <p className="text-lg font-semibold text-orange-600">${product.price}</p> {/* Changed Price Color */}
+              </Link>
 
-              <div className="flex items-center mt-3 space-x-2">
-                <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: Math.max((prev[product._id] || 0) - 1, 0) }))} className="bg-gray-300 px-2 py-1 rounded">
-                  <Minus size={16} />
-                </button>
-                <span className="text-lg">{quantities[product._id] || 1}</span>
-                <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: (prev[product._id] || 0) + 1 }))} className="bg-gray-300 px-2 py-1 rounded">
-                  <Plus size={16} />
+              <div className="mt-3 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: Math.max((prev[product._id] || 0) - 1, 0) }))} className="bg-gray-300 p-2 rounded-full">
+                    <Minus size={16} />
+                  </button>
+                  <span className="text-lg">{quantities[product._id] || 1}</span>
+                  <button onClick={() => setQuantities(prev => ({ ...prev, [product._id]: (prev[product._id] || 0) + 1 }))} className="bg-gray-300 p-2 rounded-full">
+                    <Plus size={16} />
+                  </button>
+                </div>
+
+                {/* Conditional Button: Add or Remove */}
+                <button
+                  className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700"
+                  onClick={() => {
+                    const isProductInCart = cart.some(item => item._id === product._id);
+                    if (isProductInCart) {
+                      removeFromCartHandler(product);
+                    } else {
+                      addToCart(product);
+                    }
+                  }}
+                >
+                  {cart.some(item => item._id === product._id) ? "Remove from Cart" : "Add to Cart"}
                 </button>
               </div>
-
-              {/* Colors */}
-              <div className="mt-3 flex space-x-2">
-                {product.colors.map((color) => (
-                  <button
-                    key={color}
-                    className={`w-6 h-6 rounded-full border-2 ${selectedColors[product._id] === color ? "border-black" : "border-transparent"}`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => setSelectedColors({ ...selectedColors, [product._id]: color })}
-                  ></button>
-                ))}
-              </div>
-
-              {/* Conditional Button: Add or Remove */}
-              <button
-                className="mt-3 bg-black text-white px-4 py-2 rounded-lg w-full hover:bg-gray-950"
-                onClick={() => {
-                  const isProductInCart = cart.some(item => item._id === product._id);
-                  if (isProductInCart) {
-                    removeFromCartHandler(product);
-                  } else {
-                    addToCart(product);
-                  }
-                }}
-              >
-                {cart.some(item => item._id === product._id) ? "Remove from Cart" : "Add to Cart"}
-              </button>
             </motion.div>
           ))}
         </div>
@@ -196,13 +194,13 @@ function ShoppingSection() {
       {totalPages > 1 && (
         <div className="flex justify-between mt-6">
           <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className="bg-black text-white px-4 py-2 rounded-lg"
+            className="bg-black text-white px-4 py-2 rounded-full"
             disabled={currentPage === 1}>
             Previous
           </button>
           <span>Page {currentPage} of {totalPages}</span>
           <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className="bg-black text-white px-4 py-2 rounded-lg"
+            className="bg-black text-white px-4 py-2 rounded-full"
             disabled={currentPage === totalPages}>
             Next
           </button>

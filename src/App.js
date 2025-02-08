@@ -10,6 +10,7 @@ import ViewCart from './viewcart';
 import Login from './login';
 import Register from './register';
 import Shopping from './shopping';
+import ViewProductDetail from "./ViewProductDetail"
 
 // Import new page components
 import JobEmployers from './JobEmployers';
@@ -154,6 +155,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/shopping" element={<Shopping />} />
+          <Route path="/product/:id" element={<ViewProductDetail />} />
 
           {/* New Routes */}
           <Route path="/job-employers" element={<JobEmployers />} />
