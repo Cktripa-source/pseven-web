@@ -19,7 +19,7 @@ const ServiceManagement = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await fetch('https://pseven-api-test.onrender.com/api/services');
+      const response = await fetch('https://api.psevenrwanda.com/api/services');
       if (!response.ok) {
         throw new Error('Failed to fetch services');
       }
@@ -64,7 +64,7 @@ const ServiceManagement = () => {
       }
   
       const response = await fetch(
-        `https://pseven-api-test.onrender.com/api/services/${editedService._id}`,
+        `https://api.psevenrwanda.com/api/services/${editedService._id}`,
         {
           method: 'PUT',
           body: formData,
@@ -96,7 +96,7 @@ const ServiceManagement = () => {
       toast.dismiss();
 
       const response = await fetch(
-        `https://pseven-api-test.onrender.com/api/services/${id}`,
+        `https://api.psevenrwanda.com/api/services/${id}`,
         {
           method: 'DELETE',
         }
@@ -128,7 +128,7 @@ const ServiceManagement = () => {
       formData.append('pricePerTime', editedService.pricePerTime);
       if (editedService.image) formData.append('image', editedService.image);
 
-      const response = await fetch('https://pseven-api-test.onrender.com/api/services', {
+      const response = await fetch('https://api.psevenrwanda.com/api/services', {
         method: 'POST',
         body: formData,
       });
@@ -354,7 +354,7 @@ const ServiceManagement = () => {
                           />
                         ) : (
                           <img
-                            src={`https://pseven-api-test.onrender.com/${service.image}`}
+                            src={`https://api.psevenrwanda.com/${service.image}`}
                             alt={service.name}
                             className="w-16 h-16 object-cover"
                           />

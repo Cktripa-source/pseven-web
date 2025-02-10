@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AuthProvider } from './AuthContext';
 import { AlertTriangle } from "lucide-react";
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './CartContext'; // Import CartProvider
@@ -36,11 +37,12 @@ import JobApplications from './admin/jobapplication';
 import AboutAdmin from './admin/About';
 import Logout from './admin/Logout';
 import Signup from './admin/Signup';
-
+import AdminAuth from './admin/admin'
 // Import Loading component
 import Loading from './loading'; 
 
 function App() {
+  
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -111,6 +113,7 @@ function App() {
   };
 
   return (
+    <AuthProvider>
     <CartProvider> {/* Wrap your app with CartProvider */}
       {!isAdminRoute && <Navbar />}
 
@@ -170,6 +173,7 @@ function App() {
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
 
           {/* Admin Routes */}
+          <Route path="/admin/" element={<AdminAuth/>} />
           <Route path="/admin/dashboardoverview" element={<DashboardOverview />} />
           <Route path="/admin/inbox" element={<Inbox />} />
           <Route path="/admin/users" element={<UserManagement />} />
@@ -193,6 +197,7 @@ function App() {
 
       {!isAdminRoute && <Footer />}
     </CartProvider>
+    </AuthProvider>
   );
 }
 

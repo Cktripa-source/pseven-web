@@ -16,7 +16,7 @@ const ProductManagement = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('https://pseven-api-test.onrender.com/api/products');
+      const response = await fetch('https://api.psevenrwanda.com/api/products');
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
@@ -56,7 +56,7 @@ const ProductManagement = () => {
         formData.append('image', editedProduct.image);
       }
 
-      const response = await fetch('https://pseven-api-test.onrender.com/api/products', {
+      const response = await fetch('https://api.psevenrwanda.com/api/products', {
         method: 'POST',
         body: formData,
       });
@@ -94,7 +94,7 @@ const ProductManagement = () => {
       }
 
       const response = await fetch(
-        `https://pseven-api-test.onrender.com/api/products/${editedProduct._id}`,
+        `https://api.psevenrwanda.com/api/products/${editedProduct._id}`,
         {
           method: 'PUT',
           body: formData,
@@ -119,7 +119,7 @@ const ProductManagement = () => {
     try {
       toast.dismiss();
 
-      const response = await fetch(`https://pseven-api-test.onrender.com/api/products/${id}`, {
+      const response = await fetch(`https://api.psevenrwanda.com/api/products/${id}`, {
         method: 'DELETE',
       });
 
@@ -410,7 +410,7 @@ const ProductManagement = () => {
                           </>
                         ) : product.image ? (
                           <img
-                            src={`https://pseven-api-test.onrender.com/api/${product.image}`}
+                            src={`https://api.psevenrwanda.com/api/${product.image}`}
                             alt={product.name}
                             className="w-16 h-16 object-cover rounded"
                           />

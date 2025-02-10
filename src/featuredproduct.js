@@ -5,7 +5,7 @@ import Navbar from "./nav";
 import { useCart } from "./CartContext";
 import { Link } from "react-router-dom";
 
-const API_URL = "https://pseven-api-test.onrender.com/api";
+const API_URL = "https://api.psevenrwanda.com/api";
 
 function ShoppingSection() {
   const [categories, setCategories] = useState([]);
@@ -13,8 +13,6 @@ function ShoppingSection() {
   const [products, setProducts] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [quantities, setQuantities] = useState({});
-  const [favorites, setFavorites] = useState({});
-  const [selectedColors, setSelectedColors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const productsPerPage = 6;
@@ -84,14 +82,13 @@ function ShoppingSection() {
   );
 
   const handleImageError = (e) => {
-    e.target.src = "https://via.placeholder.com/300";
+    e.target.src = "";
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 relative">
       <Navbar cartCount={getCartCount()} />
 
-      {/* Enhanced Category Button */}
       <button 
         className="bg-black text-white p-4 rounded-xl mb-6 flex items-center space-x-3 max-w-7xl mx-auto hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -100,7 +97,6 @@ function ShoppingSection() {
         <span className="text-lg font-semibold">Browse Categories</span>
       </button>
 
-      {/* Enhanced Sidebar */}
       {isSidebarOpen && (
         <motion.div
           initial={{ opacity: 0, x: -100 }}
@@ -140,13 +136,11 @@ function ShoppingSection() {
         </motion.div>
       )}
 
-      {/* Enhanced Loading Indicator */}
       {isLoading ? (
         <div className="flex justify-center items-center py-16">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600"></div>
         </div>
       ) : (
-        // Enhanced Product Grid
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {currentProducts.map((product) => (
             <motion.div 
@@ -160,7 +154,7 @@ function ShoppingSection() {
               <Link to={`/product/${product._id}`} className="block">
                 <div className="relative w-full h-64 overflow-hidden rounded-2xl mb-4">
                   <img 
-                    src={`https://pseven-api-test.onrender.com/api/${product.image}`} 
+                    src={`https://api.psevenrwanda.com/api/${product.image}`} 
                     alt={product.name} 
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
                     onError={handleImageError}
@@ -216,7 +210,6 @@ function ShoppingSection() {
         </div>
       )}
 
-      {/* Enhanced Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-6 mt-12 max-w-xl mx-auto">
           <motion.button 

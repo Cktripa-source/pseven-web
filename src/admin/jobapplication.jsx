@@ -18,7 +18,7 @@ const JobApplications = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await fetch('https://pseven-api-test.onrender.com/api/applications');
+      const response = await fetch('https://api.psevenrwanda.com/api/applications');
       if (!response.ok) {
         throw new Error('Failed to fetch applications');
       }
@@ -78,7 +78,7 @@ const JobApplications = () => {
       toast.dismiss();
 
       const response = await fetch(
-        `https://pseven-api-test.onrender.com/api/applications/${id}`,
+        `https://api.psevenrwanda.com/api/applications/${id}`,
         {
           method: 'DELETE',
         }
@@ -99,7 +99,7 @@ const JobApplications = () => {
       toast.dismiss();
 
       const response = await fetch(
-        `https://pseven-api-test.onrender.com/api/applications/${applicationId}/status`,
+        `https://api.psevenrwanda.com/api/applications/${applicationId}/status`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },

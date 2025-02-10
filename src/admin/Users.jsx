@@ -22,7 +22,7 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('https://pseven-api-test.onrender.com/api/auth');
+      const response = await axios.get('https://api.psevenrwanda.com/api/auth');
       setUsers(response.data);
     } catch (err) {
       setError('Failed to fetch users.');
@@ -52,7 +52,7 @@ const UserManagement = () => {
       toast.dismiss();
 
       const response = await axios.put(
-        `https://pseven-api-test.onrender.com/api/auth/burn/${editedUser._id}`,
+        `https://api.psevenrwanda.com/api/auth/burn/${editedUser._id}`,
         {
           status: editedUser.burned ? 'Burned' : 'Unburned',
         }
@@ -81,7 +81,7 @@ const UserManagement = () => {
   const handleDeleteUser = async (id) => {
     try {
       toast.dismiss();
-      const response = await axios.delete(`https://pseven-api-test.onrender.com/api/auth/${id}`);
+      const response = await axios.delete(`https://api.psevenrwanda.com/api/auth/${id}`);
       if (!response.data) throw new Error('Failed to delete user');
       setUsers(users.filter((user) => user._id !== id));
       toast.success('User deleted successfully!');
@@ -94,10 +94,10 @@ const UserManagement = () => {
   // Filter users based on search query
   const filteredUsers = users.filter(
     (user) =>
-      user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      (user.fullName && user.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()))
   );
-
+  
   // Pagination logic
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const currentUsers = filteredUsers.slice(

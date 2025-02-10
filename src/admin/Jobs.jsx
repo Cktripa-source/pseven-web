@@ -19,7 +19,7 @@ const JobManagement = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('https://pseven-api-test.onrender.com/api/jobs');
+      const response = await fetch('https://api.psevenrwanda.com/api/jobs');
       if (!response.ok) {
         throw new Error('Failed to fetch jobs');
       }
@@ -46,7 +46,7 @@ const JobManagement = () => {
       toast.dismiss();
 
       const response = await fetch(
-        `https://pseven-api-test.onrender.com/api/jobs/${editedJob._id}`,
+        `https://api.psevenrwanda.com/api/jobs/${editedJob._id}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -74,7 +74,7 @@ const JobManagement = () => {
       toast.dismiss();
 
       const response = await fetch(
-        `https://pseven-api-test.onrender.com/api/jobs/${id}`,
+        `https://api.psevenrwanda.com/api/jobs/${id}`,
         {
           method: 'DELETE',
         }
@@ -108,7 +108,7 @@ const JobManagement = () => {
     try {
       toast.dismiss();
 
-      const response = await fetch('https://pseven-api-test.onrender.com/api/jobs', {
+      const response = await fetch('https://api.psevenrwanda.com/api/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editedJob),

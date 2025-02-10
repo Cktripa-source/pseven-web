@@ -10,7 +10,7 @@ const Carousel = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('https://pseven-api-test.onrender.com/api/services');
+        const response = await axios.get('https://api.psevenrwanda.com/api/services');
         setServices(response.data);
       } catch (error) {
         console.error('Error fetching services:', error);
@@ -65,7 +65,7 @@ const Carousel = () => {
               className="absolute w-full h-full flex items-center justify-center p-4"
             >
               <img 
-                src={`https://pseven-api-test.onrender.com/api/${service.image}`} 
+                src={`https://api.psevenrwanda.com/api/${service.image}`} 
                 className="w-full h-full object-cover rounded-2xl shadow-2xl" 
                 alt={service.name} 
               />
