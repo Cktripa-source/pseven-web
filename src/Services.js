@@ -13,7 +13,7 @@ const Services = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get("https://pseven-api-test.onrender.com/api/services");
+        const response = await axios.get("https://api.psevenrwanda.com/api/services");
         setServices(response.data);
       } catch (err) {
         setError("Error fetching services");
@@ -71,7 +71,7 @@ const Services = () => {
                 {/* Image Section */}
                 <div className="relative w-full md:w-1/2 h-64 md:h-auto overflow-hidden">
                   <img
-                    src={`https://pseven-api-test.onrender.com/${service.image}`}
+                    src={`https://api.psevenrwanda.com/${service.image}`}
                     alt={service.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
@@ -120,7 +120,7 @@ const Services = () => {
                     onClick={() => setImageModalOpen(true)}
                   >
                     <img
-                      src={`https://pseven-api-test.onrender.com/${selectedService.image}`}
+                      src={`https://api.psevenrwanda.com/${selectedService.image}`}
                       alt={selectedService.name}
                       className="w-full h-[300px] md:h-[400px] object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -160,7 +160,7 @@ const Services = () => {
           <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex justify-center items-center z-60 p-4">
             <div className="relative max-w-5xl w-full">
               <img
-                src={`https://pseven-api-test.onrender.com/${selectedService.image}`}
+                src={`https://api.psevenrwanda.com/${selectedService.image}`}
                 alt={selectedService.name}
                 className="w-full h-auto max-h-[85vh] object-contain rounded-xl"
               />

@@ -65,7 +65,7 @@ const Carousel = () => {
               className="absolute w-full h-full flex items-center justify-center p-4"
             >
               <img 
-                src={`https://api.psevenrwanda.com/api/${service.image}`} 
+               src={`https://api.psevenrwanda.com/${service.image}`}
                 className="w-full h-full object-cover rounded-2xl shadow-2xl" 
                 alt={service.name} 
               />
