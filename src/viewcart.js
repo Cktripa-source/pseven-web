@@ -15,7 +15,7 @@ const CartItem = ({ item, index, onRemove, onIncrease, onDecrease }) => (
         </div>
         <div className="flex-1">
           <h3 className="font-medium text-lg">{item.name}</h3>
-          <p className="text-sm text-gray-600">${item.price}</p>
+          <p className="text-sm text-gray-600">FRW {item.price}</p>
         </div>
       </div>
       
@@ -47,7 +47,7 @@ const CartItem = ({ item, index, onRemove, onIncrease, onDecrease }) => (
       
       <div className="pt-2 border-t">
         <p className="text-right font-medium">
-          ${(parseFloat(typeof item.price === "string" ? item.price.replace("$", "") : item.price) * item.quantity).toFixed(2)}
+          FRW {(parseFloat(typeof item.price === "string" ? item.price.replace("FRW", "") : item.price) * item.quantity).toFixed(2)}
         </p>
       </div>
     </div>
@@ -89,7 +89,7 @@ const ViewCart = () => {
     if (savedCartItems) {
       const parsedCart = JSON.parse(savedCartItems).map(item => ({
         ...item,
-        price: typeof item.price === "string" ? parseFloat(item.price.replace("$", "")) : item.price
+        price: typeof item.price === "string" ? parseFloat(item.price.replace("FRW", "")) : item.price
       }));
       setCartItems(parsedCart);
       setCart(parsedCart);
@@ -125,7 +125,7 @@ const ViewCart = () => {
 
   const calculateTotalPrice = () => {
     return cartItems.reduce((total, item) => {
-      const itemPrice = parseFloat(typeof item.price === "string" ? item.price.replace("$", "") : item.price) || 0;
+      const itemPrice = parseFloat(typeof item.price === "string" ? item.price.replace("FRW", "") : item.price) || 0;
       return total + itemPrice * item.quantity;
     }, 0).toFixed(2);
   };
@@ -172,7 +172,7 @@ const ViewCart = () => {
           <div className="border-t pt-4">
             <div className="flex justify-between items-center mb-4">
               <span className="text-lg">Total</span>
-              <span className="text-2xl font-bold">${calculateTotalPrice()}</span>
+              <span className="text-2xl font-bold">FRW {calculateTotalPrice()}</span>
             </div>
             
             <button
