@@ -1,138 +1,159 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { FaBars, FaTachometerAlt, FaInbox, FaUsers, FaProductHunt, FaSignInAlt, FaUserPlus, FaQuestionCircle, FaHome, FaCog, FaBox } from 'react-icons/fa';
-import Logo from "../images/logo.png";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  Inbox,
+  Users,
+  Package,
+  Briefcase,
+  Settings,
+  Menu,
+  ChevronDown,
+  DollarSign,
+  LogOut,
+  Wrench,
+  X
+} from 'lucide-react';
 
-const Dashboard = () => {
-  // State to toggle profile dropdown visibility
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+const DashboardLayout = ({ children }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
-  // Toggle function to open/close the dropdown
-  const toggleDropdown = () => {
-    setIsDropdownOpen(prevState => !prevState);
-  };
+  const navigation = [
+    { name: 'Dashboard', href: '../admin/dashboardoverview', icon: LayoutDashboard },
+    { name: 'View Inbox', href: '../admin/inbox', icon: Inbox, badge: '3' },
+    { name: 'Manage Users', href: '../admin/users', icon: Users },
+    { name: 'Manage Products', href: '../admin/productmanagement', icon: Package },
+    { name: 'Jobs & Employers', href: '../admin/jobs', icon: Briefcase },
+    { name: 'Manage Services', href: '../admin/services', icon: Wrench },
+    { name: 'Settings', href: '../admin/settings', icon: Settings },
+  ];
+
+  const NavContent = () => (
+    <div className="space-y-4">
+      {navigation.map((item) => (
+        <Link
+          key={item.name}
+          to={item.href}
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-200 transition-all hover:text-white hover:bg-gray-700"
+        >
+          <item.icon className="h-4 w-4" />
+          <span>{item.name}</span>
+          {item.badge && (
+            <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 text-xs">
+              {item.badge}
+            </span>
+          )}
+        </Link>
+      ))}
+    </div>
+  );
 
   return (
-    <>
-      <nav className="fixed top-0 z-50 w-full  bg-gray-800  border-gray-700">
-        <div className="px-3 py-3 lg:px-5 lg:pl-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center justify-start rtl:justify-end">
-              <button 
-                data-drawer-target="logo-sidebar" 
-                data-drawer-toggle="logo-sidebar" 
-                aria-controls="logo-sidebar" 
-                type="button" 
-                className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden focus:outline-none focus:ring-2  hover:bg-gray-700  focus:ring-gray-600"
-              >
-                <span className="sr-only">Open sidebar</span>
-                <FaBars className="w-6 h-6" />
-              </button>
-              <Link to="../admin/" className="flex ms-2 md:me-24">
-                <img src={Logo} className="h-10 me-3 rounded-full" alt="Pseven" />
-                <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap  text-white"> 
-                  <span className="font-bold text-xl transition duration-300 hover:text-white">
-                    P<span className="text-white">SEVEN</span>
-                  </span>
-                </span>
-              </Link>
-            </div>
-            <div className="flex items-center">
-              <div className="flex items-center ms-3">
-                <div>
-                  <button 
-                    type="button" 
-                    className="flex text-sm bg-gray-800 rounded-full focus:ring-4   focus:ring-gray-600"
-                    aria-expanded={isDropdownOpen ? "true" : "false"}
-                    onClick={toggleDropdown} // Toggle dropdown on click
-                  >
-                    <span className="sr-only">Open user menu</span>
-                    <img className="w-8 h-8 rounded-full" src={Logo} alt="user photo" />
-                  </button>
+    <div className="min-h-screen">
+      {/* Top Navigation Bar */}
+      <header className="fixed top-0 z-50 w-full border-b border-gray-700 bg-gray-800">
+        <div className="flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden p-2 text-gray-400 hover:text-white"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+
+            <Link to="../admin/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="Logo" className="h-8 w-8 rounded-full" />
+              <span className="text-lg font-semibold text-white hidden md:inline-block">
+                P<span>SEVEN</span>
+              </span>
+            </Link>
+          </div>
+
+          {/* Profile Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              className="flex items-center gap-2 rounded-full focus:outline-none"
+            >
+              <img src="/logo.png" alt="Profile" className="h-8 w-8 rounded-full" />
+              <ChevronDown className="h-4 w-4 text-gray-400" />
+            </button>
+
+            {/* Profile Dropdown Menu */}
+            {isProfileDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-56 rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                <div className="px-4 py-2">
+                  <p className="text-sm font-medium text-white">Pseven Rwanda</p>
+                  <p className="text-xs text-gray-400">psevenrwanda@gmail.com</p>
                 </div>
-                {isDropdownOpen && (
-                  <div className="absolute right-0 top-12 z-50 w-48 text-base list-none divide-y rounded-lg shadow  bg-gray-700  divide-gray-600" id="dropdown-user">
-                    <div className="px-4 py-3">
-                      <p className="text-sm  text-white mb-4 font-semibold">Pseven Rwanda</p>
-                      <p className="text-sm font-medium truncate  text-gray-300">psevenrwanda@gmail.com</p>
-                    </div>
-                    <ul className="py-2">
-                      
-                      <li>
-                        <Link to="../admin/earnings" className="flex items-center px-4 py-2 text-sm  text-gray-300  hover:bg-gray-600  hover:text-white">
-                          <FaBox className="w-5 h-5 mr-2" />
-                          Earnings
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="../admin/sign-out" className="flex items-center px-4 py-2 text-sm   text-gray-300  hover:bg-gray-600  hover:text-white">
-                          <FaSignInAlt className="w-5 h-5 mr-2" />
-                          Sign Out
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                )}
+                <div className="border-t border-gray-700" />
+                <Link
+                  to="../admin/earnings"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-gray-700"
+                >
+                  <DollarSign className="h-4 w-4" />
+                  Earnings
+                </Link>
+                <Link
+                  to="../admin/sign-out"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-gray-700"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Link>
               </div>
-            </div>
+            )}
           </div>
         </div>
-      </nav>
+      </header>
 
-      <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full border-r  sm:translate-x-0  bg-gray-800  border-gray-700" aria-label="Sidebar">
-        <div className="h-full px-3 pb-4 overflow-y-auto  bg-gray-800">
-          <ul className="space-y-6 font-medium">
-            <li>
-              <Link to="../admin/dashboardoverview" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaTachometerAlt className="w-5 h-5  transition duration-75  text-gray-400   group-hover:text-white" />
-                <span className="ms-3">Dashboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/inbox" className="flex items-center p-2  rounded-lg  text-white  hover:bg-gray-700 group">
-                <FaInbox className="w-5 h-5transition duration-75  text-gray-400   group-hover:text-white" />
-                <span className="ms-3">View Inbox</span>
-                <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium   rounded-full  bg-gray-700  text-gray-300">3</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/users" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaUsers className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">Manage Users</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/productmanagement"className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaProductHunt className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">Manage Products</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/jobs"className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaSignInAlt className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">Jobs & Employers</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/services" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaBox className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">Manage Services</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="../admin/settings" className="flex items-center p-2  rounded-lg  text-white   hover:bg-gray-700 group">
-                <FaCog className="w-5 h-5 transition duration-75  text-gray-400  group-hover:text-white" />
-                <span className="ms-3">Settings</span>
-              </Link>
-            </li>
-    
-           
-          </ul>
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          
+          {/* Sidebar */}
+          <div className="fixed inset-y-0 left-0 w-64 bg-gray-800 p-4">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-2">
+                <img src="/logo.png" alt="Logo" className="h-8 w-8 rounded-full" />
+                <span className="text-lg font-semibold text-white">
+                  P<span>SEVEN</span>
+                </span>
+              </div>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <NavContent />
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Sidebar */}
+      <aside className="fixed left-0 top-16 hidden h-[calc(100vh-4rem)] w-64 border-r border-gray-700 bg-gray-800 lg:block">
+        <div className="flex h-full flex-col gap-4 p-4">
+          <NavContent />
         </div>
       </aside>
 
-    </>
+      {/* Main Content */}
+      <main className="lg:pl-64 pt-16">
+        <div className="h-full">
+          {children}
+        </div>
+      </main>
+    </div>
   );
 };
 
-export default Dashboard;
+export default DashboardLayout;

@@ -1,15 +1,29 @@
-import Dashboard from './dashboard';
-import { useState, useEffect } from 'react';
-import { FaUserAlt, FaBriefcase, FaClipboardList, FaCogs, FaBox } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import { Pie, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, BarElement } from 'chart.js';
-import { Link } from 'react-router-dom';
-
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, BarElement);
+import React from 'react';
+import { BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar } from 'recharts';
+import { UserIcon, BriefcaseIcon, ClipboardCheckIcon, CogIcon, PackageIcon } from 'lucide-react';
+const DashboardCard = ({ title, icon, content, stats, href }) => (
+  <>
+  <div className="bg-gray-900 rounded-lg shadow-lg hover:shadow-lg transition-shadow p-6">
+    <div className="flex items-center justify-between pb-2">
+      <h3 className="text-lg font-medium text-white">{title}</h3>
+      {icon}
+    </div>
+    <div className="text-2xl font-bold mb-4 text-green-50">{stats}</div>
+    <div className="h-[200px] w-full flex items-center justify-center">
+      {content}
+    </div>
+    <a 
+      href={href}
+      className="mt-4 inline-block text-sm text-green-600 hover:text-green-400 font-semibold"
+    >
+      View Details →
+    </a>
+  </div>
+  </>
+);
 
 const DashboardOverview = () => {
-  const [data, setData] = useState({
+  const [data, setData] = React.useState({
     totalApplications: 0,
     applicationsByStatus: { Pending: 0, Reviewed: 0, Accepted: 5, Rejected: 0 },
     totalJobs: 0,
@@ -22,140 +36,164 @@ const DashboardOverview = () => {
     burnedUsers: 0,
   });
 
-  const applicationsChartData = {
-    labels: ['Pending', 'Reviewed', 'Accepted', 'Rejected'],
-    datasets: [
-      {
-        label: 'Application Status',
-        data: [
-          data.applicationsByStatus.Pending,
-          data.applicationsByStatus.Reviewed,
-          data.applicationsByStatus.Accepted,
-          data.applicationsByStatus.Rejected,
-        ],
-        backgroundColor: ['#ffcc00', '#ff8800', '#33cc33', '#ff4444'],
-      },
-    ],
-  };
+  React.useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch('https://api.psevenrwanda.com/api/dashboard/overview');
+        const dashboardData = await response.json();
+        setData({
+          totalApplications: dashboardData.totalApplications ?? 0,
+          applicationsByStatus: dashboardData.applicationsByStatus ?? { 
+            Pending: 0, Reviewed: 0, Accepted: 0, Rejected: 0 
+          },
+          totalJobs: dashboardData.totalJobs ?? 0,
+          jobsByStatus: dashboardData.jobsByStatus ?? { Open: 0, Closed: 0 },
+          totalProducts: dashboardData.totalProducts ?? 0,
+          lowStockProducts: dashboardData.lowStockProducts ?? 0,
+          totalServiceRequests: dashboardData.totalServiceRequests ?? 0,
+          serviceRequestsByStatus: dashboardData.serviceRequestsByStatus ?? { 
+            Pending: 0, InProgress: 0, Completed: 0 
+          },
+          totalUsers: dashboardData.totalUsers ?? 0,
+          burnedUsers: dashboardData.burnedUsers ?? 0,
+        });
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      }
+    };
 
-  const jobsChartData = {
-    labels: ['Open', 'Closed'],
-    datasets: [
-      {
-        label: 'Job Status',
-        data: [data.jobsByStatus.Open, data.jobsByStatus.Closed],
-        backgroundColor: ['#33cc33', '#ff4444'],
-      },
-    ],
-  };
-
-  const serviceRequestsChartData = {
-    labels: ['Pending', 'In Progress', 'Completed'],
-    datasets: [
-      {
-        label: 'Service Request Status',
-        data: [
-          data.serviceRequestsByStatus.Pending,
-          data.serviceRequestsByStatus.InProgress,
-          data.serviceRequestsByStatus.Completed,
-        ],
-        backgroundColor: ['#ffcc00', '#ff8800', '#33cc33'],
-      },
-    ],
-  };
-
-  const productChartData = {
-    labels: ['Products'],
-    datasets: [
-      {
-        label: 'Total Products',
-        data: [data.totalProducts],
-        backgroundColor: '#33cc33',
-      },
-      {
-        label: 'Low Stock Products',
-        data: [data.lowStockProducts],
-        backgroundColor: '#ff4444',
-      },
-    ],
-  };
-
-  const userChartData = {
-    labels: ['Users'],
-    datasets: [
-      {
-        label: 'Burned Users',
-        data: [data.burnedUsers],
-        backgroundColor: '#ff4444',
-      },
-      {
-        label: 'Active Users',
-        data: [data.totalUsers - data.burnedUsers],
-        backgroundColor: '#33cc33',
-      },
-    ],
-  };
-
-  const cards = [
-    { title: 'Total Applications', icon: <FaClipboardList className="text-4xl text-green-500" />, content: 'Applications', data: data.totalApplications, chart: <Pie data={applicationsChartData} />, link: "../admin/jobapplication" },
-    { title: 'Total Jobs', icon: <FaBriefcase className="text-4xl text-green-500" />, content: 'Jobs', data: data.totalJobs, chart: <Pie data={jobsChartData} />, link: "../admin/jobs" },
-    { title: 'Total Products', icon: <FaBox className="text-4xl text-orange-500" />, content: 'Products', data: data.totalProducts, chart: <Bar data={productChartData} />, link: "../admin/productmanagement" },
-    { title: 'Service Requests', icon: <FaCogs className="text-4xl text-yellow-500" />, content: 'Requests', data: data.totalServiceRequests, chart: <Pie data={serviceRequestsChartData} />, link: "../admin/services" },
-    { title: 'Users Overview', icon: <FaUserAlt className="text-4xl text-purple-500" />, content: 'Users', data: data.totalUsers, chart: <Bar data={userChartData} />, link: "../admin/users" },
-  ];
-
-  useEffect(() => {
     fetchDashboardData();
   }, []);
 
-  const fetchDashboardData = async () => {
-    try {
-      const res = await fetch('https://api.psevenrwanda.com/api/dashboard/overview');
-      const dashboardData = await res.json();
-      setData({
-        totalApplications: dashboardData.totalApplications || 0,
-        applicationsByStatus: dashboardData.applicationsByStatus || { Pending: 0, Reviewed: 0, Accepted: 0, Rejected: 0 },
-        totalJobs: dashboardData.totalJobs || 0,
-        jobsByStatus: dashboardData.jobsByStatus || { Open: 0, Closed: 0 },
-        totalProducts: dashboardData.totalProducts || 0,
-        lowStockProducts: dashboardData.lowStockProducts || 0,
-        totalServiceRequests: dashboardData.totalServiceRequests || 0,
-        serviceRequestsByStatus: dashboardData.serviceRequestsByStatus || { Pending: 0, InProgress: 0, Completed: 0 },
-        totalUsers: dashboardData.totalUsers || 0,
-        burnedUsers: dashboardData.burnedUsers || 0,
-      });
-    } catch (error) {
-      toast.error('Error fetching dashboard data');
-      console.error('Error fetching dashboard data:', error);
+  const cards = [
+    {
+      title: 'Applications Overview',
+      icon: <ClipboardCheckIcon className="h-8 w-8 text-green-500" />,
+      content: (
+        <BarChart width={300} height={200} data={[
+          { name: 'Applications', 
+            Pending: data.applicationsByStatus.Pending,
+            Reviewed: data.applicationsByStatus.Reviewed,
+            Accepted: data.applicationsByStatus.Accepted,
+            Rejected: data.applicationsByStatus.Rejected 
+          }
+        ]}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="Pending" fill="#FFB020" />
+          <Bar dataKey="Reviewed" fill="#14B8A6" />
+          <Bar dataKey="Accepted" fill="#10B981" />
+          <Bar dataKey="Rejected" fill="#F43F5E" />
+        </BarChart>
+      ),
+      stats: `${data.totalApplications} Total`,
+      href: "../admin/jobapplication"
+    },
+    {
+      title: 'Jobs Status',
+      icon: <BriefcaseIcon className="h-8 w-8 text-blue-500" />,
+      content: (
+        <BarChart width={300} height={200} data={[
+          { name: 'Jobs',
+            Open: data.jobsByStatus.Open,
+            Closed: data.jobsByStatus.Closed
+          }
+        ]}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="Open" fill="#10B981" />
+          <Bar dataKey="Closed" fill="#F43F5E" />
+        </BarChart>
+      ),
+      stats: `${data.totalJobs} Total`,
+      href: "../admin/jobs"
+    },
+    {
+      title: 'Products Overview',
+      icon: <PackageIcon className="h-8 w-8 text-orange-500" />,
+      content: (
+        <BarChart width={300} height={200} data={[
+          { name: 'Products',
+            Total: data.totalProducts,
+            'Low Stock': data.lowStockProducts
+          }
+        ]}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="Total" fill="#10B981" />
+          <Bar dataKey="Low Stock" fill="#F43F5E" />
+        </BarChart>
+      ),
+      stats: `${data.totalProducts} Total`,
+      href: "../admin/productmanagement"
+    },
+    {
+      title: 'Service Requests',
+      icon: <CogIcon className="h-8 w-8 text-purple-500" />,
+      content: (
+        <BarChart width={300} height={200} data={[
+          { name: 'Requests',
+            Pending: data.serviceRequestsByStatus.Pending,
+            'In Progress': data.serviceRequestsByStatus.InProgress,
+            Completed: data.serviceRequestsByStatus.Completed
+          }
+        ]}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="Pending" fill="#FFB020" />
+          <Bar dataKey="In Progress" fill="#14B8A6" />
+          <Bar dataKey="Completed" fill="#10B981" />
+        </BarChart>
+      ),
+      stats: `${data.totalServiceRequests} Total`,
+      href: "../admin/services"
+    },
+    {
+      title: 'Users Overview',
+      icon: <UserIcon className="h-8 w-8 text-yellow-500" />,
+      content: (
+        <BarChart width={300} height={200} data={[
+          { name: 'Users',
+            Active: data.totalUsers - data.burnedUsers,
+            Burned: data.burnedUsers
+          }
+        ]}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="Active" fill="#10B981" />
+          <Bar dataKey="Burned" fill="#F43F5E" />
+        </BarChart>
+      ),
+      stats: `${data.totalUsers} Total`,
+      href: "../admin/users"
     }
-  };
+  ];
 
   return (
-    <>
-      <Dashboard />
-      <div className="p-20 min-h-screen sm:ml-64 bg-gray-900">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              className={`p-6 rounded-lg shadow-md card-animation ${index === cards.length - 1 ? 'col-span-2' : ''} bg-gray-800`}
-            >
-              <div className="flex items-center space-x-4">
-                {card.icon}
-                <div>
-                  <h3 className="text-xl font-semibold text-white">{card.title}</h3>
-                  <p className="text-white">{card.data} {card.content}</p>
-                  <div className="w-64 h-48 mt-4">
-                    {card.chart}
-                  </div>
-                  <Link to={card.link} className="text-green-400 mt-4 inline-block">View Details</Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="p-8 space-y-8 bg-gray-900 min-h-screen">
+     <div className="bg-gray-800 p-4 border-2 border-dashed rounded-lg shadow-md border-green-200 w-full">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3">
+        {cards.map((card, index) => (
+          <DashboardCard key={index} {...card} />
+        ))}
       </div>
-    </>
+    </div>
+    </div>
   );
 };
 

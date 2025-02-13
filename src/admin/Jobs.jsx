@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrashAlt, FaSave, FaSearch, FaPlus } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Dashboard from './dashboard';
+
 
 const JobManagement = () => {
   const [jobs, setJobs] = useState([]);
@@ -155,10 +155,8 @@ const JobManagement = () => {
 
   return (
     <>
-    <Dashboard/>
-    <div className="p-20 min-h-screen sm:ml-64 bg-gray-900">
-
-      <div className="bg-gray-800 p-4 border-2 border-dashed rounded-lg shadow-md border-gray-700 w-full">
+   <div className="p-8 space-y-8 bg-gray-900 min-h-screen">
+   <div className="bg-gray-800 p-4 border-2 border-dashed rounded-lg shadow-md border-green-200 w-full">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center space-x-2 w-2/3">
             <input
