@@ -79,14 +79,14 @@ function App() {
     return (
         <AuthProvider>
             <CartProvider>
-                {!isAdminRoute && <Navbar />&&<Carousel />}
+                {!isAdminRoute && <Navbar />}
 
                 {/* Main Content */}
                 {!isOffline ? (
                     <>
                         <Routes>
                             {/* Public Routes */}
-                            <Route path="/" element={<Shopping />} />
+                            <Route path="/" element={<><Carousel /><Shopping /></>} />
                             <Route path="/viewcart" element={<ViewCart />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
