@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar } from 'recharts';
 import { UserIcon, BriefcaseIcon, ClipboardCheckIcon, CogIcon, PackageIcon } from 'lucide-react';
 const DashboardCard = ({ title, icon, content, stats, href }) => (
@@ -12,12 +13,12 @@ const DashboardCard = ({ title, icon, content, stats, href }) => (
     <div className="h-[200px] w-full flex items-center justify-center">
       {content}
     </div>
-    <a 
-      href={href}
+    <Link 
+      to={href}
       className="mt-4 inline-block text-sm text-green-600 hover:text-green-400 font-semibold"
     >
       View Details →
-    </a>
+    </Link>
   </div>
   </>
 );
@@ -90,7 +91,7 @@ const DashboardOverview = () => {
         </BarChart>
       ),
       stats: `${data.totalApplications} Total`,
-      href: "../admin/jobapplication"
+      href: "./jobapplication"
     },
     {
       title: 'Jobs Status',
@@ -112,7 +113,7 @@ const DashboardOverview = () => {
         </BarChart>
       ),
       stats: `${data.totalJobs} Total`,
-      href: "../admin/jobs"
+      href: "./jobs"
     },
     {
       title: 'Products Overview',
@@ -134,7 +135,7 @@ const DashboardOverview = () => {
         </BarChart>
       ),
       stats: `${data.totalProducts} Total`,
-      href: "../admin/productmanagement"
+      href: "./productmanagement"
     },
     {
       title: 'Service Requests',
@@ -158,7 +159,7 @@ const DashboardOverview = () => {
         </BarChart>
       ),
       stats: `${data.totalServiceRequests} Total`,
-      href: "../admin/services"
+      href: "./services"
     },
     {
       title: 'Users Overview',
@@ -180,7 +181,7 @@ const DashboardOverview = () => {
         </BarChart>
       ),
       stats: `${data.totalUsers} Total`,
-      href: "../admin/users"
+      href: "./users"
     }
   ];
 

@@ -111,28 +111,30 @@ function ShoppingSection() {
           >
             <X size={24} />
           </button>
-          <h2 className="text-4xl font-bold mb-8 text-gray-800">Categories</h2>
-          <div className="flex flex-col space-y-4 w-64">
-            {categories.map((category) => (
-              <motion.button
-                key={category}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`text-lg p-4 rounded-xl ${
-                  selectedCategory === category 
-                    ? "bg-green-600 shadow-lg shadow-green-200" 
-                    : "bg-black hover:bg-gray-800"
-                } text-white w-full text-center font-semibold transition-all duration-300`}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  setCurrentPage(1);
-                  setIsSidebarOpen(false);
-                }}
-              >
-                {category}
-              </motion.button>
-            ))}
-          </div>
+          <h2 className="text-4xl font-bold mb-8 text-gray-900 text-center">Categories</h2>
+<div className="h-screen overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full px-4">
+  {categories.map((category) => (
+    <motion.button
+      key={category}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={`p-4 rounded-2xl text-lg font-semibold transition-all duration-300 shadow-md 
+        ${
+          selectedCategory === category 
+            ? "bg-green-600 text-white shadow-lg shadow-green-200" 
+            : "bg-gray-900 text-gray-100 hover:bg-gray-700"
+        }`}
+      onClick={() => {
+        setSelectedCategory(category);
+        setCurrentPage(1);
+        setIsSidebarOpen(false);
+      }}
+    >
+      {category}
+    </motion.button>
+  ))}
+</div>
+
         </motion.div>
       )}
 
@@ -161,9 +163,9 @@ function ShoppingSection() {
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">{product.name}</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">{product.name}</h3>
                 <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
-                <p className="text-2xl font-bold text-orange-600 mb-4"> RWF {product.price}</p>
+                <p className="text-xl font-bold text-orange-600 mb-4"> RWF {product.price}</p>
               </Link>
 
               <div className="flex items-center justify-between space-x-4">
@@ -188,7 +190,7 @@ function ShoppingSection() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`flex-1 py-3 px-6 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 ${
+                  className={`flex-1 text-sm py-2 px-3 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 ${
                     cart.some(item => item._id === product._id)
                       ? "bg-green-500 hover:bg-green-600"
                       : "bg-black hover:bg-black/90"
@@ -216,14 +218,14 @@ function ShoppingSection() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="bg-black text-white px-2 py-2 rounded-xl font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             disabled={currentPage === 1}
           >
             <ChevronLeft size={20} />
-            <span>Previous</span>
+            <span>Prev</span>
           </motion.button>
           
-          <span className="text-lg font-semibold">
+          <span className="md:text-lg text-sm font-semibold">
             Page {currentPage} of {totalPages}
           </span>
           
@@ -231,7 +233,7 @@ function ShoppingSection() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="bg-black text-white px-2 py-2 rounded-xl font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             disabled={currentPage === totalPages}
           >
             <span>Next</span>

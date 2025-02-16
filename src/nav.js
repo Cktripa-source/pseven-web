@@ -82,13 +82,13 @@ function Navbar() {
       </div>
 
       {/* Main Navbar */}
-      <div className="flex justify-between items-center px-6 py-3 bg-gray-900 border-b border-gray-800">
+      <div className="flex justify-between items-center px-6 py-1 bg-gray-900 border-b border-gray-800">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
           <motion.img
             src={Logo}
             alt="Logo"
-            className="h-12 rounded-full"
+            className="h-10 rounded-full"
             whileHover={{ scale: 1.05, rotate: 360 }}
             transition={{ duration: 0.5 }}
           />

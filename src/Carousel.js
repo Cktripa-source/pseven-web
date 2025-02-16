@@ -37,7 +37,7 @@ const Carousel = () => {
   }, [services.length]);
 
   return (
-    <div className="relative w-full mx-auto h-[600px] flex items-center justify-center overflow-hidden md:mt-28 mt-24">
+    <div className="relative w-full mx-auto h-[600px] flex items-center justify-center overflow-hidden md:mt-28 mt-8">
       {/* Navigation Buttons */}
       <button 
         onClick={handlePrev}
@@ -66,7 +66,7 @@ const Carousel = () => {
             >
               <img 
                src={`https://api.psevenrwanda.com/${service.image}`}
-                className="w-full h-full object-cover rounded-2xl shadow-2xl" 
+                className="w-full h-full object-cover" 
                 alt={service.name} 
               />
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/95 via-black/80 to-black/70 rounded-2xl flex flex-col items-center justify-center text-center px-6">
@@ -74,7 +74,7 @@ const Carousel = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-green-400 mb-6 text-3xl md:text-6xl font-bold tracking-tight"
+                  className="text-green-400 mb-6 text-2xl md:text-4xl font-bold tracking-tight"
                 >
                   {service.name}
                 </motion.h1>
@@ -82,7 +82,7 @@ const Carousel = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-gray-200 text-lg md:text-2xl max-w-3xl leading-relaxed"
+                  className="text-gray-200 text-md md:text-xl max-w-3xl leading-relaxed"
                 >
                   {service.description}
                 </motion.p>

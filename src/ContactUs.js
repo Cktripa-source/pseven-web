@@ -223,12 +223,12 @@ const ContactPage = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/20 pointer-events-none z-10" />
         <iframe
           title="Location Map"
-          className="w-full h-full grayscale hover:grayscale-0 transition-all duration-500"
+          className="w-full h-full md:grayscale hover:grayscale-0 transition-all duration-500"
           frameBorder="0"
           style={{ border: 0 }}
           loading="lazy"
           allowFullScreen
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d989.6122008536961!2d29.26929477118369!3d-1.6604392456186574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dd07e09f544a85%3A0xa25ffde906649d6!2sKARUKOGO-Gisenyi!5e1!3m2!1sen!2srw!4v1739458966631!5m2!1sen!2srw"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1051.49022070435!2d29.27030640478114!3d-1.6600368238312566!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dd070b0b94164b%3A0x9665eb2cfa9f131f!2sP7%20COMPANY%20LTD!5e1!3m2!1sen!2srw!4v1739696188378!5m2!1sen!2srw"
         />
       </div>
     </div>
