@@ -82,7 +82,7 @@ function App() {
                 {!isAdminRoute && <Navbar />}
 
                 {/* Main Content */}
-                {!isOffline ? (
+                {/* {isOffline ? ( */}
                     <>
                         <Routes>
                             {/* Public Routes */}
@@ -110,13 +110,13 @@ function App() {
                         {/* Floating Chat Box - Only show on non-admin routes and when online */}
                         {!isAdminRoute && <FloatingChatBox userId={userId} />}
                     </>
-                ) : (
+                {/* ) : (
                     <div className="flex flex-col justify-center items-center min-h-screen bg-green-200">
                         <AlertTriangle className='text-gray-950 h-20 w-20 p-4' />
                         <h1 className="text-2xl text-center">You are offline. Please check your internet connection.</h1>
                         <p className="mt-4">Content is unavailable while offline. Please reconnect to the internet.</p>
                     </div>
-                )}
+                )} */}
 
                 {!isAdminRoute && <Footer />}
             </CartProvider>
