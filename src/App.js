@@ -8,6 +8,8 @@ import Carousel from './Carousel';
 import Footer from './footer';
 import ViewCart from './viewcart';
 import Login from './login';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 import Register from './register';
 import Shopping from './shopping';
 import ViewProductDetail from "./ViewProductDetail";
@@ -89,6 +91,8 @@ function App() {
                             <Route path="/" element={<><Carousel /><Shopping /></>} />
                             <Route path="/viewcart" element={<ViewCart />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
+                            <Route path="/reset-password/:token" element={<ResetPassword />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/shopping" element={<Shopping />} />
                             <Route path="/product/:id" element={<ViewProductDetail />} />
