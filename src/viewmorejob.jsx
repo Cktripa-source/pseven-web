@@ -56,7 +56,7 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
   };
 
   const getJobUrl = () => {
-    return `${window.location.origin}/jobs/${jobId}`;
+    return `${window.location.origin}/job-employers?jobId=${jobId}`;
   };
 
   const handleShare = (platform) => {
