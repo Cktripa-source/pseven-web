@@ -20,9 +20,35 @@ function ShoppingSection() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [sortOption, setSortOption] = useState("default");
-  const productsPerPage = 6;
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Dynamic products per page based on screen size
+  const getProductsPerPage = () => {
+    if (isMobile) return 4;
+    return 6;
+  };
+
+  const productsPerPage = getProductsPerPage();
 
   const { cart, setCart, removeFromCart, getCartCount } = useCart();
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add event listener
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   const addToCart = (product) => {
     const quantity = quantities[product._id] || 1;
@@ -157,17 +183,41 @@ function ShoppingSection() {
       <Navbar cartCount={getCartCount()} onCartClick={() => setIsCartOpen(true)} />
 
       {/* Main content - Container with max width */}
-      <div className="flex-1 flex justify-center px-4 pt-6">
+      <div className="flex-1 flex justify-center px-2 sm:px-4 pt-4 sm:pt-6">
         <div className="w-full max-w-6xl">
-          {/* Categories chips above search bar */}
-          <div className="mb-6 overflow-x-auto scrollbar-hide">
+          {/* Mobile menu button - Only visible on small screens */}
+          <div className="md:hidden mb-4 flex justify-between items-center">
+            <motion.button 
+              whileTap={{ scale: 0.95 }}
+              className="p-2 rounded-lg bg-white shadow-sm"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <MenuIcon size={20} />
+            </motion.button>
+            <h2 className="text-lg font-bold">{selectedCategory || "All Products"}</h2>
+            <motion.button 
+              whileTap={{ scale: 0.95 }}
+              className="p-2 rounded-lg bg-white shadow-sm relative"
+              onClick={() => setIsCartOpen(true)}
+            >
+              <ShoppingCart size={20} />
+              {getCartCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {getCartCount()}
+                </span>
+              )}
+            </motion.button>
+          </div>
+
+          {/* Categories chips - scrollable on mobile */}
+          <div className="mb-4 sm:mb-6 overflow-x-auto scrollbar-hide">
             <div className="flex space-x-2 pb-2">
               {categories.map((category) => (
                 <motion.button
                   key={category}
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
                     selectedCategory === category 
                       ? "bg-green-600 text-white shadow-md" 
                       : "bg-white text-gray-700 border border-gray-200 hover:border-green-400 hover:shadow-sm"
@@ -183,39 +233,39 @@ function ShoppingSection() {
             </div>
           </div>
 
-          {/* Search and filter bar - Improved styling */}
-          <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+          {/* Search and filter bar - Responsive layout */}
+          <div className="flex flex-col md:flex-row items-center justify-between mb-4 sm:mb-8 gap-3 sm:gap-4">
             <div className="relative w-full md:w-2/3">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search size={18} className="text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+                <Search size={16} className="text-gray-400" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-12 pr-4 py-3 border-0 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="block w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-3 border-0 rounded-lg sm:rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="flex items-center gap-2 sm:gap-4 w-full md:w-auto">
               <select 
-                className="flex-1 md:flex-none bg-white border-0 rounded-xl py-3 px-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="flex-1 md:flex-none bg-white border-0 rounded-lg sm:rounded-xl py-2 sm:py-3 px-2 sm:px-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent text-xs sm:text-sm"
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
               >
-                <option value="default">Sort by: Default</option>
-                <option value="price-low-high">Price: Low to High</option>
-                <option value="price-high-low">Price: High to Low</option>
-                <option value="name-a-z">Name: A to Z</option>
-                <option value="name-z-a">Name: Z to A</option>
+                <option value="default">Sort: Default</option>
+                <option value="price-low-high">Price: Low-High</option>
+                <option value="price-high-low">Price: High-Low</option>
+                <option value="name-a-z">Name: A-Z</option>
+                <option value="name-z-a">Name: Z-A</option>
               </select>
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-green-600 text-white p-3 rounded-xl flex items-center gap-2 hover:bg-green-700 shadow-sm"
+                className="bg-green-600 text-white p-2 sm:p-3 rounded-lg sm:rounded-xl flex items-center gap-1 sm:gap-2 hover:bg-green-700 shadow-sm text-xs sm:text-sm"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
-                <Filter size={18} />
+                <Filter size={16} />
                 <span className="hidden md:inline">Categories</span>
               </motion.button>
             </div>
@@ -223,31 +273,31 @@ function ShoppingSection() {
 
           {/* Selected category indicator */}
           {selectedCategory && selectedCategory !== "All" && (
-            <div className="mb-6">
-              <div className="inline-flex items-center bg-green-100 text-green-800 rounded-full px-4 py-1">
-                <span className="font-medium">{selectedCategory}</span>
+            <div className="mb-4 sm:mb-6">
+              <div className="inline-flex items-center bg-green-100 text-green-800 rounded-full px-3 sm:px-4 py-1">
+                <span className="text-xs sm:text-sm font-medium">{selectedCategory}</span>
                 <button 
                   onClick={() => setSelectedCategory("All")}
                   className="ml-2 text-green-600 hover:text-green-800"
                 >
-                  <X size={16} />
+                  <X size={14} />
                 </button>
               </div>
             </div>
           )}
 
           {isLoading ? (
-            <div className="flex justify-center items-center py-16">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600"></div>
+            <div className="flex justify-center items-center py-12 sm:py-16">
+              <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-t-4 border-b-4 border-green-600"></div>
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
-              <div className="text-5xl mb-4">🔍</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">No products found</h2>
-              <p className="text-gray-600">Try changing your search or filter criteria</p>
+            <div className="text-center py-12 sm:py-16 bg-white rounded-xl sm:rounded-2xl shadow-sm">
+              <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">🔍</div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">No products found</h2>
+              <p className="text-sm sm:text-base text-gray-600">Try changing your search or filter criteria</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
               {currentProducts.map((product) => (
                 <motion.div 
                   key={product._id} 
@@ -256,11 +306,11 @@ function ShoppingSection() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.3 }}
-                  className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border-0"
+                  className="group bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border-0"
                 >
                   <div className="relative">
                     <Link to={`/product/${product._id}`}>
-                      <div className="relative w-full h-52 overflow-hidden">
+                      <div className="relative w-full h-36 sm:h-48 lg:h-52 overflow-hidden">
                         <img 
                           src={`https://api.psevenrwanda.com/api/${product.image}`} 
                           alt={product.name} 
@@ -271,85 +321,86 @@ function ShoppingSection() {
                       </div>
                     </Link>
                     
-                    {/* Product quick actions */}
-                    <div className="absolute top-3 right-3 flex flex-col gap-2">
+                    {/* Product quick actions - Scaled for mobile */}
+                    <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1 sm:gap-2">
                       <motion.button 
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`p-2 rounded-full shadow-md ${
+                        className={`p-1.5 sm:p-2 rounded-full shadow-md ${
                           favoriteProducts.includes(product._id) 
                             ? "bg-red-500 text-white" 
                             : "bg-white text-gray-700 hover:bg-gray-100"
                         }`}
                         onClick={() => toggleFavorite(product._id)}
                       >
-                        <Heart size={16} fill={favoriteProducts.includes(product._id) ? "white" : "none"} />
+                        <Heart size={14} fill={favoriteProducts.includes(product._id) ? "white" : "none"} />
                       </motion.button>
                       <Link to={`/product/${product._id}`}>
                         <motion.button 
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          className="p-2 rounded-full bg-white text-gray-700 shadow-md hover:bg-gray-100"
+                          className="p-1.5 sm:p-2 rounded-full bg-white text-gray-700 shadow-md hover:bg-gray-100"
                         >
-                          <Eye size={16} />
+                          <Eye size={14} />
                         </motion.button>
                       </Link>
                     </div>
                     
                     {/* Category tag */}
                     {product.category && (
-                      <div className="absolute top-3 left-3">
-                        <span className="bg-black/70 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
+                      <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                        <span className="bg-black/70 text-white text-xxs sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full backdrop-blur-sm">
                           {product.category}
                         </span>
                       </div>
                     )}
                   </div>
                   
-                  {/* Product info */}
-                  <div className="p-4">
+                  {/* Product info - Responsive padding and text sizes */}
+                  <div className="p-3 sm:p-4">
                     <Link to={`/product/${product._id}`}>
-                      <h3 className="text-base font-bold text-gray-800 mb-1 hover:text-green-600 transition-colors line-clamp-1">
+                      <h3 className="text-sm sm:text-base font-bold text-gray-800 mb-0.5 sm:mb-1 hover:text-green-600 transition-colors line-clamp-1">
                         {product.name}
                       </h3>
                     </Link>
                     
-                    {/* Ratings */}
-                    <div className="flex items-center mb-2">
+                    {/* Ratings - Smaller on mobile */}
+                    <div className="flex items-center mb-1 sm:mb-2">
                       {[1, 2, 3, 4, 5].map((star) => {
                         const rating = parseFloat(getRandomRating(product._id));
                         return star <= Math.floor(rating) ? (
-                          <Star key={star} size={14} className="text-yellow-400 fill-current" />
+                          <Star key={star} size={12} className="text-yellow-400 fill-current" />
                         ) : star === Math.ceil(rating) && !Number.isInteger(rating) ? (
-                          <StarHalf key={star} size={14} className="text-yellow-400 fill-current" />
+                          <StarHalf key={star} size={12} className="text-yellow-400 fill-current" />
                         ) : (
-                          <Star key={star} size={14} className="text-gray-300" />
+                          <Star key={star} size={12} className="text-gray-300" />
                         );
                       })}
-                      <span className="text-xs text-gray-500 ml-2">
+                      <span className="text-xxs sm:text-xs text-gray-500 ml-1 sm:ml-2">
                         {getRandomRating(product._id)}
                       </span>
                     </div>
                     
-                    <p className="text-gray-700 text-sm mb-3 line-clamp-2">
+                    {/* Description - Hide on smallest screens, limited lines on others */}
+                    <p className="text-gray-700 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-2 hidden xs:block">
                       {product.description}
                     </p>
                     
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-lg font-bold text-orange-600">RWF {product.price.toLocaleString()}</p>
+                    <div className="flex items-center justify-between mb-2 sm:mb-3">
+                      <p className="text-base sm:text-lg font-bold text-orange-600">RWF {product.price.toLocaleString()}</p>
                     </div>
                     
-                    {/* Add to cart section */}
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                    {/* Add to cart section - Smaller controls on mobile */}
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <div className="flex items-center bg-gray-100 rounded-md sm:rounded-lg p-0.5 sm:p-1">
                         <motion.button 
                           whileTap={{ scale: 0.9 }}
                           onClick={() => setQuantities(prev => ({ ...prev, [product._id]: Math.max((prev[product._id] || 1) - 1, 1) }))}
                           className="bg-white p-1 rounded-md shadow-sm hover:bg-gray-50"
                         >
-                          <Minus size={14} />
+                          <Minus size={12} />
                         </motion.button>
-                        <span className="text-xs font-medium w-6 text-center">
+                        <span className="text-xxs sm:text-xs font-medium w-4 sm:w-6 text-center">
                           {quantities[product._id] || 1}
                         </span>
                         <motion.button 
@@ -357,14 +408,14 @@ function ShoppingSection() {
                           onClick={() => setQuantities(prev => ({ ...prev, [product._id]: (prev[product._id] || 1) + 1 }))}
                           className="bg-white p-1 rounded-md shadow-sm hover:bg-gray-50"
                         >
-                          <Plus size={14} />
+                          <Plus size={12} />
                         </motion.button>
                       </div>
                       
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`flex-1 py-2 px-2 rounded-lg font-medium text-xs text-white shadow-sm transition-all duration-200 flex items-center justify-center gap-1 ${
+                        className={`flex-1 py-1.5 sm:py-2 px-1.5 sm:px-2 rounded-md sm:rounded-lg font-medium text-xxs sm:text-xs text-white shadow-sm transition-all duration-200 flex items-center justify-center gap-1 ${
                           cart.some(item => item._id === product._id)
                             ? "bg-green-600 hover:bg-green-700"
                             : "bg-black hover:bg-gray-900"
@@ -380,12 +431,12 @@ function ShoppingSection() {
                       >
                         {cart.some(item => item._id === product._id) ? (
                           <>
-                            <X size={14} />
+                            <X size={12} />
                             <span>Remove</span>
                           </>
                         ) : (
                           <>
-                            <ShoppingCart size={14} />
+                            <ShoppingCart size={12} />
                             <span>Add to Cart</span>
                           </>
                         )}
@@ -397,31 +448,32 @@ function ShoppingSection() {
             </div>
           )}
           
-          {/* Pagination */}
+          {/* Pagination - Simplified for mobile */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center mt-10 mb-6">
-              <nav className="flex items-center gap-1 bg-white p-2 rounded-xl shadow-sm">
+            <div className="flex justify-center items-center mt-6 sm:mt-10 mb-4 sm:mb-6">
+              <nav className="flex items-center gap-1 bg-white p-1.5 sm:p-2 rounded-lg sm:rounded-xl shadow-sm">
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft size={16} />
+                  <ChevronLeft size={14} />
                 </motion.button>
                 
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                {/* Show fewer page numbers on mobile */}
+                {Array.from({ length: Math.min(isMobile ? 3 : 5, totalPages) }, (_, i) => {
                   // Calculate which page numbers to show
                   let pageNum;
-                  if (totalPages <= 5) {
+                  if (totalPages <= (isMobile ? 3 : 5)) {
                     pageNum = i + 1;
-                  } else if (currentPage <= 3) {
+                  } else if (currentPage <= (isMobile ? 2 : 3)) {
                     pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
+                  } else if (currentPage >= totalPages - (isMobile ? 1 : 2)) {
+                    pageNum = totalPages - (isMobile ? 2 : 4) + i;
                   } else {
-                    pageNum = currentPage - 2 + i;
+                    pageNum = currentPage - (isMobile ? 1 : 2) + i;
                   }
                   
                   return (
@@ -429,7 +481,7 @@ function ShoppingSection() {
                       key={i}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`flex items-center justify-center w-8 h-8 rounded-lg text-sm ${
+                      className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg text-xs sm:text-sm ${
                         currentPage === pageNum
                           ? "bg-green-600 text-white font-medium"
                           : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
@@ -445,10 +497,10 @@ function ShoppingSection() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  className="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={currentPage === totalPages}
                 >
-                  <ChevronRight size={16} />
+                  <ChevronRight size={14} />
                 </motion.button>
               </nav>
             </div>
@@ -456,7 +508,7 @@ function ShoppingSection() {
         </div>
       </div>
 
-      {/* Category sidebar overlay */}
+      {/* Category sidebar overlay - Full screen on mobile */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -472,12 +524,12 @@ function ShoppingSection() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -300, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="absolute left-0 top-0 h-full w-72 bg-white shadow-2xl overflow-y-auto"
+              className="absolute left-0 top-0 h-full w-full max-w-xs sm:w-72 bg-white shadow-2xl overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Categories</h2>
+              <div className="p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Categories</h2>
                   <button 
                     onClick={() => setIsSidebarOpen(false)}
                     className="p-2 rounded-full hover:bg-gray-100"
@@ -492,7 +544,7 @@ function ShoppingSection() {
                       key={category}
                       whileHover={{ x: 4 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`py-3 px-4 rounded-lg text-left font-medium transition-all ${
+                      className={`py-2 sm:py-3 px-3 sm:px-4 rounded-lg text-left font-medium transition-all text-sm ${
                         selectedCategory === category 
                           ? "bg-green-600 text-white" 
                           : "bg-gray-50 text-gray-700 hover:bg-gray-100"
@@ -513,7 +565,7 @@ function ShoppingSection() {
         )}
       </AnimatePresence>
 
-      {/* Cart sidebar */}
+      {/* Cart sidebar - Adjusted for mobile */}
       <AnimatePresence>
         {isCartOpen && (
           <motion.div
@@ -529,13 +581,13 @@ function ShoppingSection() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 400, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="absolute right-0 top-0 h-full w-full sm:w-80 bg-white shadow-2xl overflow-hidden"
+              className="absolute right-0 top-0 h-full w-full xs:w-4/5 sm:w-80 bg-white shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col h-full">
-                <div className="p-5 border-b">
+                <div className="p-4 sm:p-5 border-b">
                   <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-xl font-bold text-gray-900">Your Cart</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">Your Cart</h2>
                     <button 
                       onClick={() => setIsCartOpen(false)}
                       className="p-2 rounded-full hover:bg-gray-100"
@@ -543,31 +595,31 @@ function ShoppingSection() {
                       <X size={18} />
                     </button>
                   </div>
-                  <div className="flex items-center text-gray-500 text-sm">
+                  <div className="flex items-center text-gray-500 text-xs sm:text-sm">
                     <ShoppingCart size={14} className="mr-2" />
                     <span>{getCartCount()} items</span>
                   </div>
                 </div>
                 
-                <div className="flex-1 overflow-y-auto p-5">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5">
                   {cart.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center">
-                      <div className="bg-gray-100 p-5 rounded-full mb-4">
-                        <ShoppingCart size={28} className="text-gray-400" />
+                      <div className="bg-gray-100 p-4 sm:p-5 rounded-full mb-3 sm:mb-4">
+                        <ShoppingCart size={24} className="text-gray-400" />
                       </div>
-                      <h3 className="text-lg font-medium text-gray-700 mb-2">Your cart is empty</h3>
-                      <p className="text-gray-500 mb-6 text-sm">Looks like you haven't added any products to your cart yet.</p>
+                      <h3 className="text-base sm:text-lg font-medium text-gray-700 mb-2">Your cart is empty</h3>
+                      <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">Looks like you haven't added any products to your cart yet.</p>
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="bg-green-600 text-white px-5 py-2 rounded-xl font-medium hover:bg-green-700 text-sm"
+                        className="bg-green-600 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-medium hover:bg-green-700 text-xs sm:text-sm"
                         onClick={() => setIsCartOpen(false)}
                       >
                         Continue Shopping
                       </motion.button>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                       {cart.map((item) => (
                         <motion.div 
                           key={item._id}

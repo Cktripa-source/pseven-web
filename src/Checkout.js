@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, MessageCircle, MapPin, Mail, Phone } from "lucide-react";
+import { ShoppingCart, MessageCircle, MapPin, Mail, Phone, User, Building, ArrowRight, CreditCard } from "lucide-react";
 
 const Checkout = ({ setCartCount }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -74,151 +74,210 @@ const Checkout = ({ setCartCount }) => {
     // Send the message via WhatsApp
     const phoneNumber = "+250791855396";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
-};
+  };
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-2">
-        <div className="w-full max-w-md text-center bg-white rounded-lg shadow-lg p-6">
-          <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h2 className="text-2xl font-semibold text-gray-700 mb-2">Your cart is empty</h2>
-          <p className="text-gray-500">Please add items to your cart to continue shopping.</p>
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div className="w-full max-w-md text-center bg-white rounded-xl shadow-md p-8 border border-gray-100">
+          <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingCart className="h-10 w-10 text-gray-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-3">Your cart is empty</h2>
+          <p className="text-gray-500 mb-6">Please add items to your cart to continue shopping.</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-green-600 transition-colors duration-300 flex items-center justify-center mx-auto"
+          >
+            <span>Continue Shopping</span>
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-green-50 py-12 px-4 sm:px-6 lg:px-8 mt-16 md:mt-32">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-black to-indigo-600 bg-clip-text text-transparent">
-          Checkout
-        </h1>
-        <p className="text-center text-gray-600 mb-8">Complete your order via WhatsApp</p>
+    <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8 mt-16 md:mt-32">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Complete Your Order
+          </h1>
+          <div className="w-16 h-1 bg-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Review your items and provide your details</p>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Order Summary */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100">
-            <div className="p-6 border-b border-green-100 bg-gradient-to-r from-green-50 to-indigo-50">
-              <h2 className="text-xl font-semibold flex items-center gap-2 text-black">
-                <ShoppingCart className="h-5 w-5" />
-                Order Summary
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+              <div className="p-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                <h2 className="text-lg font-semibold flex items-center gap-2 text-gray-900">
+                  <ShoppingCart className="h-5 w-5 text-green-500" />
+                  Order Summary
+                </h2>
+                <span className="text-sm font-medium text-gray-500">{cartItems.length} item(s)</span>
+              </div>
+              
+              <div className="divide-y divide-gray-100">
                 {cartItems.map((item, index) => (
                   <div
                     key={index}
-                    className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-green-100 hover:shadow-md transition-all duration-300"
+                    className="flex p-4 hover:bg-gray-50 transition-colors duration-150"
                   >
-                    <div className="relative h-32 w-32 sm:h-24 sm:w-24 rounded-lg overflow-hidden">
+                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                       <img
                         src={`https://api.psevenrwanda.com/api/${item.image}`}
                         alt={item.name}
-                        className="object-cover w-full h-full transform hover:scale-110 transition-transform duration-300"
+                        className="h-full w-full object-cover object-center"
                       />
                     </div>
-                    <div className="flex-1 text-center sm:text-left">
-                      <h3 className="font-medium text-gray-900 text-lg">{item.name}</h3>
-                      <p className="text-black">Quantity: {item.quantity}</p>
-                      <p className="font-semibold text-indigo-600 text-lg mt-2">
-                        FRW {(parseFloat(String(item.price).replace("FRW", "")) * item.quantity).toFixed(2)}
-                      </p>
+                    <div className="ml-4 flex flex-1 flex-col">
+                      <div className="flex justify-between">
+                        <h3 className="font-medium text-gray-900">{item.name}</h3>
+                        <p className="font-medium text-gray-900">
+                          FRW {(parseFloat(String(item.price).replace("FRW", "")) * item.quantity).toFixed(2)}
+                        </p>
+                      </div>
+                      <div className="mt-1 flex items-end justify-between text-sm">
+                        <p className="text-gray-500">Qty {item.quantity}</p>
+                        <p className="text-gray-500">FRW {formatCurrency(item.price)} each</p>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="pt-6 mt-6 border-t border-green-100">
-                <div className="flex justify-between items-center text-xl font-semibold">
-                  <span className="text-gray-800">Total</span>
-                  <span className="text-indigo-600">FRW {calculateTotalPrice()}</span>
+              
+              <div className="p-5 bg-gray-50 space-y-3">
+                <div className="flex justify-between text-gray-600">
+                  <span>Subtotal</span>
+                  <span>FRW {calculateTotalPrice()}</span>
+                </div>
+                <div className="flex justify-between text-gray-600">
+                  <span>Shipping</span>
+                  <span>Calculated at next step</span>
+                </div>
+                <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
+                  <span className="text-lg font-semibold text-gray-900">Total</span>
+                  <span className="text-lg font-semibold text-green-600">FRW {calculateTotalPrice()}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100">
-            <div className="p-6 border-b border-green-100 bg-gradient-to-r from-green-50 to-indigo-50">
-              <h2 className="text-xl font-semibold flex items-center gap-2 text-black">
-                <MessageCircle className="h-5 w-5" />
-                Contact Details
-              </h2>
-            </div>
-            <div className="p-6">
-              <form onSubmit={handleWhatsAppOrder} className="space-y-6">
-                <div className="space-y-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="name"
-                      value={shippingDetails.name}
-                      onChange={handleInputChange}
-                      placeholder="Full Name"
-                      className="w-full px-4 py-3 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
-                      required
-                    />
-                    <ShoppingCart className="h-5 w-5 text-black absolute left-3 top-3.5" />
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 sticky top-8">
+              <div className="p-5 border-b border-gray-100 bg-gray-50">
+                <h2 className="text-lg font-semibold flex items-center gap-2 text-gray-900">
+                  <User className="h-5 w-5 text-green-500" />
+                  Your Details
+                </h2>
+              </div>
+              <div className="p-5">
+                <form onSubmit={handleWhatsAppOrder} className="space-y-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                      <div className="relative">
+                        <input
+                          id="name"
+                          type="text"
+                          name="name"
+                          value={shippingDetails.name}
+                          onChange={handleInputChange}
+                          placeholder="Enter your full name"
+                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
+                          required
+                        />
+                        <User className="h-4 w-4 text-gray-400 absolute left-3 top-3.5" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
+                      <div className="relative">
+                        <input
+                          id="address"
+                          type="text"
+                          name="address"
+                          value={shippingDetails.address}
+                          onChange={handleInputChange}
+                          placeholder="Enter your address"
+                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
+                          required
+                        />
+                        <MapPin className="h-4 w-4 text-gray-400 absolute left-3 top-3.5" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                      <div className="relative">
+                        <input
+                          id="city"
+                          type="text"
+                          name="city"
+                          value={shippingDetails.city}
+                          onChange={handleInputChange}
+                          placeholder="Enter your city"
+                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
+                          required
+                        />
+                        <Building className="h-4 w-4 text-gray-400 absolute left-3 top-3.5" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                      <div className="relative">
+                        <input
+                          id="email"
+                          type="email"
+                          name="email"
+                          value={shippingDetails.email}
+                          onChange={handleInputChange}
+                          placeholder="Enter your email"
+                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
+                          required
+                        />
+                        <Mail className="h-4 w-4 text-gray-400 absolute left-3 top-3.5" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                      <div className="relative">
+                        <input
+                          id="phone"
+                          type="tel"
+                          name="phoneNumber"
+                          value={shippingDetails.phoneNumber}
+                          onChange={handleInputChange}
+                          placeholder="Enter your phone number"
+                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
+                          required
+                        />
+                        <Phone className="h-4 w-4 text-gray-400 absolute left-3 top-3.5" />
+                      </div>
+                    </div>
                   </div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="address"
-                      value={shippingDetails.address}
-                      onChange={handleInputChange}
-                      placeholder="Shipping Address"
-                      className="w-full px-4 py-3 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
-                      required
-                    />
-                    <MapPin className="h-5 w-5 text-black absolute left-3 top-3.5" />
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="city"
-                      value={shippingDetails.city}
-                      onChange={handleInputChange}
-                      placeholder="City"
-                      className="w-full px-4 py-3 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
-                      required
-                    />
-                    <MapPin className="h-5 w-5 text-black absolute left-3 top-3.5" />
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      name="email"
-                      value={shippingDetails.email}
-                      onChange={handleInputChange}
-                      placeholder="Email Address"
-                      className="w-full px-4 py-3 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
-                      required
-                    />
-                    <Mail className="h-5 w-5 text-black absolute left-3 top-3.5" />
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      value={shippingDetails.phoneNumber}
-                      onChange={handleInputChange}
-                      placeholder="Phone Number"
-                      className="w-full px-4 py-3 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pl-10"
-                      required
-                    />
-                    <Phone className="h-5 w-5 text-black absolute left-3 top-3.5" />
-                  </div>
-                </div>
 
-                <button
-                  type="submit"
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-gray-500 to-emerald-500 text-white rounded-xl hover:from-gray-600 hover:to-emerald-600 transition-all transform hover:scale-[1.02] shadow-lg"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  Complete Order via WhatsApp
-                </button>
-              </form>
+                  <div className="pt-4">
+                    <button
+                      type="submit"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-green-600 transition-colors duration-300 font-medium"
+                    >
+                      <CreditCard className="h-5 w-5" />
+                      Complete via WhatsApp
+                    </button>
+                    <p className="text-xs text-gray-500 text-center mt-3">
+                      Your order details will be sent securely via WhatsApp for payment processing.
+                    </p>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
