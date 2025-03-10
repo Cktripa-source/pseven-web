@@ -43,7 +43,7 @@ function Login() {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <motion.div 
-          className="rounded-lg overflow-hidden"
+          className="bg-white rounded-lg overflow-hidden"
           transition={{ duration: 0.3 }}
         >
           <div className="py-2 px-4">

@@ -69,7 +69,7 @@ const Carousel = () => {
                 className="w-full h-full object-cover" 
                 alt={service.name} 
               />
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/95 via-black/80 to-black/70 rounded-2xl flex flex-col items-center justify-center text-center px-6">
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/95 via-black/80 to-black/70  flex flex-col items-center justify-center text-center px-6">
                 <motion.h1 
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}

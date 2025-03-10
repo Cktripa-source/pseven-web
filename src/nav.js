@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Home, Briefcase, ShoppingBag, Settings, Tag, Phone, Mail, 
@@ -18,6 +18,10 @@ function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [bubbles, setBubbles] = useState([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const dropdownRefs = useRef({});
 
   // Handle scroll effect with debounce
   useEffect(() => {
@@ -68,29 +72,58 @@ function Navbar() {
     return () => clearInterval(interval);
   }, []);
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-  const toggleProfileDropdown = () => {
-    setIsProfileDropdownOpen(!isProfileDropdownOpen);
-    if (isNotificationsOpen) setIsNotificationsOpen(false);
-  };
-  const toggleNotifications = () => {
-    setIsNotificationsOpen(!isNotificationsOpen);
-    if (isProfileDropdownOpen) setIsProfileDropdownOpen(false);
-  };
-
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isProfileDropdownOpen || isNotificationsOpen) {
-        if (!event.target.closest('.dropdown-container')) {
+      if (isProfileDropdownOpen || isNotificationsOpen || isSearchOpen) {
+        // Check if the click was on a nav item that toggles a dropdown
+        const isNavItemClick = Object.values(dropdownRefs.current).some(
+          ref => ref && ref.contains(event.target)
+        );
+        
+        if (!isNavItemClick && !event.target.closest('.dropdown-content')) {
           setIsProfileDropdownOpen(false);
           setIsNotificationsOpen(false);
+          setIsSearchOpen(false);
         }
       }
     };
+    
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isProfileDropdownOpen, isNotificationsOpen]);
+  }, [isProfileDropdownOpen, isNotificationsOpen, isSearchOpen]);
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+    if (isNotificationsOpen) setIsNotificationsOpen(false);
+    if (isSearchOpen) setIsSearchOpen(false);
+  };
+  
+  const toggleNotifications = () => {
+    setIsNotificationsOpen(!isNotificationsOpen);
+    if (isProfileDropdownOpen) setIsProfileDropdownOpen(false);
+    if (isSearchOpen) setIsSearchOpen(false);
+  };
+
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (isProfileDropdownOpen) setIsProfileDropdownOpen(false);
+    if (isNotificationsOpen) setIsNotificationsOpen(false);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // Handle search submission
+    console.log(`Searching for: ${searchQuery}`);
+    // Close search dropdown after search
+    setIsSearchOpen(false);
+  };
 
   // Generate user avatar with first letter
   const getUserAvatar = () => {
@@ -114,16 +147,39 @@ function Navbar() {
 
   // Navigation items
   const navItems = [
-    { path: '/', label: 'Home', icon: Home },
-    { path: '/job-employers', label: 'Jobs', icon: Briefcase },
-    { path: '/shopping', label: 'Buy & Sell', icon: ShoppingBag },
-    { path: '/services', label: 'Services', icon: Settings },
-    { path: '/others', label: 'Others', icon: Tag }
+    { key: 'home', path: '/', label: 'Home', icon: Home },
+    { key: 'jobs', path: '/job-employers', label: 'Jobs', icon: Briefcase },
+    { key: 'shopping', path: '/shopping', label: 'Buy & Sell', icon: ShoppingBag },
+    { key: 'services', path: '/services', label: 'Services', icon: Settings },
+    { key: 'others', path: '/others', label: 'Others', icon: Tag }
   ];
 
   const handleLogout = () => {
     logout();
     setIsProfileDropdownOpen(false);
+  };
+
+  // Sample search results for global search
+  const getSearchResults = (query) => {
+    if (!query) return [];
+    
+    const allResults = [
+      { id: 1, category: 'Home', title: 'Homepage Banner', link: '/home/banner' },
+      { id: 2, category: 'Home', title: 'Featured Products', link: '/home/featured' },
+      { id: 3, category: 'Jobs', title: 'Software Developer', link: '/jobs/software-developer' },
+      { id: 4, category: 'Jobs', title: 'Marketing Manager', link: '/jobs/marketing-manager' },
+      { id: 5, category: 'Shopping', title: 'Electronics', link: '/shopping/electronics' },
+      { id: 6, category: 'Shopping', title: 'Clothing', link: '/shopping/clothing' },
+      { id: 7, category: 'Services', title: 'Web Development', link: '/services/web-development' },
+      { id: 8, category: 'Services', title: 'Graphic Design', link: '/services/graphic-design' },
+      { id: 9, category: 'Others', title: 'Community Events', link: '/others/community-events' },
+      { id: 10, category: 'Others', title: 'Help Center', link: '/others/help-center' }
+    ];
+    
+    return allResults.filter(item => 
+      item.title.toLowerCase().includes(query.toLowerCase()) ||
+      item.category.toLowerCase().includes(query.toLowerCase())
+    );
   };
 
   return (
@@ -175,11 +231,11 @@ function Navbar() {
               <img
                 src={Logo}
                 alt="Logo"
-                className="h-8 rounded-full shadow-sm"
+                className="h-6 sm:h-8 rounded-full shadow-sm"
               />
             </motion.div>
             <motion.div 
-              className="font-bold text-lg"
+              className="font-bold text-sm sm:text-lg"
               whileHover={{ letterSpacing: "0.03em" }}
               transition={{ duration: 0.3 }}
             >
@@ -189,9 +245,9 @@ function Navbar() {
           </Link>
         </div>
 
-        {/* Navigation Menu - Desktop only */}
-        <div className="hidden md:flex items-center space-x-6">
-          {navItems.map(({ path, label, icon: Icon }, idx) => (
+        {/* Navigation Menu - Desktop */}
+        <div className="hidden lg:flex items-center space-x-6">
+          {navItems.map(({ key, path, label, icon: Icon }, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 5 }}
@@ -200,366 +256,180 @@ function Navbar() {
             >
               <Link
                 to={path}
-                className={`flex items-center space-x-1.5 transition-all py-1 px-2 rounded-md hover:bg-gray-100 text-sm font-medium group ${
-                  isScrolled ? 'text-gray-950 hover:text-green-600' : 'text-gray-50 hover:text-green-600'
+                className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-all duration-200 ${
+                  isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-700'
                 }`}
               >
-                <Icon className="h-4 w-4 group-hover:text-green-600" />
+                <Icon size={16} className="shrink-0" />
                 <span>{label}</span>
               </Link>
             </motion.div>
           ))}
         </div>
 
-        {/* Search Bar - Desktop */}
-        <div className="hidden lg:flex flex-1 max-w-md mx-4">
-          <div className="relative w-full group">
-            <input
-              type="search"
-              placeholder="Search products, services, jobs..."
-              className="w-full py-1.5 px-4 pr-10 rounded-full bg-gray-100 border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none text-sm transition-all group-hover:bg-white placeholder:text-gray-500"
-            />
-            <button className="absolute right-3 top-1.5 text-gray-500 group-hover:text-green-600 transition-colors">
-              <Search className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Right Section */}
-        <div className="flex items-center space-x-1 md:space-x-4">
-          {/* Cart with bubble animation on hover */}
-          <motion.div whileHover={{ y: -2 }} className="relative">
-            <Link to="/viewcart" className="relative text-gray-700 hover:text-green-600 transition-colors p-1.5 group">
-              <ShoppingCart className="h-5 w-5" />
-              {getCartCount() > 0 && (
-                <motion.span
-                  className="absolute top-4 -right-4 bg-green-600 text-xs text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold shadow-sm"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  {getCartCount() || 0}
-                </motion.span>
-              )}
-              
-              {/* Mini bubbles on hover */}
-              <AnimatePresence>
-                {[1, 2, 3].map((i) => (
-                  <motion.div
-                    key={`cart-bubble-${i}`}
-                    className="absolute rounded-full bg-green-500/30 hidden group-hover:block"
-                    style={{
-                      width: 4 + i * 2,
-                      height: 4 + i * 2,
-                      bottom: 0,
-                      left: 8 + i * 3,
-                    }}
-                    initial={{ y: 0, opacity: 0 }}
-                    animate={{ y: -15 - i * 5, opacity: [0, 0.8, 0] }}
-                    exit={{ opacity: 0 }}
-                    transition={{ 
-                      duration: 1.5,
-                      delay: i * 0.2,
-                      repeat: Infinity,
-                      repeatType: "loop"
-                    }}
-                  />
-                ))}
-              </AnimatePresence>
-            </Link>
-          </motion.div>
+        {/* Right Section - Icons and Mobile Menu */}
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* Search Icon */}
+          <button 
+            className={`p-2 rounded-full transition-colors ${
+              isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
+            }`}
+            onClick={toggleSearch}
+            ref={el => dropdownRefs.current.search = el}
+          >
+            <Search size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+          </button>
           
-          {isAuthenticated ? (
-            <>
-              {/* Notifications with bubble animations */}
-              <div className="relative dropdown-container">
-                <motion.button
-                  onClick={toggleNotifications}
-                  className="relative text-gray-700 hover:text-green-600 transition-colors p-1.5 group"
-                  whileHover={{ y: -2 }}
-                >
-                  <Bell className="h-5 w-5" />
-                  <motion.span 
-                    className="absolute -top-1 -right-1 bg-green-600 text-xs text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold shadow-sm"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    whileHover={{ scale: 1.2 }}
-                  >
-                    3
-                  </motion.span>
-                  
-                  {/* Notification ripple effect */}
-                  <motion.div
-                    className="absolute -top-1 -right-1 rounded-full border-2 border-green-500/50 hidden group-hover:block"
-                    style={{ width: 16, height: 16 }}
-                    animate={{ 
-                      scale: [1, 1.5, 2],
-                      opacity: [1, 0.5, 0]
-                    }}
-                    transition={{ 
-                      duration: 1.5,
-                      repeat: Infinity,
-                      repeatType: "loop"
-                    }}
-                  />
-                </motion.button>
-                
-                {/* Notifications Dropdown */}
-                <AnimatePresence>
-                  {isNotificationsOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 border border-gray-200 z-50"
-                    >
-                      <div className="px-4 py-2 border-b border-gray-200 flex items-center justify-between">
-                        <h3 className="font-medium text-green-600">Notifications</h3>
-                        <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">3 new</span>
-                      </div>
-                      <div className="max-h-60 overflow-y-auto">
-                        {[1, 2, 3].map((item) => (
-                          <div key={item} className="px-4 py-2 hover:bg-gray-50 transition-colors border-b border-gray-100">
-                            <div className="flex items-start gap-3">
-                              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                                <Bell className="h-4 w-4 text-green-600" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium text-gray-900">New notification {item}</p>
-                                <p className="text-xs text-gray-500 mt-0.5">Just now</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="px-4 py-2 border-t border-gray-200">
-                        <button className="w-full text-center text-xs text-green-600 hover:text-green-700">
-                          View all notifications
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* User Profile */}
-              <div className="relative dropdown-container">
-                <motion.button
-                  onClick={toggleProfileDropdown}
-                  className="flex items-center space-x-2 text-gray-800 hover:text-green-600 transition-colors p-1 group"
-                  whileHover={{ y: -2 }}
-                >
-                  {typeof getUserAvatar() === 'string' ? (
-                    <div className="relative">
-                      <img
-                        src={getUserAvatar()}
-                        alt="Profile"
-                        className="h-7 w-7 rounded-full border-2 border-green-500/30 shadow-sm object-cover"
-                      />
-                      
-                      {/* Avatar glow effect on hover */}
-                      <motion.div
-                        className="absolute inset-0 rounded-full border-2 border-green-500/0 hidden group-hover:block"
-                        animate={{ 
-                          boxShadow: ["0 0 0 0px rgba(16, 185, 129, 0.2)", "0 0 0 4px rgba(16, 185, 129, 0)"],
-                          borderColor: ["rgba(16, 185, 129, 0.6)", "rgba(16, 185, 129, 0)"]
-                        }}
-                        transition={{ 
-                          duration: 1.5,
-                          repeat: Infinity,
-                          repeatType: "loop"
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      {getUserAvatar()}
-                      
-                      {/* Avatar glow effect on hover */}
-                      <motion.div
-                        className="absolute inset-0 rounded-full border-2 border-green-500/0 hidden group-hover:block"
-                        animate={{ 
-                          boxShadow: ["0 0 0 0px rgba(16, 185, 129, 0.2)", "0 0 0 4px rgba(16, 185, 129, 0)"],
-                          borderColor: ["rgba(16, 185, 129, 0.6)", "rgba(16, 185, 129, 0)"]
-                        }}
-                        transition={{ 
-                          duration: 1.5,
-                          repeat: Infinity,
-                          repeatType: "loop"
-                        }}
-                      />
-                    </div>
-                  )}
-                  <span className="hidden md:block text-sm font-medium max-w-24 truncate">
-                    {user?.name || 'User'}
-                  </span>
-                  <ChevronDown className={`h-3 w-3 opacity-70 transition-transform duration-300 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
-                </motion.button>
-
-                {/* Profile Dropdown */}
-                <AnimatePresence>
-                  {isProfileDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 border border-gray-200 z-50"
-                    >
-                      <div className="px-4 py-2 border-b border-gray-200 flex items-center space-x-3">
-                        {typeof getUserAvatar() === 'string' ? (
-                          <img
-                            src={getUserAvatar()}
-                            alt="Profile"
-                            className="h-10 w-10 rounded-full border-2 border-green-500/30 shadow-sm object-cover"
-                          />
-                        ) : (
-                          getUserAvatar()
-                        )}
-                        <div>
-                          <p className="font-medium text-gray-900">{user?.name || 'User'}</p>
-                          <p className="text-xs text-gray-500">{user?.email || 'user@example.com'}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="py-1">
-                        {[
-                          { label: 'Your Profile', path: '/profile' },
-                          { label: 'Account Settings', path: '/settings' },
-                          { label: 'Your Orders', path: '/orders' }
-                        ].map((item, idx) => (
-                          <Link 
-                            key={idx}
-                            to={item.path} 
-                            className="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors text-sm space-x-2 text-gray-700"
-                            onClick={() => setIsProfileDropdownOpen(false)}
-                          >
-                            <span>{item.label}</span>
-                          </Link>
-                        ))}
-                      </div>
-                      
-                      <div className="border-t border-gray-200 my-1"></div>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-50 transition-colors text-sm flex items-center space-x-2"
+          <AnimatePresence>
+            {isSearchOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute right-20 top-16 w-80 bg-white rounded-lg shadow-lg py-3 dropdown-content"
+                style={{ zIndex: 9999 }}
+              >
+                <form onSubmit={handleSearchSubmit} className="px-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search across all categories..."
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                    <Search size={16} className="absolute left-3 top-3 text-gray-400" />
+                  </div>
+                </form>
+                <div className="mt-2 px-4 max-h-60 overflow-y-auto">
+                  {searchQuery && getSearchResults(searchQuery).map(result => (
+                    <div key={result.id}>
+                      <Link
+                        to={result.link}
+                        onClick={() => setIsSearchOpen(false)}
+                        className="block px-2 py-1.5 hover:bg-gray-100 rounded-md transition-colors text-sm"
                       >
-                        <LogIn className="h-4 w-4 rotate-180" />
-                        <span>Logout</span>
-                      </button>
-                    </motion.div>
+                        <span className="text-xs text-gray-500">{result.category}</span>
+                        <div>{result.title}</div>
+                      </Link>
+                    </div>
+                  ))}
+                  
+                  {searchQuery && getSearchResults(searchQuery).length === 0 && (
+                    <div className="px-2 py-1.5 text-gray-500 text-sm">
+                      No results found
+                    </div>
                   )}
-                </AnimatePresence>
-              </div>
-            </>
+                  
+                  {!searchQuery && (
+                    <div className="px-2 py-1.5 text-gray-500 text-sm">
+                      Type to search
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Cart Icon */}
+          <Link to="/viewcart" className="relative">
+            <button className={`p-2 rounded-full transition-colors ${
+              isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
+            }`}>
+              <ShoppingCart size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+              {getCartCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getCartCount()}
+                </span>
+              )}
+            </button>
+          </Link>
+
+          {/* Notifications */}
+          <div className="relative dropdown-container hidden sm:block">
+            <button
+              onClick={toggleNotifications}
+              className={`p-2 rounded-full transition-colors ${
+                isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
+              }`}
+            >
+              <Bell size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+            </button>
+            <AnimatePresence>
+              {isNotificationsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 dropdown-content"
+                  style={{ zIndex: 9999 }}
+                >
+                  {/* Notification items would go here */}
+                  <div className="px-4 py-2 text-sm text-gray-600">No new notifications</div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Auth Buttons or Profile */}
+          {isAuthenticated ? (
+            <div className="relative dropdown-container">
+              <button
+                onClick={toggleProfileDropdown}
+                className="flex items-center space-x-1 p-1 sm:p-2 rounded-full hover:bg-gray-800/10"
+              >
+                {getUserAvatar()}
+                <ChevronDown size={16} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+              </button>
+              <AnimatePresence>
+                {isProfileDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 dropdown-content"
+                    style={{ zIndex: 9999 }}
+                  >
+                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</Link>
+                    <Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</Link>
+                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                      Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ) : (
-            <div className="flex items-center space-x-2 md:space-x-3">
-              <motion.div whileHover={{ y: -2 }} className="hidden md:block relative group">
-                <Link to="/login" className="px-4 py-1.5 text-green-50 border border-green-50 hover:bg-gray-950 rounded-full text-sm font-medium transition-colors">
-                  Sign In
-                </Link>
-                {/* Bubble effect on hover */}
-                <AnimatePresence>
-                  {[1, 2, 3].map((i) => (
-                    <motion.div
-                      key={`signin-bubble-${i}`}
-                      className="absolute rounded-full bg-green-500/30 hidden group-hover:block"
-                      style={{
-                        width: 4 + i * 2,
-                        height: 4 + i * 2,
-                        bottom: -2,
-                        left: 20 + i * 10,
-                      }}
-                      initial={{ y: 0, opacity: 0 }}
-                      animate={{ y: -15 - i * 3, opacity: [0, 0.8, 0] }}
-                      exit={{ opacity: 0 }}
-                      transition={{ 
-                        duration: 1.5,
-                        delay: i * 0.2,
-                        repeat: Infinity,
-                        repeatType: "loop"
-                      }}
-                    />
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }} className="hidden md:block relative group">
-                <Link to="/register" className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-medium transition-colors shadow-sm">
-                  Sign Up
-                </Link>
-                {/* Bubble effect on hover */}
-                <AnimatePresence>
-                  {[1, 2, 3].map((i) => (
-                    <motion.div
-                      key={`signup-bubble-${i}`}
-                      className="absolute rounded-full bg-green-200 hidden group-hover:block"
-                      style={{
-                        width: 4 + i * 2,
-                        height: 4 + i * 2,
-                        bottom: -2,
-                        left: 20 + i * 10,
-                      }}
-                      initial={{ y: 0, opacity: 0 }}
-                      animate={{ y: -15 - i * 3, opacity: [0, 0.8, 0] }}
-                      exit={{ opacity: 0 }}
-                      transition={{ 
-                        duration: 1.5,
-                        delay: i * 0.2,
-                        repeat: Infinity,
-                        repeatType: "loop"
-                      }}
-                    />
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }} className="md:hidden">
-                <Link to="/login" className="text-gray-700 hover:text-green-600 transition-colors p-1.5">
-                  <LogIn className="h-5 w-5" />
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }} className="md:hidden">
-                <Link to="/register" className="text-gray-700 hover:text-green-600 transition-colors p-1.5">
-                  <UserPlus className="h-5 w-5" />
-                </Link>
-              </motion.div>
+            <div className="hidden sm:flex items-center space-x-2">
+              <Link to="/login">
+                <button className={`flex items-center space-x-1 px-3 py-1.5 rounded-lg transition-colors ${
+                  isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-800'
+                }`}>
+                  <LogIn size={16} />
+                  <span>Login</span>
+                </button>
+              </Link>
+              <Link to="/register">
+                <button className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors">
+                  <UserPlus size={16} />
+                  <span>Register</span>
+                </button>
+              </Link>
             </div>
           )}
 
-          {/* Mobile Menu Button with bubble animation */}
-          <motion.button 
-            onClick={toggleMobileMenu} 
-            className="md:hidden text-gray-800 hover:text-green-600 transition-colors p-1.5 relative group"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+          {/* Mobile Menu Button */}
+          <button
+            onClick={toggleMobileMenu}
+            className="lg:hidden p-2 rounded-full transition-colors"
+            aria-label="Toggle mobile menu"
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            
-            {/* Button bubble animations */}
-            <AnimatePresence>
-              {!isMobileMenuOpen && [1, 2].map((i) => (
-                <motion.div
-                  key={`menu-bubble-${i}`}
-                  className="absolute rounded-full bg-green-500/20 hidden group-hover:block"
-                  style={{
-                    width: 4 + i * 2,
-                    height: 4 + i * 2,
-                    top: i * 3 + 2,
-                    right: i * 3,
-                  }}
-                  initial={{ x: 0, opacity: 0 }}
-                  animate={{ x: [-5, 5, -5], opacity: [0, 0.8, 0] }}
-                  exit={{ opacity: 0 }}
-                  transition={{ 
-                    duration: 2,
-                    delay: i * 0.3,
-                    repeat: Infinity,
-                    repeatType: "loop"
-                  }}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.button>
+            {isMobileMenuOpen ? (
+              <X size={24} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+            ) : (
+              <Menu size={24} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+            )}
+          </button>
         </div>
       </div>
 
@@ -567,134 +437,139 @@ function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white/95 backdrop-blur-sm absolute top-full left-0 w-full border-t border-gray-200 shadow-lg z-50"
+            className={`lg:hidden overflow-hidden ${
+              isScrolled ? 'bg-gray-100' : 'bg-gray-800'
+            }`}
+            style={{ zIndex: 9998 }}
           >
-            <div className="p-4">
-              <div className="relative">
-                <input
-                  type="search"
-                  placeholder="Search products, services, jobs..."
-                  className="w-full py-2 px-4 pl-10 rounded-full bg-gray-100 border border-gray-200 focus:border-green-500 focus:outline-none text-sm transition-all"
-                />
-                <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-gray-500" />
-              </div>
-            </div>
-            <div className="divide-y divide-gray-200">
-              {navItems.map(({ path, label, icon: Icon }, idx) => (
-                <motion.div
-                  key={path}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                >
+            <div className="container mx-auto px-4 py-4 space-y-4">
+              {/* Mobile Search */}
+              <form onSubmit={handleSearchSubmit}>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                  />
+                  <Search size={16} className="absolute left-3 top-3 text-gray-400" />
+                </div>
+              </form>
+            
+              {/* Mobile Navigation Items */}
+              <div className="space-y-2">
+                {navItems.map(({ key, path, label, icon: Icon }) => (
                   <Link
+                    key={key}
                     to={path}
-                    className="flex items-center space-x-3 px-6 py-3 hover:bg-gray-50 transition-colors group text-gray-800"
-                    onClick={toggleMobileMenu}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
+                      isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-700'
+                    }`}
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center relative">
-                      <Icon className="h-4 w-4 text-green-600 group-hover:scale-110 transition-transform" />
-                      
-                      {/* Icon bubble animation on hover */}
-                      <motion.div
-                        className="absolute inset-0 rounded-full hidden group-hover:block"
-                        animate={{ 
-                          boxShadow: ["0 0 0 0px rgba(16, 185, 129, 0.3)", "0 0 0 4px rgba(16, 185, 129, 0)"]
-                        }}
-                        transition={{ 
-                          duration: 1.2,
-                          repeat: Infinity,
-                          repeatType: "loop"
-                        }}
-                      />
-                    </div>
+                    <Icon size={20} />
                     <span className="font-medium">{label}</span>
                   </Link>
-                </motion.div>
-              ))}
-            </div>
-            
-            {/* Contact Info in Mobile Menu - Kept in mobile view */}
-            <div className="px-6 py-3 border-t border-gray-200">
-              <p className="text-sm font-medium text-gray-700 mb-2">Contact Us</p>
-              <div className="space-y-2">
-                <a href="tel:+250791855396" className="flex items-center space-x-2 text-gray-600 text-sm group">
-                  <Phone className="h-4 w-4 text-green-600 group-hover:animate-pulse" />
-                  <span className="group-hover:text-green-600 transition-colors">+250791855396</span>
+                ))}
+              </div>
+
+              {/* Mobile Auth Section */}
+              {!isAuthenticated && (
+                <div className="pt-4 border-t border-gray-700 space-y-2">
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center justify-center space-x-2 p-3 rounded-lg w-full transition-colors ${
+                      isScrolled 
+                        ? 'bg-gray-200 text-gray-800 hover:bg-gray-300' 
+                        : 'bg-gray-700 text-white hover:bg-gray-600'
+                    }`}
+                  >
+                    <LogIn size={20} />
+                    <span>Login</span>
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center space-x-2 p-3 rounded-lg w-full bg-green-600 text-white hover:bg-green-700 transition-colors"
+                  >
+                    <UserPlus size={20} />
+                    <span>Register</span>
+                  </Link>
+                </div>
+              )}
+
+              {/* Mobile Contact Links */}
+              <div className={`pt-4 border-t ${isScrolled ? 'border-gray-300' : 'border-gray-700'}`}>
+                <div className="grid grid-cols-2 gap-4">
+                  <a
+                    href="mailto:support@example.com"
+                    className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${
+                      isScrolled 
+                        ? 'text-gray-800 hover:bg-gray-200' 
+                        : 'text-gray-200 hover:bg-gray-700'
+                    }`}
+                  >
+                    <Mail size={18} />
+                    <span>Email Us</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Social Links */}
+              <div className="pt-4 flex justify-center space-x-4">
+                <a 
+                  href="https://facebook.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`p-2 rounded-full transition-colors ${
+                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                  }`}
+                >
+                  <Facebook size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
                 </a>
-                <a href="mailto:psevenrwanda@gmail.com" className="flex items-center space-x-2 text-gray-600 text-sm group">
-                  <Mail className="h-4 w-4 text-green-600 group-hover:animate-pulse" />
-                  <span className="group-hover:text-green-600 transition-colors">psevenrwanda@gmail.com</span>
+                <a 
+                  href="https://twitter.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`p-2 rounded-full transition-colors ${
+                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                  }`}
+                >
+                  <Twitter size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+                </a>
+                <a 
+                  href="https://instagram.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`p-2 rounded-full transition-colors ${
+                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                  }`}
+                >
+                  <Instagram size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+                </a>
+                <a 
+                  href="https://youtube.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`p-2 rounded-full transition-colors ${
+                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                  }`}
+                >
+                  <Youtube size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
                 </a>
               </div>
             </div>
-            
-            {/* Mobile auth buttons */}
-            {!isAuthenticated && (
-              <motion.div 
-                className="flex justify-center space-x-4 p-6 border-t border-gray-200"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <Link 
-                  to="/login" 
-                  className="flex-1 text-center px-6 py-2.5 border border-green-600 text-green-600 rounded-full text-sm font-medium transition-colors relative overflow-hidden group"
-                  onClick={toggleMobileMenu}
-                >
-                  <span className="relative z-10">Sign In</span>
-                  <motion.div 
-  className="absolute inset-0 bg-green-50 opacity-0 group-hover:opacity-100 transition-opacity"
-  initial={{ x: "-100%" }}
-  whileHover={{ x: "0%" }}
-  transition={{ duration: 0.3 }}
-/>
-</Link>
-<Link 
-  to="/register" 
-  className="flex-1 text-center px-6 py-2.5 bg-green-600 text-white rounded-full text-sm font-medium transition-colors shadow-sm relative overflow-hidden group"
-  onClick={toggleMobileMenu}
->
-  <span className="relative z-10">Sign Up</span>
-  <motion.div 
-    className="absolute inset-0 bg-green-700 opacity-0 group-hover:opacity-100 transition-opacity"
-    initial={{ x: "-100%" }}
-    whileHover={{ x: "0%" }}
-    transition={{ duration: 0.3 }}
-  />
-</Link>
-</motion.div>
-)}
-
-{/* Social Media Icons */}
-<div className="flex justify-center items-center space-x-4 p-4 border-t border-gray-200">
-  {[
-    { icon: Facebook, href: "#", color: "#1877F2" },
-    { icon: Twitter, href: "#", color: "#1DA1F2" },
-    { icon: Instagram, href: "#", color: "#E4405F" },
-    { icon: Youtube, href: "#", color: "#FF0000" }
-  ].map((social, idx) => (
-    <motion.a
-      key={idx}
-      href={social.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      whileHover={{ y: -3 }}
-      className="p-2 rounded-full text-gray-600 hover:text-gray-800 transition-colors"
-    >
-      <social.icon className="h-5 w-5" />
-    </motion.a>
-  ))}
-</div>
-</motion.div>
-)}
-</AnimatePresence>
-</nav>
-);
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
 }
 
 export default Navbar;
