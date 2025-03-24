@@ -22,6 +22,7 @@ function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   
   const dropdownRefs = useRef({});
+  const searchRef = useRef(null);
 
   // Handle scroll effect with debounce
   useEffect(() => {
@@ -129,10 +130,10 @@ function Navbar() {
   const getUserAvatar = () => {
     if (user?.avatar) return user.avatar;
     
-    const name = user?.name || 'User';
-    const firstLetter = name.charAt(0).toUpperCase();
+    const fullName = user?.fullName || 'User';
+    const firstLetter = fullName.charAt(0).toUpperCase();
     const colors = ['#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B'];
-    const colorIndex = name.charCodeAt(0) % colors.length;
+    const colorIndex = fullName.charCodeAt(0) % colors.length;
     const bgColor = colors[colorIndex];
     
     return (
@@ -184,7 +185,7 @@ function Navbar() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-hidden ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-visible ${
         isScrolled ? 'backdrop-blur-md bg-gray-200/90' : 'bg-gray-900 backdrop-blur-md'
       }`}
     >
@@ -270,166 +271,226 @@ function Navbar() {
         {/* Right Section - Icons and Mobile Menu */}
         <div className="flex items-center space-x-2 sm:space-x-4">
           {/* Search Icon */}
-          <button 
-            className={`p-2 rounded-full transition-colors ${
-              isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
-            }`}
-            onClick={toggleSearch}
-            ref={el => dropdownRefs.current.search = el}
+          <div className="relative">
+            <button 
+              className={`p-2 rounded-full transition-colors ${
+                isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
+              }`}
+              onClick={toggleSearch}
+              ref={el => {
+                dropdownRefs.current.search = el;
+                searchRef.current = el;
+              }}
+            >
+              <Search size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+            </button>
+            
+            <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
           >
-            <Search size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-          </button>
-          
-          <AnimatePresence>
-            {isSearchOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="absolute right-20 top-16 w-80 bg-white rounded-lg shadow-lg py-3 dropdown-content"
-                style={{ zIndex: 9999 }}
-              >
-                <form onSubmit={handleSearchSubmit} className="px-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search across all categories..."
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                      className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    <Search size={16} className="absolute left-3 top-3 text-gray-400" />
-                  </div>
-                </form>
-                <div className="mt-2 px-4 max-h-60 overflow-y-auto">
-                  {searchQuery && getSearchResults(searchQuery).map(result => (
-                    <div key={result.id}>
-                      <Link
-                        to={result.link}
-                        onClick={() => setIsSearchOpen(false)}
-                        className="block px-2 py-1.5 hover:bg-gray-100 rounded-md transition-colors text-sm"
-                      >
-                        <span className="text-xs text-gray-500">{result.category}</span>
-                        <div>{result.title}</div>
-                      </Link>
-                    </div>
-                  ))}
-                  
-                  {searchQuery && getSearchResults(searchQuery).length === 0 && (
-                    <div className="px-2 py-1.5 text-gray-500 text-sm">
-                      No results found
-                    </div>
-                  )}
-                  
-                  {!searchQuery && (
-                    <div className="px-2 py-1.5 text-gray-500 text-sm">
-                      Type to search
-                    </div>
-                  )}
+            <div className="bg-white w-full max-w-4xl p-4 m-auto rounded-lg shadow-lg">
+              <form onSubmit={handleSearchSubmit}>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search across all categories..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    className="w-full px-3 py-2 pl-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                    autoFocus
+                  />
+                  <Search size={16} className="absolute left-3 top-3 text-gray-400" />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </form>
+              <div className="mt-4 max-h-60 overflow-y-auto">
+                {searchQuery && getSearchResults(searchQuery).map(result => (
+                  <div key={result.id}>
+                    <Link
+                      to={result.link}
+                      onClick={() => setIsSearchOpen(false)}
+                      className="block px-2 py-2 hover:bg-gray-100 rounded-md transition-colors text-sm"
+                    >
+                      <span className="text-xs text-gray-500">{result.category}</span>
+                      <div>{result.title}</div>
+                    </Link>
+                  </div>
+                ))}
+
+                {searchQuery && getSearchResults(searchQuery).length === 0 && (
+                  <div className="px-2 py-2 text-gray-500 text-sm text-center">
+                    No results found
+                  </div>
+                )}
+
+                {!searchQuery && (
+                  <div className="px-2 py-2 text-gray-500 text-sm text-center">
+                    Type to search
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+          </div>
 
           {/* Cart Icon */}
           <Link to="/viewcart" className="relative">
             <button className={`p-2 rounded-full transition-colors ${
               isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
             }`}>
-              <ShoppingCart size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+             <ShoppingCart size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
               {getCartCount() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {getCartCount()}
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                  {getCartCount() > 9 ? '9+' : getCartCount()}
                 </span>
               )}
             </button>
           </Link>
 
-          {/* Notifications */}
-          <div className="relative dropdown-container hidden sm:block">
-            <button
-              onClick={toggleNotifications}
+          {/* Notifications Icon */}
+          <div className="relative">
+            <button 
               className={`p-2 rounded-full transition-colors ${
                 isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
               }`}
+              onClick={toggleNotifications}
+              ref={el => dropdownRefs.current.notifications = el}
             >
               <Bell size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                3
+              </span>
             </button>
+            
+           <AnimatePresence>
+  {isNotificationsOpen && (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      className="absolute md:right-0 -right-20 m-auto top-full mt-2 w-80 md:w-[700px] bg-white rounded-lg shadow-lg py-3 dropdown-content"
+    >
+      <div className="px-4 pb-2 border-b border-gray-100 flex justify-between items-center">
+        <h3 className="font-semibold text-gray-800">Notifications</h3>
+        <ChevronDown size={16} className="text-gray-500" />
+      </div>
+      <div className="max-h-60 overflow-y-auto">
+        <div className="px-4 py-2 border-b border-gray-100 hover:bg-gray-50">
+          <div className="text-sm font-medium">New message from John</div>
+          <div className="text-xs text-gray-500">2 minutes ago</div>
+        </div>
+        <div className="px-4 py-2 border-b border-gray-100 hover:bg-gray-50">
+          <div className="text-sm font-medium">Your item has been shipped</div>
+          <div className="text-xs text-gray-500">3 hours ago</div>
+        </div>
+        <div className="px-4 py-2 hover:bg-gray-50">
+          <div className="text-sm font-medium">Password changed successfully</div>
+          <div className="text-xs text-gray-500">Yesterday</div>
+        </div>
+      </div>
+      <div className="px-4 pt-2 border-t border-gray-100">
+        <Link to="/notifications" className="text-sm text-green-600 hover:text-green-700">
+          View all notifications
+        </Link>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+          </div>
+
+          {/* Profile Dropdown */}
+          <div className="relative">
+            {isAuthenticated ? (
+              <button
+                className="flex items-center space-x-1"
+                onClick={toggleProfileDropdown}
+                ref={el => dropdownRefs.current.profile = el}
+              >
+                <div className="relative">
+                  {typeof user?.avatar === 'string' ? (
+                    <img 
+                      src={user.avatar} 
+                      alt="Profile" 
+                      className="h-7 w-7 rounded-full object-cover border-2 border-green-500"
+                    />
+                  ) : (
+                    getUserAvatar()
+                  )}
+                </div>
+                <ChevronDown size={16} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+              </button>
+            ) : (
+              /* Login/Register buttons for desktop view only */
+              <div className="hidden lg:flex items-center space-x-2">
+                <Link
+                  to="/login"
+                  className={`flex items-center space-x-1 px-3 py-1.5 rounded-md text-sm ${
+                    isScrolled 
+                      ? 'text-gray-800 hover:bg-gray-200' 
+                      : 'text-gray-200 hover:bg-gray-700'
+                  }`}
+                >
+                  <LogIn size={16} />
+                  <span>Login</span>
+                </Link>
+                <Link
+                  to="/register"
+                  className="flex items-center space-x-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm transition-colors"
+                >
+                  <UserPlus size={16} />
+                  <span>Register</span>
+                </Link>
+              </div>
+            )}
+            
             <AnimatePresence>
-              {isNotificationsOpen && (
+              {isAuthenticated && isProfileDropdownOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 dropdown-content"
-                  style={{ zIndex: 9999 }}
+                  className="absolute right-0 top-full mt-2 w-60 bg-white rounded-lg shadow-lg py-2 dropdown-content"
                 >
-                  {/* Notification items would go here */}
-                  <div className="px-4 py-2 text-sm text-gray-600">No new notifications</div>
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <div className="font-medium">{user?.name}</div>
+                    <div className="text-sm text-gray-500">{user?.fullName}</div>
+                  </div>
+                  <Link to="/userDashboard" className="block px-4 py-2 hover:bg-gray-50">My Dashboard</Link>
+                  <div className="border-t border-gray-100 mt-1 pt-1">
+                    <button 
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-50"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-
-          {/* Auth Buttons or Profile */}
-          {isAuthenticated ? (
-            <div className="relative dropdown-container">
-              <button
-                onClick={toggleProfileDropdown}
-                className="flex items-center space-x-1 p-1 sm:p-2 rounded-full hover:bg-gray-800/10"
-              >
-                {getUserAvatar()}
-                <ChevronDown size={16} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-              </button>
-              <AnimatePresence>
-                {isProfileDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 dropdown-content"
-                    style={{ zIndex: 9999 }}
-                  >
-                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</Link>
-                    <Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</Link>
-                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                      Logout
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ) : (
-            <div className="hidden sm:flex items-center space-x-2">
-              <Link to="/login">
-                <button className={`flex items-center space-x-1 px-3 py-1.5 rounded-lg transition-colors ${
-                  isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-800'
-                }`}>
-                  <LogIn size={16} />
-                  <span>Login</span>
-                </button>
-              </Link>
-              <Link to="/register">
-                <button className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors">
-                  <UserPlus size={16} />
-                  <span>Register</span>
-                </button>
-              </Link>
-            </div>
-          )}
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMobileMenu}
-            className="lg:hidden p-2 rounded-full transition-colors"
-            aria-label="Toggle mobile menu"
-          >
-            {isMobileMenuOpen ? (
-              <X size={24} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-            ) : (
-              <Menu size={24} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-            )}
-          </button>
+          
+          {/* Mobile Menu Button - Show even for non-authenticated users */}
+          <div className="lg:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className={`p-2 rounded-md transition-colors ${
+                isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
+              }`}
+            >
+              {isMobileMenuOpen ? (
+                <X size={24} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+              ) : (
+                <Menu size={24} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -437,132 +498,174 @@ function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
             className={`lg:hidden overflow-hidden ${
               isScrolled ? 'bg-gray-100' : 'bg-gray-800'
             }`}
-            style={{ zIndex: 9998 }}
           >
-            <div className="container mx-auto px-4 py-4 space-y-4">
-              {/* Mobile Search */}
-              <form onSubmit={handleSearchSubmit}>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-                  />
-                  <Search size={16} className="absolute left-3 top-3 text-gray-400" />
-                </div>
-              </form>
-            
-              {/* Mobile Navigation Items */}
-              <div className="space-y-2">
-                {navItems.map(({ key, path, label, icon: Icon }) => (
-                  <Link
-                    key={key}
-                    to={path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
-                      isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-700'
-                    }`}
-                  >
-                    <Icon size={20} />
-                    <span className="font-medium">{label}</span>
-                  </Link>
-                ))}
-              </div>
-
-              {/* Mobile Auth Section */}
+            <div className="container mx-auto px-4 py-3 space-y-1">
+              {navItems.map(({ key, path, label, icon: Icon }) => (
+                <Link
+                  key={key}
+                  to={path}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md ${
+                    isScrolled 
+                      ? 'text-gray-800 hover:bg-gray-200' 
+                      : 'text-gray-200 hover:bg-gray-700'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Icon size={18} />
+                  <span>{label}</span>
+                </Link>
+              ))}
+              
+              {/* Login and Register buttons for mobile - always show in mobile menu when not authenticated */}
               {!isAuthenticated && (
-                <div className="pt-4 border-t border-gray-700 space-y-2">
+                <div className="py-2 space-y-2 border-t border-gray-700 mt-2">
                   <Link
                     to="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center justify-center space-x-2 p-3 rounded-lg w-full transition-colors ${
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md ${
                       isScrolled 
-                        ? 'bg-gray-200 text-gray-800 hover:bg-gray-300' 
-                        : 'bg-gray-700 text-white hover:bg-gray-600'
+                        ? 'text-gray-800 bg-gray-200 hover:bg-gray-300' 
+                        : 'text-gray-200 bg-gray-700 hover:bg-gray-600'
                     }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <LogIn size={20} />
+                    <LogIn size={18} />
                     <span>Login</span>
                   </Link>
                   <Link
                     to="/register"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center space-x-2 p-3 rounded-lg w-full bg-green-600 text-white hover:bg-green-700 transition-colors"
                   >
-                    <UserPlus size={20} />
+                    <UserPlus size={18} />
                     <span>Register</span>
                   </Link>
                 </div>
               )}
-
-              {/* Mobile Contact Links */}
-              <div className={`pt-4 border-t ${isScrolled ? 'border-gray-300' : 'border-gray-700'}`}>
-                <div className="grid grid-cols-2 gap-4">
-                  <a
-                    href="mailto:support@example.com"
-                    className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${
-                      isScrolled 
-                        ? 'text-gray-800 hover:bg-gray-200' 
-                        : 'text-gray-200 hover:bg-gray-700'
+              
+              {/* User profile options when logged in */}
+              {isAuthenticated && (
+                <div className="py-2 space-y-1 border-t border-gray-700 mt-2">
+                  <div className="px-3 py-2">
+                    <div className={isScrolled ? "font-medium text-gray-800" : "font-medium text-gray-200"}>{user?.name}</div>
+                    <div className={isScrolled ? "text-sm text-gray-600" : "text-sm text-gray-400"}>{user?.email}</div>
+                  </div>
+                  <Link
+                    to="/profile"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md ${
+                      isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-700'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>My Profile</span>
+                  </Link>
+                  <Link
+                    to="/orders"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md ${
+                      isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-700'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>My Orders</span>
+                  </Link>
+                  <Link
+                    to="/favorites"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md ${
+                      isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-700'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>Saved Items</span>
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md ${
+                      isScrolled ? 'text-gray-800 hover:bg-gray-200' : 'text-gray-200 hover:bg-gray-700'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>Settings</span>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md w-full text-left ${
+                      isScrolled ? 'text-red-600 hover:bg-gray-200' : 'text-red-400 hover:bg-gray-700'
                     }`}
                   >
-                    <Mail size={18} />
-                    <span>Email Us</span>
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+              
+              <div className="pt-2 mt-2 border-t border-gray-700">
+                <div className="flex items-center space-x-2">
+                  <Mail size={16} className={isScrolled ? 'text-gray-600' : 'text-gray-400'} />
+                  <a 
+                    href="mailto:support@pseven.com" 
+                    className={isScrolled ? 'text-gray-800' : 'text-gray-300'}
+                  >
+                    support@pseven.com
                   </a>
                 </div>
-              </div>
-
-              {/* Social Links */}
-              <div className="pt-4 flex justify-center space-x-4">
-                <a 
-                  href="https://facebook.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`p-2 rounded-full transition-colors ${
-                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
-                  }`}
-                >
-                  <Facebook size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-                </a>
-                <a 
-                  href="https://twitter.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`p-2 rounded-full transition-colors ${
-                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
-                  }`}
-                >
-                  <Twitter size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-                </a>
-                <a 
-                  href="https://instagram.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`p-2 rounded-full transition-colors ${
-                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
-                  }`}
-                >
-                  <Instagram size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-                </a>
-                <a 
-                  href="https://youtube.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`p-2 rounded-full transition-colors ${
-                    isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
-                  }`}
-                >
-                  <Youtube size={20} className={isScrolled ? 'text-gray-800' : 'text-gray-200'} />
-                </a>
+                <div className="flex items-center space-x-2 mt-2">
+                  <Phone size={16} className={isScrolled ? 'text-gray-600' : 'text-gray-400'} />
+                  <a 
+                    href="tel:+1234567890" 
+                    className={isScrolled ? 'text-gray-800' : 'text-gray-300'}
+                  >
+                    +1 (234) 567-890
+                  </a>
+                </div>
+                <div className="flex items-center space-x-4 mt-3">
+                  <a 
+                    href="https://facebook.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={`p-1.5 rounded-full ${
+                      isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                    }`}
+                  >
+                    <Facebook size={18} className={isScrolled ? 'text-gray-700' : 'text-gray-300'} />
+                  </a>
+                  <a 
+                    href="https://twitter.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={`p-1.5 rounded-full ${
+                      isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                    }`}
+                  >
+                    <Twitter size={18} className={isScrolled ? 'text-gray-700' : 'text-gray-300'} />
+                  </a>
+                  <a 
+                    href="https://instagram.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={`p-1.5 rounded-full ${
+                      isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                    }`}
+                  >
+              <Instagram size={18} className={isScrolled ? 'text-gray-700' : 'text-gray-300'} />
+                  </a>
+                  <a 
+                    href="https://youtube.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={`p-1.5 rounded-full ${
+                      isScrolled ? 'hover:bg-gray-200' : 'hover:bg-gray-700'
+                    }`}
+                  >
+                    <Youtube size={18} className={isScrolled ? 'text-gray-700' : 'text-gray-300'} />
+                  </a>
+                </div>
               </div>
             </div>
           </motion.div>

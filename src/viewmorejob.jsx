@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   MapPin, Clock, Briefcase, Share2, Link, Facebook, 
   Twitter, Linkedin, ArrowLeft, Copy, Check, ExternalLink,
-  Building, CalendarRange, Globe, Image as ImageIcon
+  CalendarRange, Globe, Image as ImageIcon
 } from 'lucide-react';
 import Loading from './loading';
 
@@ -31,12 +31,8 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
       }
     };
 
-    if (jobId) {
-      fetchJobDetails();
-    }
-  }, [jobId]);
-
-  useEffect(() => {
+    if (jobId) fetchJobDetails();
+    
     // Close share options when clicking outside
     const handleClickOutside = (event) => {
       if (shareContainerRef.current && !shareContainerRef.current.contains(event.target)) {
@@ -45,19 +41,15 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [jobId]);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const getJobUrl = () => {
-    return `${window.location.origin}/job-employers?jobId=${jobId}`;
-  };
+  const getJobUrl = () => `${window.location.origin}/job-employers?jobId=${jobId}`;
 
   const handleShare = (platform) => {
     const url = getJobUrl();
@@ -91,13 +83,9 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
     }
   };
 
-  const toggleLargeImage = () => {
-    setShowLargeImage(!showLargeImage);
-  };
-
-  if (loading) return <div className="flex justify-center items-center h-screen w-full"><Loading /></div>;
-  if (error) return <div className="text-center text-red-500 font-semibold text-lg w-full">{error}</div>;
-  if (!job) return <div className="text-center text-gray-500 w-full">Job not found</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen"><Loading /></div>;
+  if (error) return <div className="text-center text-red-500 font-semibold text-lg">{error}</div>;
+  if (!job) return <div className="text-center text-gray-500">Job not found</div>;
 
   const tabs = [
     { id: 'description', label: 'Description' },
@@ -110,27 +98,25 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="bg-white min-h-screen w-full"
+      className="bg-white min-h-screen"
     >
-      {/* Modern navigation bar */}
-      <div className="bg-gray-900 text-white sticky top-0 z-10 shadow-lg w-full">
-        <div className="w-full px-4 py-3 flex items-center justify-between">
-          <button 
-            onClick={onBack} 
-            className="flex items-center text-gray-300 hover:text-white transition-colors"
-          >
+      {/* Header */}
+      <div className="bg-gray-900 text-white sticky top-0 z-10 shadow-lg">
+        <div className="px-4 py-3 flex items-center justify-between">
+          <button onClick={onBack} className="flex items-center text-gray-300 hover:text-white transition-colors">
             <ArrowLeft size={20} className="mr-2" />
             <span className="hidden xs:inline">Back</span>
           </button>
           
-          <h1 className="text-base sm:text-lg font-semibold text-white truncate max-w-xs sm:max-w-md">{job.title}</h1>
+          <h1 className="text-base sm:text-lg font-semibold text-white truncate max-w-xs sm:max-w-md">
+            {job.title}
+          </h1>
           
           <div className="flex items-center space-x-2 sm:space-x-4">
             <div ref={shareContainerRef} className="relative">
               <button
                 onClick={() => setIsSharingOpen(!isSharingOpen)}
                 className="flex items-center text-gray-300 hover:text-white transition-colors p-1 sm:p-2"
-                aria-label="Share"
               >
                 <Share2 size={18} />
                 <span className="hidden sm:inline ml-1">Share</span>
@@ -160,32 +146,20 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
                     </button>
                   </div>
                   
-                  <div className="grid grid-cols-4 gap-2 mb-2">
-                    <button 
-                      onClick={() => handleShare('facebook')} 
-                      className="flex flex-col items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
+                  <div className="grid grid-cols-4 gap-2">
+                    <button onClick={() => handleShare('facebook')} className="flex flex-col items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100">
                       <Facebook size={20} className="text-blue-600 mb-1" />
                       <span className="text-xs">Facebook</span>
                     </button>
-                    <button 
-                      onClick={() => handleShare('twitter')} 
-                      className="flex flex-col items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
+                    <button onClick={() => handleShare('twitter')} className="flex flex-col items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100">
                       <Twitter size={20} className="text-blue-400 mb-1" />
                       <span className="text-xs">Twitter</span>
                     </button>
-                    <button 
-                      onClick={() => handleShare('linkedin')} 
-                      className="flex flex-col items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
+                    <button onClick={() => handleShare('linkedin')} className="flex flex-col items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100">
                       <Linkedin size={20} className="text-blue-700 mb-1" />
                       <span className="text-xs">LinkedIn</span>
                     </button>
-                    <button 
-                      onClick={() => handleShare('email')} 
-                      className="flex flex-col items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
+                    <button onClick={() => handleShare('email')} className="flex flex-col items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100">
                       <Link size={20} className="text-gray-600 mb-1" />
                       <span className="text-xs">Email</span>
                     </button>
@@ -204,20 +178,20 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
         </div>
       </div>
       
-      {/* Job header with key details */}
-      <div className="bg-gray-100 border-b w-full">
-        <div className="w-full px-4 py-6">
+      {/* Job header */}
+      <div className="bg-gray-100 border-b">
+        <div className="px-4 py-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-            <div className="flex items-center mb-4 sm:mb-0 w-full">
+            <div className="flex items-center mb-4 sm:mb-0">
               <div 
                 className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-lg shadow-md overflow-hidden flex items-center justify-center mr-3 sm:mr-4 cursor-pointer hover:opacity-90 transition-opacity flex-shrink-0"
-                onClick={toggleLargeImage}
+                onClick={() => setShowLargeImage(!showLargeImage)}
               >
                 {job.image ? (
                   <img 
-                    src={`https://api.psevenrwanda.com${job.image}`} 
+                    src={job.image}
                     alt={job.title} 
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="bg-gray-100 w-full h-full flex flex-col items-center justify-center">
@@ -250,8 +224,8 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
       </div>
       
       {/* Tab navigation */}
-      <div className="border-b border-gray-200 w-full overflow-x-auto scrollbar-hide">
-        <div className="w-full px-4">
+      <div className="border-b border-gray-200 overflow-x-auto scrollbar-hide">
+        <div className="px-4">
           <div className="flex">
             {tabs.map(tab => (
               <button
@@ -270,10 +244,9 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
         </div>
       </div>
       
-      {/* Main content area */}
-      <div className="w-full px-4 py-6 sm:py-8">
+      {/* Main content */}
+      <div className="px-4 py-6 sm:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Main content */}
           <div className="lg:col-span-2">
             {activeTab === 'description' && (
               <div>
@@ -290,13 +263,12 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
                 <div className="prose max-w-none text-gray-700 text-sm sm:text-base">
                   {job.companyDescription || "No company information provided."}
                 </div>
-
                 <div className="mt-6">
                   <h3 className="text-md sm:text-lg font-medium text-gray-800 mb-3">Company Logo</h3>
                   <div className="bg-white p-4 border border-gray-200 rounded-lg inline-block">
                     {job.image ? (
                       <img 
-                        src={`https://api.psevenrwanda.com${job.image}`} 
+                        src={job.image}
                         alt={`${job.title} company logo`} 
                         className="max-h-32 sm:max-h-40 object-contain"
                       />
@@ -357,7 +329,6 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
                   </div>
                 </div>
                 
-                
                 {job.companyWebsite && (
                   <div className="flex items-start">
                     <div className="bg-gray-100 p-2 rounded-lg mr-3 flex-shrink-0">
@@ -396,12 +367,12 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
       {showLargeImage && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
-          onClick={toggleLargeImage}
+          onClick={() => setShowLargeImage(false)}
         >
           <div className="relative bg-white rounded-lg p-4 max-w-2xl max-h-screen overflow-auto" onClick={e => e.stopPropagation()}>
             <button 
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 bg-white rounded-full p-1"
-              onClick={toggleLargeImage}
+              onClick={() => setShowLargeImage(false)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -409,7 +380,7 @@ const ViewMore = ({ jobId, onBack, onApply }) => {
             </button>
             {job.image ? (
               <img 
-                src={`https://api.psevenrwanda.com${job.image}`} 
+                src={job.image}
                 alt={job.title} 
                 className="max-w-full max-h-full object-contain"
               />

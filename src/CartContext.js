@@ -18,7 +18,9 @@ export const CartProvider = ({ children }) => {
       const newCart = [...prevCart];
       const existingProductIndex = newCart.findIndex(
         (item) =>
-          item.id === product.id && item.selectedColor === product.selectedColor
+          item.id === product.id && 
+          (item.selectedColor === product.selectedColor || 
+           (!item.selectedColor && !product.selectedColor))
       );
 
       if (existingProductIndex !== -1) {
@@ -32,12 +34,19 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCart = (productId, selectedColor) => {
-    setCart((prevCart) =>
-      prevCart.filter(
-        (item) =>
-          !(item.id === productId && item.selectedColor === selectedColor)
-      )
-    );
+    // If only productId is provided (no selectedColor), 
+    // remove all items with that ID regardless of color
+    if (selectedColor === undefined) {
+      setCart((prevCart) => prevCart.filter((item) => item.id !== productId && item._id !== productId));
+    } else {
+      // Otherwise, use the original behavior
+      setCart((prevCart) =>
+        prevCart.filter(
+          (item) =>
+            !(item.id === productId && item.selectedColor === selectedColor)
+        )
+      );
+    }
   };
 
   const clearCart = () => {

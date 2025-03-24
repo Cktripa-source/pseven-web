@@ -1,19 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-// Create axios instance with default config
-const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+const API_ONLINE='https://api.psevenrwanda.com/api/';
+// Create separate API instances for user and admin
+const baseAPI = axios.create({
+  baseURL: API_ONLINE|| 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
 // Add axios interceptor for token handling
-api.interceptors.request.use(
+baseAPI.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('userToken');
+    const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,7 +27,7 @@ api.interceptors.request.use(
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser ] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -37,63 +37,98 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem('userToken');
+    const token = localStorage.getItem('authToken');
+    const authType = localStorage.getItem('authType');
+    
     if (token) {
       try {
-        const response = await api.get('/auth/check');
-        setUser (response.data.user);
-        // Redirect based on role
+        const response = await baseAPI.get('/auth/check');
+        setUser(response.data.user);
+        
+        // Route users based on role and current location
+        const currentPath = window.location.pathname;
+        const isAdminPath = currentPath.startsWith('/admin');
+        
         if (response.data.user.role === 'admin') {
-          navigate('/admin/dashboardoverview');
+          if (!isAdminPath) {
+            // Admin is on user routes, redirect to admin dashboard
+            navigate('/admin/dashboardoverview');
+          }
         } else {
-          navigate('/admin');
+          if (isAdminPath) {
+            // Regular user is on admin routes, redirect to user area
+            navigate('/shopping');
+          }
         }
+        
+        setLoading(false);
       } catch (err) {
-        if (err.response?.status === 404) {
-          console.error('Auth Check Endpoint Not Found:', err);
-          // Handle the 404 error, e.g., log out the user
-          localStorage.removeItem('userToken');
-          setUser (null);
-          navigate('/login');
-        } else {
-          handleAuthError(err);
-        }
+        handleAuthError(err);
       }
     } else {
-      setLoading(false); // No token, just set loading to false
+      setLoading(false);
     }
   };
+  
   const handleAuthError = (err) => {
     console.error('Auth Error:', err);
-    localStorage.removeItem('userToken');
-    setUser (null);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authType');
+    setUser(null);
     setError(err.response?.data?.message || 'Authentication failed');
-    if (err.response?.status === 401) {
+    
+    // Determine where to redirect based on current path
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith('/admin')) {
+      navigate('/admin/');
+    } else {
       navigate('/login');
     }
-    setLoading(false); // Ensure loading is set to false on error
+    
+    setLoading(false);
   };
 
-  const login = async (email, password) => {
+  // User-specific login function
+  const userLogin = async (email, password) => {
     try {
       setError(null);
-      const response = await api.post('/auth/login', {
+      
+      // First check if this is an admin trying to log in to user route
+      const isLikelyAdmin = await checkIfAdmin(email);
+      
+      if (isLikelyAdmin) {
+        return { 
+          success: false, 
+          error: 'User not found',
+          redirectTo: '/login',
+          isAdminAttempt: true
+        };
+      }
+      
+      // Proceed with regular user login
+      const response = await baseAPI.post('/auth/login', {
         email,
         password,
       });
       
       const { token, user: userData } = response.data;
-      localStorage.setItem('userToken', token);
-      setUser (userData);
-
-      // Redirect based on role
+      
+      // Double-check that we're not logging in an admin
       if (userData.role === 'admin') {
-        navigate('/admin/dashboardoverview');
-      } else {
-        navigate('/admin');
+        return { 
+          success: false, 
+          error: 'User not found',
+          redirectTo: '/login',
+          isAdminAttempt: true
+        };
       }
-
-      return { success: true };
+      
+      // Store auth info
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('authType', 'user');
+      setUser(userData);
+      
+      return { success: true, redirectTo: '/shopping' };
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Login failed';
       setError(errorMessage);
@@ -101,14 +136,91 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Admin-specific login function
+  const adminLogin = async (email, password) => {
+    try {
+      setError(null);
+      
+      // Check if this is actually a regular user trying to log in
+      const isAdmin = await checkIfAdmin(email);
+      
+      if (!isAdmin) {
+        return { 
+          success: false, 
+          error: 'Unknown admin: Guessed user',
+          redirectTo: '/login',
+          isUserAttempt: true
+        };
+      }
+      
+      // Proceed with admin login attempt using the specific admin route
+      const response = await baseAPI.post('/auth/admin-login', {
+        email,
+        password,
+      });
+      
+      const { token, user: userData } = response.data;
+      
+      // Verify this is really an admin (redundant but safe)
+      if (userData.role !== 'admin') {
+        return { 
+          success: false, 
+          error: 'Unknown admin: Guessed user',
+          redirectTo: '/login',
+          isUserAttempt: true
+        };
+      }
+      
+      // Store auth info before navigation
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('authType', 'admin');
+      setUser(userData);
+      
+      // Use React Router for consistent navigation
+      return { 
+        success: true, 
+        redirectTo: '/admin/dashboardoverview'
+      };
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Login failed';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Helper function to check if an email belongs to an admin
+  const checkIfAdmin = async (email) => {
+    try {
+      console.log('Checking if email is admin:', email);
+      const response = await baseAPI.post('/auth/check-role', { email });
+      console.log('Response from check-role:', response.data);
+      return response.data.role === 'admin';
+    } catch (err) {
+      // Log more detailed error information
+      console.error('Role check failed:', err);
+      console.error('Response status:', err.response?.status);
+      console.error('Response data:', err.response?.data);
+      return false;
+    }
+  };
+
   const register = async (userData) => {
     try {
       setError(null);
-      const response = await api.post('/auth/register', userData);
       
-      // If registration is successful, automatically log in
+      // Check if trying to register as admin via API only
+      const isAdmin = await checkIfAdmin(userData.email);
+      if (isAdmin) {
+        return { 
+          success: false, 
+          error: 'Cannot register admin accounts through public registration'
+        };
+      }
+      
+      const response = await baseAPI.post('/auth/register', userData);
+      
       if (response.data.success) {
-        return await login(userData.email, userData.password);
+        return { success: true, message: 'Registration successful!' };
       }
       
       return { success: true, message: 'Registration successful!' };
@@ -121,12 +233,19 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Optional: Call logout endpoint if you have one
-      // await api.post('/auth/logout');
-      localStorage.removeItem('userToken');
-      setUser (null);
+      const isAdmin = user?.role === 'admin';
+      
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('authType');
+      setUser(null);
       setError(null);
-      navigate('/login');
+      
+      // Redirect based on user type
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/login');
+      }
     } catch (err) {
       console.error('Logout error:', err);
     }
@@ -142,15 +261,17 @@ export const AuthProvider = ({ children }) => {
         user, 
         loading, 
         error, 
-        login, 
+        userLogin,
+        adminLogin, 
         register, 
         logout, 
         clearError,
+        checkAuth,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin'
       }}
     >
-      {loading ? <div>Loading...</div> : children} {/* Show loading state */}
+      {loading ? <div>Loading...</div> : children}
     </AuthContext.Provider>
   );
 };
@@ -163,5 +284,5 @@ export const useAuth = () => {
   return context;
 };
 
-// Optional: Export the api instance for use in other parts of the application
-export const authApi = api;
+// Export the api instance for use in other parts of the application
+export const api = baseAPI;

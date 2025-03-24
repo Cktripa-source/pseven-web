@@ -8,6 +8,8 @@ import Carousel from './Carousel';
 import Footer from './footer';
 import ViewCart from './viewcart';
 import Login from './login';
+import Dashboard from './userDashboard';
+import EditProfile from './editeprofile';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import Register from './register';
@@ -24,6 +26,9 @@ import OrderConfirmation from './order-confirmation';
 import Services from "./Services";
 import FloatingChatBox from './chatbox';
 import Loading from './loading';
+import { ProfileProvider } from './ProfileContext';
+import { NotFound, Forbidden } from './ErrorPages'; // Import the error components
+import ProtectedRoute from './ProtectedRoute'; // Import the ProtectedRoute component
 
 // Admin Pages
 import AdminAuth from './admin/admin';
@@ -81,47 +86,60 @@ function App() {
     return (
         <AuthProvider>
             <CartProvider>
+                <ProfileProvider>
                 {!isAdminRoute && <Navbar />}
 
-                {/* Main Content */}
-                {/* {isOffline ? ( */}
-                    <>
-                        <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<><Carousel /><Shopping /></>} />
-                            <Route path="/viewcart" element={<ViewCart />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/forgot-password" element={<ForgotPassword />} />
-                            <Route path="/reset-password/:token" element={<ResetPassword />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/shopping" element={<Shopping />} />
-                            <Route path="/product/:id" element={<ViewProductDetail />} />
-                            <Route path="/job-employers" element={<JobEmployers />} />
-                            <Route path="/services" element={<Services />} />
-                            <Route path="/others" element={<Others />} />
-                            <Route path="/about" element={<AboutUs />} />
-                            <Route path="/faq" element={<Faq />} />
-                            <Route path="/contact" element={<ContactUs />} />
-                            <Route path="/checkout" element={<Checkout />} />
-                            <Route path="/payment" element={<Payment />} />
-                            <Route path="/order-confirmation" element={<OrderConfirmation />} />
-
-                            {/* Admin Routes */}
-                            <Route path="/admin/*" element={<AdminPages />} />
-                            <Route path="/admin" element={<AdminAuth />} />
-                        </Routes>
-
-                        {/* Floating Chat Box - Only show on non-admin routes and when online */}
-                        {!isAdminRoute && <FloatingChatBox userId={userId} />}
-                    </>
-                {/* ) : (
-                    <div className="flex flex-col justify-center items-center min-h-screen bg-green-200">
-                        <AlertTriangle className='text-gray-950 h-20 w-20 p-4' />
-                        <h1 className="text-2xl text-center">You are offline. Please check your internet connection.</h1>
-                        <p className="mt-4">Content is unavailable while offline. Please reconnect to the internet.</p>
+                {/* Network Status Notification */}
+                {isOffline && (
+                    <div className="bg-red-500 text-white p-2 text-center flex items-center justify-center">
+                        <AlertTriangle className="mr-2" size={20} />
+                        You are currently offline. Some features may be unavailable.
                     </div>
-                )} */}
+                )}
+                {isSlowNetwork && !isOffline && (
+                    <div className="bg-yellow-500 text-white p-2 text-center">
+                        Slow network detected. Some content may load slowly.
+                    </div>
+                )}
 
+                {/* Main Content */}
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<><Carousel /><Shopping /></>} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
+                    <Route path="/shopping" element={<Shopping />} />
+                    <Route path="/product/:id" element={<ViewProductDetail />} />
+                    <Route path="/services" element={<Services />} />
+                    <Route path="/others" element={<Others />} />
+                    <Route path="/about" element={<AboutUs />} />
+                    <Route path="/faq" element={<Faq />} />
+                    <Route path="/contact" element={<ContactUs />} />
+                    <Route path="/job-employers" element={<JobEmployers />} />
+                    
+                    {/* Protected User Routes */}
+                    <Route path="/userDashboard" element={<ProtectedRoute element={<Dashboard />} />} />
+                    <Route path="/editeprofile" element={<ProtectedRoute element={<EditProfile />} />} />
+                    <Route path="/viewcart" element={<ProtectedRoute element={<ViewCart />} />} />
+                    <Route path="/checkout" element={<ProtectedRoute element={<Checkout />} />} />
+                    <Route path="/payment" element={<ProtectedRoute element={<Payment />} />} />
+                    <Route path="/order-confirmation" element={<ProtectedRoute element={<OrderConfirmation />} />} />
+                    
+                    {/* Admin Routes */}
+                    <Route path="/admin" element={<AdminAuth />} />
+                    <Route path="/admin/*" element={<ProtectedRoute element={<AdminPages />} requiredRole="admin" />} />
+                    
+                    {/* Error Routes */}
+                    <Route path="/forbidden" element={<Forbidden />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+
+                {/* Floating Chat Box - Only show on non-admin routes and when online */}
+                {!isAdminRoute && !isOffline && <FloatingChatBox userId={userId} />}
+                </ProfileProvider>
+                
                 {!isAdminRoute && <Footer />}
             </CartProvider>
         </AuthProvider>

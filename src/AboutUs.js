@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 // Import a valid background image
-import backgroundImage from './images/camera.jpg';
+
 
 const AboutPage = () => {
   // State to track which sections are visible
@@ -67,13 +67,13 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-green-50 to-white">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('./images/camera.jpg')] opacity-5" />
+          <div className="absolute inset-0 bg-[url('./images/logo.png')] opacity-5" />
         </div>
         
         <div className="container mx-auto px-6 relative z-10 text-center">
-          <h1 className="text-5xl md:text-4xl font-bold mb-6 text-gray-800">
+          <h1 className="text-5xl md:text-4xl font-bold mb-6  text-green-600">
             Pseven
-            <span className="text-green-600"> Rwanda</span>
+            <span className="text-gray-800"> Rwanda</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">

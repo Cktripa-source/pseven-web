@@ -17,7 +17,7 @@ const ForgotPassword = () => {
       //const response = await axios.post('/api/auth/forgot-password', { email });
       
       // If proxy isn't set up, use the full URL
-      const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      const response = await axios.post('https://api.psevenrwanda.com/api/auth/forgot-password', { email });
       
       setMessage(response.data.message);
     } catch (err) {

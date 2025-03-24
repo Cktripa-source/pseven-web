@@ -1,11 +1,28 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Plus, Minus, X, Menu, ChevronLeft, ChevronRight, ShoppingCart, Filter, Search, Star, StarHalf, Eye } from "lucide-react";
+import { Heart, Plus, Minus, X, Menu, ChevronLeft, ChevronRight, ShoppingCart, Filter, Search, Star, StarHalf, Eye, Loader } from "lucide-react";
+import { Toaster, toast } from 'react-hot-toast';
 import Navbar from "./nav";
 import { useCart } from "./CartContext";
 import { Link } from "react-router-dom";
 
 const API_URL = "https://api.psevenrwanda.com/api";
+
+// Loading Overlay Component
+export const LoadingOverlay = ({ isLoading, message = "Loading..." }) => {
+  if (!isLoading) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+      <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center">
+        <div className="animate-spin mb-4">
+          <Loader size={24} className="text-green-600" />
+        </div>
+        <p className="text-sm font-medium text-gray-700">{message}</p>
+      </div>
+    </div>
+  );
+};
 
 // Animation variants
 const fadeIn = {
@@ -36,6 +53,24 @@ const ProductCard = ({ product, cart, addToCart, removeFromCart, favoriteProduct
   const handleImageError = (e) => {
     e.target.src = "";
   };
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    toast(`Added ${product.name} to cart`);
+  };
+  const handleRemoveFromCart = (productId, productName) => {
+    removeFromCart(productId);
+    toast(`Removed ${productName} from cart`);
+  };
+  const handleToggleFavorite = (productId, productName) => {
+    toggleFavorite(productId);
+    
+    if (favoriteProducts.includes(productId)) {
+      toast.info(`Removed ${productName} from favorites`);
+    } else {
+      toast.success(`Added ${productName} to favorites`);
+    }
+  };
   
   return (
     <motion.div 
@@ -63,7 +98,7 @@ const ProductCard = ({ product, cart, addToCart, removeFromCart, favoriteProduct
                 ? "bg-red-500 text-white" 
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
-            onClick={() => toggleFavorite(product._id)}
+            onClick={() => handleToggleFavorite(product._id, product.name)}
           >
             <Heart size={14} fill={favoriteProducts.includes(product._id) ? "white" : "none"} />
           </motion.button>
@@ -136,7 +171,7 @@ const ProductCard = ({ product, cart, addToCart, removeFromCart, favoriteProduct
                 ? "bg-green-600 hover:bg-green-700"
                 : "bg-black hover:bg-gray-900"
             }`}
-            onClick={() => isInCart ? removeFromCart(product._id) : addToCart(product)}
+            onClick={() => isInCart ? handleRemoveFromCart(product._id, product.name) : handleAddToCart(product)}
           >
             {isInCart ? (
               <>
@@ -175,6 +210,11 @@ const RatingStars = ({ rating }) => {
 
 // Cart item component
 const CartItem = ({ item, updateQuantity, removeItem }) => {
+  const handleRemove = () => {
+    removeItem();
+    toast.info(`Removed ${item.name} from cart`);
+  };
+  
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
@@ -208,7 +248,7 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
             <Plus size={12} />
           </button>
           <button 
-            onClick={() => removeItem(item)}
+            onClick={handleRemove}
             className="ml-auto p-1 text-gray-400 hover:text-red-500"
           >
             <X size={14} />
@@ -283,6 +323,7 @@ function ShoppingSection() {
   const [quantities, setQuantities] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [sortOption, setSortOption] = useState("default");
@@ -308,18 +349,23 @@ function ShoppingSection() {
   };
 
   // Update cart quantity
-  const updateCartQuantity = (productId, newQuantity) => {
+const updateCartQuantity = (productId, newQuantity) => {
+  setPageLoading(true);
+  setTimeout(() => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
-      return;
+      toast(`Item removed from cart`);
+    } else {
+      setCart(prevCart => 
+        prevCart.map(item => 
+          item._id === productId ? { ...item, quantity: newQuantity } : item
+        )
+      );
+      toast(`Cart updated`);
     }
-    
-    setCart(prevCart => 
-      prevCart.map(item => 
-        item._id === productId ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
+    setPageLoading(false);
+  }, 100);
+};
 
   // Toggle favorites
   const toggleFavorite = (productId) => {
@@ -334,11 +380,15 @@ function ShoppingSection() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setPageLoading(true);
         const res = await fetch(`${API_URL}/categories`);
         const data = await res.json();
         setCategories(["All", ...data]);
+        setPageLoading(false);
       } catch (error) {
         console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories");
+        setPageLoading(false);
       }
     };
 
@@ -356,8 +406,10 @@ function ShoppingSection() {
         const res = await fetch(`${API_URL}/products${categoryQuery}`);
         const data = await res.json();
         setProducts(data);
+        toast.success(`Loaded ${data.length} products`);
       } catch (error) {
         console.error("Error fetching products:", error);
+        toast.error("Failed to load products");
       } finally {
         setIsLoading(false);
       }
@@ -415,8 +467,49 @@ function ShoppingSection() {
     return (3.5 + (seed % 15) / 10).toFixed(1);
   };
 
+  // Apply category filter with loading
+  const handleCategoryChange = (category) => {
+    setPageLoading(true);
+    setSelectedCategory(category);
+    setIsSidebarOpen(false);
+    
+    setTimeout(() => {
+      setPageLoading(false);
+      
+      if (category === "All") {
+        toast.info("Showing all products");
+      } else {
+        toast.info(`Showing ${category} products`);
+      }
+    }, 500);
+  };
+
+  // Handle search with loading
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    if (query.length > 2) {
+      setPageLoading(true);
+      setTimeout(() => {
+        setPageLoading(false);
+        
+        const count = filteredProducts.filter(product => 
+          product.name.toLowerCase().includes(query.toLowerCase()) || 
+          product.description.toLowerCase().includes(query.toLowerCase())
+        ).length;
+        
+        toast.info(`Found ${count} results for "${query}"`);
+      }, 300);
+    }
+  };
+
   return (
     <div className="flex min-h-screen mb-32 relative">
+      {/* React Hot Toast */}
+      <Toaster position="bottom-right" />
+      
+      <LoadingOverlay isLoading={pageLoading} message="Processing..." />
       <Navbar cartCount={getCartCount()} onCartClick={() => setIsCartOpen(true)} />
 
       {/* Main content */}
@@ -459,7 +552,7 @@ function ShoppingSection() {
                       ? "bg-green-600 text-white shadow-md" 
                       : "bg-white text-gray-700 border border-gray-200 hover:border-green-400 hover:shadow-sm"
                   }`}
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => handleCategoryChange(category)}
                 >
                   {category}
                 </motion.button>
@@ -478,14 +571,17 @@ function ShoppingSection() {
                 className="block w-full pl-12 pr-4 py-3 border-0 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                 placeholder="Search products..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearch}
               />
             </div>
             <div className="flex items-center gap-4 w-full md:w-auto">
               <select 
                 className="flex-1 md:flex-none bg-white border-0 rounded-xl py-3 px-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                 value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
+                onChange={(e) => {
+                  setSortOption(e.target.value);
+                  toast.info(`Sorted by ${e.target.options[e.target.selectedIndex].text}`);
+                }}
               >
                 <option value="default">Sort: Default</option>
                 <option value="price-low-high">Price: Low-High</option>
@@ -511,7 +607,9 @@ function ShoppingSection() {
               <div className="inline-flex items-center bg-green-100 text-green-800 rounded-full px-4 py-1">
                 <span className="text-sm font-medium">{selectedCategory}</span>
                 <button 
-                  onClick={() => setSelectedCategory("All")}
+                  onClick={() => {
+                    handleCategoryChange("All");
+                  }}
                   className="ml-2 text-green-600 hover:text-green-800"
                 >
                   <X size={14} />
@@ -555,178 +653,102 @@ function ShoppingSection() {
             <Pagination 
               currentPage={currentPage} 
               totalPages={totalPages} 
-              setCurrentPage={setCurrentPage}
+              setCurrentPage={(page) => {
+                setPageLoading(true);
+                setTimeout(() => {
+                  setCurrentPage(page);
+                  setPageLoading(false);
+                }, 300);
+              }} 
               isMobile={isMobile}
             />
           )}
         </div>
       </div>
 
-      {/* Category sidebar */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
-            onClick={() => setIsSidebarOpen(false)}
+      {/* Sidebars for mobile view */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-40 flex">
+          <div className="flex-1 bg-black/30" onClick={() => setIsSidebarOpen(false)} />
+          <motion.div 
+            initial={{ x: '100%' }} 
+            animate={{ x: 0 }} 
+            exit={{ x: '100%' }} 
+            transition={{ type: 'spring', stiffness: 300 }}
+            className="bg-white w-2/3 md:w-1/3 h-full p-4 relative"
           >
-            <motion.div
-              initial={{ x: -300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -300, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="absolute left-0 top-0 h-full w-full bg-white shadow-2xl overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
+            <button 
+              className="absolute top-4 right-4"
+              onClick={() => setIsSidebarOpen(false)}
             >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6 mt-16">
-                  <h2 className="text-xl font-bold text-gray-900">Categories</h2>
+              <X size={24} className="text-gray-600" />
+            </button>
+            <h2 className="font-bold text-lg mb-4">Categories</h2>
+            <ul>
+              {categories.map((category) => (
+                <li key={category} className="mb-2">
                   <button 
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="p-2 rounded-full hover:bg-gray-100"
+                    className={`w-full text-left py-2 px-3 rounded-lg transition-all ${
+                      selectedCategory === category 
+                        ? "bg-green-600 text-white" 
+                        : "bg-white text-gray-700 hover:bg-gray-100"
+                    }`} 
+                    onClick={() => handleCategoryChange(category)}
                   >
-                    <X size={18} />
+                    {category}
                   </button>
-                </div>
-                
-                <div className="flex flex-col gap-2">
-                  {categories.map((category) => (
-                    <motion.button
-                      key={category}
-                      whileHover={{ x: 4 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`py-3 px-4 rounded-lg text-left font-medium transition-all text-sm ${
-                        selectedCategory === category 
-                          ? "bg-green-600 text-white" 
-                          : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                      }`}
-                      onClick={() => {
-                        setSelectedCategory(category);
-                        setIsSidebarOpen(false);
-                      }}
-                    >
-                      {category}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+                </li>
+              ))}
+            </ul>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
 
-      {/* Cart sidebar */}
-      <AnimatePresence>
-        {isCartOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-            onClick={() => setIsCartOpen(false)}
+      {/* Cart Sidebar */}
+      {isCartOpen && (
+        <div className="fixed inset-0 z-40 flex">
+          <div className="flex-1 bg-black/30" onClick={() => setIsCartOpen(false)} />
+          <motion.div 
+            initial={{ x: '100%' }} 
+            animate={{ x: 0 }} 
+            exit={{ x: '100%' }} 
+            transition={{ type: 'spring', stiffness: 300 }}
+            className="bg-white w-2/3 md:w-1/3 h-full p-4 relative"
           >
-            <motion.div
-              initial={{ x: 400, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 400, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="absolute right-0 top-0 h-full w-full xs:w-4/5 sm:w-80 bg-white shadow-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex flex-col h-full">
-                <div className="p-5 border-b">
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-xl font-bold text-gray-900 mt-16">Your Cart</h2>
-                    <button 
-                      onClick={() => setIsCartOpen(false)}
-                      className="p-2 rounded-full hover:bg-gray-100"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                  <div className="flex items-center text-gray-500 text-sm">
-                    <ShoppingCart size={14} className="mr-2" />
-                    <span>{getCartCount()} items</span>
-                  </div>
-                </div>
-                
-                <div className="flex-1 overflow-y-auto p-5">
-                  {cart.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center">
-                      <div className="bg-gray-100 p-5 rounded-full mb-4">
-                        <ShoppingCart size={24} className="text-gray-400" />
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-700 mb-2">Your cart is empty</h3>
-                      <p className="text-sm text-gray-500 mb-6">Looks like you haven't added any products to your cart yet.</p>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-green-600 text-white px-5 py-2 rounded-xl font-medium hover:bg-green-700 text-sm"
-                        onClick={() => setIsCartOpen(false)}
-                      >
-                        Continue Shopping
-                      </motion.button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {cart.map((item) => (
-                        <CartItem 
-                          key={item._id}
-                          item={item}
-                          updateQuantity={updateCartQuantity}
-                          removeItem={() => removeFromCart(item._id)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-                
-                {cart.length > 0 && (
-                  <div className="p-5 border-t bg-gray-50">
-                    <div className="space-y-3 mb-6">
-                      <div className="flex justify-between text-gray-600 text-sm">
-                        <span>Subtotal</span>
-                        <span>RWF {calculateCartTotal().toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-gray-600 text-sm">
-                        <span>Shipping</span>
-                        <span>Calculated at checkout</span></div>
-                      <div className="flex justify-between font-bold text-lg">
-                        <span>Total</span>
-                        <span>RWF {calculateCartTotal().toLocaleString()}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <Link to="/checkout">
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="w-full bg-green-600 text-white py-3 rounded-xl font-medium hover:bg-green-700 text-sm flex items-center justify-center gap-2"
-                        >
-                          Proceed to Checkout
-                        </motion.button>
-                      </Link>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full bg-white border border-gray-200 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-50 text-sm"
-                        onClick={() => setIsCartOpen(false)}
-                      >
-                        Continue Shopping
-                      </motion.button>
-                    </div>
-                  </div>
-                )}
+              <button 
+  className="absolute top-4 right-4"
+  onClick={() => setIsCartOpen(false)}
+>
+  <X size={24} className="text-gray-950" />
+</button>
+            
+              <X size={24} className="text-gray-950" />
+            
+            <h2 className="font-bold text-lg mb-4">Cart</h2>
+            {cart.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="text-5xl mb-4">🛍️</div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
               </div>
-            </motion.div>
+            ) : (
+              <div>
+                {cart.map((item, index) => (
+                  <CartItem 
+                    key={item._id} 
+                    item={item} 
+                    updateQuantity={(newQuantity) => updateCartQuantity(item._id, newQuantity)}
+                    removeItem={() => updateCartQuantity(item._id, 0)}
+                  />
+                ))}
+                <div className="mt-6">
+                  <h3 className="text-lg font-bold text-gray-800 mb-1">Subtotal</h3>
+                  <p className="text-base text-gray-600">RWF {calculateCartTotal().toLocaleString()}</p>
+                </div>
+              </div>
+            )}
           </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }

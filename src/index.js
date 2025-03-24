@@ -10,7 +10,6 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    {/* Wrap everything inside CartProvider to maintain cart state across routes */}
     <CartProvider>
       <BrowserRouter>
         <App />

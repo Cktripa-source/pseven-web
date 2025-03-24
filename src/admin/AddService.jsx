@@ -35,13 +35,13 @@ const AddService = ({ onServiceAdded, editingService, onEditComplete }) => {
 
     try {
       if (editingService) {
-        await axios.put(`http://localhost:5000/api/services/${editingService._id}`, formData, {
+        await axios.put(`https://api.psevenrwanda.com/api/services/${editingService._id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         setMessage('Service updated successfully!');
         onEditComplete();
       } else {
-        await axios.post('http://localhost:5000/api/services', formData, {
+        await axios.post('https://api.psevenrwanda.com/api/services', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         setMessage('Service added successfully!');

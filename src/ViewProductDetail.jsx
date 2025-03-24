@@ -89,23 +89,10 @@ function ViewProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8 mt-32">
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <div className="w-full h-96 bg-gray-200 animate-pulse rounded-md"></div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
-          <div className="h-8 bg-gray-200 animate-pulse rounded w-3/4"></div>
-          <div className="h-20 bg-gray-200 animate-pulse rounded w-full"></div>
-          <div className="h-6 bg-gray-200 animate-pulse rounded w-1/4"></div>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="w-10 h-10 bg-gray-200 animate-pulse rounded-full"></div>
-            ))}
-          </div>
-          <div className="flex gap-4 mt-6">
-            <div className="h-12 bg-gray-200 animate-pulse rounded w-1/2"></div>
-            <div className="h-12 bg-gray-200 animate-pulse rounded w-1/2"></div>
-          </div>
+      <div className="container mx-auto p-6 flex items-center justify-center min-h-64 mt-32">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="mt-2 text-gray-600">Loading product...</p>
         </div>
       </div>
     );
@@ -147,9 +134,9 @@ function ViewProductDetail() {
 
         {/* Pricing */}
         <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-3xl font-bold text-red-500">${product.price}</span>
+          <span className="text-3xl font-bold text-red-500">FRW {product.price}</span>
           {product.originalPrice > product.price && (
-            <span className="text-lg text-gray-400 line-through">${product.originalPrice}</span>
+            <span className="text-lg text-gray-400 line-through">FRW {product.originalPrice}</span>
           )}
         </div>
 

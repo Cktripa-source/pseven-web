@@ -1,33 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, Mail, User, AlertTriangle, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from './AuthContext';
-import Loading from "./loading";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function Login() {
+function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { userLogin, user, isAdmin } = useAuth();
+  
+  // Effect to handle redirection when user auth state changes
+  useEffect(() => {
+    if (user) {
+        // Regular users go to shopping
+        navigate('/shopping');
+      }
+    },[user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsButtonLoading(true);
     setError("");
 
-    const result = await login(email, password);
-    if (result.success) {
-      navigate('/shopping');  // Redirect to shopping section after login
-    } else {
-      setError(result.error || 'Login failed');
+    try {
+      const result = await userLogin(email, password);
+      
+      if (!result.success) {
+        setError(result.error || 'Login failed');
+        
+        // If this was an admin attempting to use user login
+        if (result.isAdminAttempt) {
+          toast.info("It looks like you're an admin. Redirecting to admin login...");
+          setTimeout(() => {
+            navigate(result.redirectTo);
+          }, 2000);
+        }
+      } else {
+        toast.success("Login successful!");
+        
+        // Navigation will be handled by the auth context hook
+        if (result.redirectTo) {
+          navigate(result.redirectTo);
+        }
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+      console.error(err);
+    } finally {
+      setIsButtonLoading(false);
     }
-    setIsLoading(false);
   };
-
-  if (isLoading) return <Loading />;
 
   return (
     <motion.div 
@@ -52,8 +79,8 @@ function Login() {
                 <User className="text-white" size={28} />
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-black text-center">Welcome Back</h1>
-            <p className="text-gray-950 text-center text-sm mt-1">Sign in to continue</p>
+            <h1 className="text-2xl font-bold text-black text-center">Customer Login</h1>
+            <p className="text-gray-950 text-center text-sm mt-1">Sign in to your account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-8">
@@ -61,8 +88,9 @@ function Login() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-3 bg-red-50 text-red-500 rounded-lg text-sm font-medium"
+                className="mb-6 p-3 bg-red-50 text-red-500 rounded-lg text-sm font-medium flex items-center"
               >
+                <AlertTriangle className="mr-2 h-5 w-5 text-red-500" />
                 {error}
               </motion.div>
             )}
@@ -101,9 +129,9 @@ function Login() {
               </div>
 
               <div className="flex items-center">
-               <Link to="/forgot-password" className="text-md text-green-600 hover:text-green-800 transition-colors justify-end">
-                    Forgot password?
-                  </Link>
+                <Link to="/forgot-password" className="text-md text-green-600 hover:text-green-800 transition-colors justify-end">
+                  Forgot password?
+                </Link>
               </div>
 
               <motion.button
@@ -111,9 +139,17 @@ function Login() {
                 className="w-full bg-black text-white py-3.5 rounded-lg font-medium hover:bg-green-600 transition-colors"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                disabled={isLoading}
+                disabled={isButtonLoading}
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
+                {isButtonLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="mr-2 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Authentication...
+                  </span>
+                ) : 'Sign in'}
               </motion.button>
             </div>
 
@@ -124,12 +160,19 @@ function Login() {
                   Sign up now
                 </Link>
               </p>
+              <p className="text-center text-gray-500 mt-3 text-sm">
+                Admin user?{' '}
+                <Link to="/admin/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+                  Admin login
+                </Link>
+              </p>
             </div>
           </form>
         </motion.div>
       </motion.div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </motion.div>
   );
 }
 
-export default Login;
+export default UserLogin;

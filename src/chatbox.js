@@ -20,7 +20,7 @@ const FloatingChatBox = () => {
 
   const getAIResponse = async (userMessage) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/home/chat', {
+      const response = await axios.post('https://api.psevenrwanda.com/api/home/chat', {
         message: userMessage,
       }, { 
         timeout: 30000,
