@@ -81,7 +81,7 @@ const ProductCard = ({ product, cart, addToCart, removeFromCart, favoriteProduct
         <Link to={`/product/${product._id}`}>
           <div className="relative w-full h-36 sm:h-48 lg:h-52 overflow-hidden">
             <img 
-              src={`${API_URL}/${product.image}`} 
+              src={product.image} 
               alt={product.name} 
               className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
               onError={handleImageError}
@@ -224,7 +224,7 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
     >
       <div className="w-16 h-16 flex-shrink-0 bg-white rounded-lg overflow-hidden">
         <img 
-          src={`${API_URL}/${item.image}`} 
+          src={item.image} 
           alt={item.name} 
           className="w-full h-full object-cover" 
           onError={(e) => e.target.src = ""}
