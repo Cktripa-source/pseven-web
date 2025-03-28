@@ -78,7 +78,7 @@ const Services = () => {
                 {/* Image Section */}
                 <div className="relative w-full h-64 overflow-hidden">
                   <img
-                    src={`https://api.psevenrwanda.com/${service.image}`}
+                    src={service.image}
                     alt={service.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
