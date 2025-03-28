@@ -130,7 +130,7 @@ const Services = () => {
                     onClick={() => setImageModalOpen(true)}
                   >
                     <img
-                      src={`https://api.psevenrwanda.com/${selectedService.image}`}
+                      src={selectedService.image}
                       alt={selectedService.name}
                       className="w-full h-64 md:h-full object-cover"
                     />
@@ -187,7 +187,7 @@ const Services = () => {
           >
             <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
               <img
-                src={`https://api.psevenrwanda.com/${selectedService.image}`}
+                src={selectedService.image}
                 alt={selectedService.name}
                 className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
               />
