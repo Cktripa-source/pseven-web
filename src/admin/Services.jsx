@@ -25,7 +25,7 @@ import { toast } from 'react-toastify';
 import { getAuthToken } from '../utils/auth';
 import { CSVLink } from 'react-csv';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://api.psevenrwanda.com';
 
 const ServiceManagement = () => {
   const [services, setServices] = useState([]);
